@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="Lionlnuc">
+    
+    <!-- Completely eliminate flash of wrong theme -->
+    <script>
+        (function() {
+            const THEME_KEY = "REDEFINE-THEME-STATUS";
+            const DARK = "dark", LIGHT = "light";
+            
+            // Get preferred theme
+            function getTheme() {
+                try {
+                    const saved = localStorage.getItem(THEME_KEY);
+                    if (saved) {
+                        const { isDark } = JSON.parse(saved);
+                        return isDark ? DARK : LIGHT;
+                    }
+                } catch (e) {}
+                
+                return matchMedia("(prefers-color-scheme: dark)").matches ? DARK : LIGHT;
+            }
+            
+            // Apply theme to document
+            function applyTheme(theme) {
+                const isDark = theme === DARK;
+                const root = document.documentElement;
+                
+                // Set classes for compatibility
+                root.classList.add(theme);
+                root.classList.remove(isDark ? LIGHT : DARK);
+                root.style.colorScheme = theme;
+            }
+            
+            // Initial application
+            const theme = getTheme();
+            applyTheme(theme);
+            
+            // Listen for system preference changes
+            matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ({ matches }) => {
+                // Only update if using system preference (no localStorage entry)
+                if (!localStorage.getItem(THEME_KEY)) {
+                    applyTheme(matches ? DARK : LIGHT);
+                }
+            });
+            
+            // Set body classes ASAP (before DOMContentLoaded)
+            (function() {
+                const addBodyClass = () => {
+                    const b = document.body;
+                    if (!b) return false;
+                    b.classList.add(theme + "-mode");
+                    return true;
+                };
+
+                // Try immediately
+                if (addBodyClass()) return;
+
+                // Observe until body exists
+                const mo = new MutationObserver(() => {
+                    if (addBodyClass()) mo.disconnect();
+                });
+                mo.observe(document.documentElement, { childList: true, subtree: true });
+            })();
+        })();
+    </script>
+    
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="https://lionlnuc.github.io/2025/12/16/位运算的总结/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+    
+    
+        
+        <meta name="description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Lionlnuc - 享受编程，享受生活">
+<meta property="og:url" content="https://lionlnuc.github.io/2025/12/16/%E4%BD%8D%E8%BF%90%E7%AE%97%E7%9A%84%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="Lionlnuc - 享受编程，享受生活">
+<meta property="og:description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://lionlnuc.github.io/images/redefine-og.webp">
+<meta property="article:published_time" content="2025-12-16T15:13:07.495Z">
+<meta property="article:modified_time" content="2025-08-29T14:19:51.790Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lionlnuc.github.io/images/redefine-og.webp">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/images/redefine-favicon.svg" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/redefine-favicon.svg">
+    <meta name="theme-color" content="#83cff9">
+    <link rel="shortcut icon" href="/images/redefine-favicon.svg">
+    <!--- Page Info-->
+    
+    <title>
+        
+            Lionlnuc - Redefine Your Hexo Journey.
+        
+    </title>
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
+
+
+    <!--- Inject Part-->
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/css/build/tailwind.css">
+
+    
+
+    
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
+
+    
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
+
+    <!--- Font Part-->
+    
+    
+    
+    
+    
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"lionlnuc.github.io","root":"/","language":"zh-CN","path":"search.json"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":false,"title_alignment":"left","headings_top_spacing":{"h1":"3.2rem","h2":"2.4rem","h3":"1.9rem","h4":"1.6rem","h5":"1.4rem","h6":"1.3rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#83cff9","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":false,"custom_message":null},"side_tools":{"gear_rotation":true,"auto_expand":false},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"Hexo Theme Redefine, Redefine Your Hexo Journey."},"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"https://files.codelife.cc/wallhaven/full/e7/wallhaven-e7j33o.jpg?x-oss-process=image/resize,limit_0,m_fill,w_1920,h_1080/quality,Q_93/format,webp","dark":"https://files.codelife.cc/wallpaper/wallspic/167264.jpg?x-oss-process=image/resize,limit_0,m_fill,w_2560,h_1440/quality,Q_92/format,webp"},"title":"Lionlnuc","subtitle":{"text":["随心所欲地享受每一天\\(￣︶￣*\\))","随时随地，浏览记录O(∩_∩)O","如果喜欢，建议给个支持( •̀ ω •́ )✧","喜欢的话，留个言好嘛(oﾟvﾟ)ノ","你有建议？反馈作者(●^◡^●)","欢迎来到我的博客(｡･∀･)ﾉﾞ","文字正在不断轮换(*￣3￣)╭","正在努力更新博客(ง •_•)ง","正在不断努力改善博客中ε=( o｀ω′)ノ"],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":150,"backing_speed":30,"starting_delay":1000,"backing_delay":3000,"loop":true,"smart_backspace":true},"text_color":{"light":"#101010","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":true,"style":"default","links":{"github":"https://github.com/lionlnuc","instagram":null,"zhihu":null,"twitter":null,"email":null,"CSDN":"https://blog.csdn.net/a140781"},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":false,"version":"11.4.1"}},"version":"2.8.5","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Categories":{"path":"/categories","icon":"fa-regular fa-list"},"ShuoShuo":{"icon":"fa-solid fa-comment-dots","path":"/shuoshuo"},"Links":{"icon":"fa-regular fa-link","submenus":{"Github":"https://github.com/lionlnuc","CSDN":"https://blog.csdn.net/a140781"}},"Github":{"icon":"fa-brands fa-github","path":"https://github.com/lionlnuc/lionlnuc.github.io/"}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":{"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Gallery":{"path":"/masonry","icon":"fa-solid fa-image"},"Tags":{"path":"/tags","icon":"fa-regular fa-tags"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"}}},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2025/12/15 22:45:00"};
+    window.lang_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+    window.data = {"masonry":false};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+
+<body>
+	<div class="progress-bar-container">
+	
+
+	
+	<span class="pjax-progress-bar"></span>
+	<!--        <span class="swup-progress-icon">-->
+	<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+	<!--        </span>-->
+	
+</div>
+
+<main class="page-container" id="swup">
+
+	
+
+	<div class="main-content-container flex flex-col justify-between min-h-dvh">
+		<div class="main-content-header">
+			<header class="navbar-container px-6 md:px-12">
+    <div class="navbar-content transition-navbar ">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                
+                Lionlnuc
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    首页
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/archives"
+                                        >
+                                    <i class="fa-regular fa-archive fa-fw"></i>
+                                    归档
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/categories"
+                                        >
+                                    <i class="fa-regular fa-list fa-fw"></i>
+                                    分类
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/shuoshuo"
+                                        >
+                                    <i class="fa-solid fa-comment-dots fa-fw"></i>
+                                    说说
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="has-dropdown"
+                                   href="#"
+                                        onClick=&#34;return false;&#34;>
+                                    <i class="fa-regular fa-link fa-fw"></i>
+                                    链接
+                                    <i class="fa-solid fa-chevron-down fa-fw"></i>
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                                    <ul class="sub-menu">
+                                        
+                                            <li>
+                                                <a target="_blank" rel="noopener" href="https://github.com/lionlnuc">
+                                                    GITHUB
+                                                </a>
+                                            </li>
+                                        
+                                            <li>
+                                                <a target="_blank" rel="noopener" href="https://blog.csdn.net/a140781">
+                                                    CSDN
+                                                </a>
+                                            </li>
+                                        
+                                    </ul>
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   target="_blank" rel="noopener" href="https://github.com/lionlnuc/lionlnuc.github.io/"
+                                        >
+                                    <i class="fa-brands fa-github fa-fw"></i>
+                                    GITHUB
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                        <li class="navbar-item search search-popup-trigger">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-dvh w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                        >
+                            <span>
+                                首页
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/archives"
+                        >
+                            <span>
+                                归档
+                            </span>
+                            
+                                <i class="fa-regular fa-archive fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/categories"
+                        >
+                            <span>
+                                分类
+                            </span>
+                            
+                                <i class="fa-regular fa-list fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/shuoshuo"
+                        >
+                            <span>
+                                说说
+                            </span>
+                            
+                                <i class="fa-solid fa-comment-dots fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item-sub text-base my-1.5 flex flex-col w-full">
+                        
+                        <div class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary cursor-pointer text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                             navbar-data-toggle="submenu-Links"
+                        >
+                            <span>
+                                链接
+                            </span>
+                            
+                                <i class="fa-solid fa-chevron-right fa-sm fa-fw transition-all"></i>
+                            
+                        </div>
+                        
+
+                        
+                            <div class="flex-col items-start px-2 py-2 hidden" data-target="submenu-Links">
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           target="_blank" rel="noopener" href="https://github.com/lionlnuc">GITHUB</a>
+                                    </div>
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           target="_blank" rel="noopener" href="https://blog.csdn.net/a140781">CSDN</a>
+                                    </div>
+                                
+                            </div>
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           target="_blank" rel="noopener" href="https://github.com/lionlnuc/lionlnuc.github.io/"
+                        >
+                            <span>
+                                GITHUB
+                            </span>
+                            
+                                <i class="fa-brands fa-github fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+                
+                    
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/masonry"
+                        >
+                            <span>Gallery</span>
+                            <i class="fa-solid fa-image fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/tags"
+                        >
+                            <span>Tags</span>
+                            <i class="fa-regular fa-tags fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+                    
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">0</div>
+        <div class="label text-third-text-color text-sm">标签</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">0</div>
+        <div class="label text-third-text-color text-sm">分类</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">2</div>
+        <div class="label text-third-text-color text-sm">文章</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+		</div>
+
+		<div class="main-content-body transition-fade-up">
+			
+
+			<div class="main-content">
+				<div class="post-page-container flex relative justify-between box-border w-full h-full">
+	<div class="article-content-container">
+
+		<div class="article-title relative w-full">
+			
+			<div class="w-full flex items-center pt-6 justify-start">
+				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3"></h1>
+			</div>
+			
+		</div>
+
+		
+		<div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+			<div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+				<img src="https://avatars.githubusercontent.com/u/187401115?s=400&u=249fd1e6bbecad7cea1c4e7786d2228f9de05099&v=4">
+			</div>
+			<div class="info flex flex-col justify-between">
+				<div class="author flex items-center">
+					<span class="name text-default-text-color text-lg font-semibold">Lionlnuc</span>
+					
+					<span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv1</span>
+					
+				</div>
+				<div class="meta-info">
+					<div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2025-12-16 23:13:07</span>
+        <span class="mobile">2025-12-16 23:13:07</span>
+        <span class="hover-info">创建</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2025-08-29 22:19:51</span>
+            <span class="mobile">2025-08-29 22:19:51</span>
+            <span class="hover-info">更新</span>
+        </span>
+    
+
+    
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+				</div>
+			</div>
+		</div>
+		
+
+		
+
+
+		<div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+			<h3 id="回忆知识点"><a href="#回忆知识点" class="headerlink" title="回忆知识点"></a>回忆知识点</h3><ol>
+<li>位运算是基于整数二进制表示进行的运算。</li>
+<li>下面展示三种位运算的方法</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>运算符</th>
+<th>规律</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>与</td>
+<td>&amp;</td>
+<td>只有两个对应位都为 1时才为 1</td>
+</tr>
+<tr>
+<td>或</td>
+<td>|</td>
+<td>只要两个对应位中有一个 1时就为 1</td>
+</tr>
+<tr>
+<td>异或</td>
+<td>^</td>
+<td>只有两个对应位不同时才为 1</td>
+</tr>
+</tbody></table>
+<h4 id="移位运算"><a href="#移位运算" class="headerlink" title="移位运算"></a>移位运算</h4><ul>
+<li><code>n&lt;&lt;i</code> 表示 n 的二进制表示向左移动 i 位所得的值。<font color="#c3d69b">经常以 n&lt;&lt;1 来表示除二的操作</font></li>
+<li><code>n&gt;&gt;i</code> 表示 n 的二进制表示向右移动 i 位所得的值。<blockquote>
+<p>左移 i 位相当于乘 2<sup>i</sup>，右移 i 位相当于除以2<sup>i</sup>。</p>
+</blockquote>
+</li>
+</ul>
+<h4 id="原码-补码-反码"><a href="#原码-补码-反码" class="headerlink" title="原码 补码 反码"></a>原码 补码 反码</h4><p>因为有一道题用到了这个知识点所以我来复习一下，考研 er</p>
+<p><font color="#d99694">原码</font>：是最简单的机器数表示法。用最高位表示符号位，‘1’表示负号，‘0’表示正号。其他位存放该数的二进制的绝对值</p>
+<blockquote>
+<p>这里举个🌰<br>‘1010‘ 最高位为 1 表示这个数是个负数，其他三位‘010’转为十进制为 2，所以‘1010’表示-2。<br>同理‘0010’表示十进制的 2</p>
+<p>0010+0011&#x3D;0011&#x3D;1+2&#x3D;3；对于整数加减法是合理的<br>0000+1000&#x3D;1000&#x3D;0；这个也是合理的<br>0001+1001&#x3D;1010&#x3D;1+(-1)&#x3D;-2；这是错误的<br>所以引入了反码来解决这个问题</p>
+</blockquote>
+<p><font color="#d99694">反码</font>：正数的反码还是等于原码，负数的反码就是他的原码除符号位外，按位取反。</p>
+<blockquote>
+<p>举个🌰<br>对于正数 3，原码为 0011，反码仍为 0011；<br>对于-3，原码为 1011，符号位不变，其余位按位取反，则反码为 1100<br>对于-1，原码为 1001，则反码为 1110<br>此时如果再进行上面的运算<br>0001+1110&#x3D;1111&#x3D;1+(-1)&#x3D;-7<br>1110+1101&#x3D;1011&#x3D;-1+(-2)&#x3D;-4<br>1110+1100&#x3D;1010&#x3D;-1+(-3)&#x3D;-5<br>可以发现除了第一个以外，结果均与正确值相差 1<br>所以引入补码的概念来解决这一问题</p>
+</blockquote>
+<p><font color="#d99694">补码</font>：正数的补码等于他的原码， 负数的补码等于反码+1。也等于正数反码+1。</p>
+<blockquote>
+<p>🌰依旧出场<br>用补码来进行运算<br>源码 1 : 0001   -1: 1001<br>补码 1 : 0001   -1: 1110 + 1 &#x3D; 1111<br>补码相加 1 + -1 &#x3D; 0001 + 1111 &#x3D; 0000 结果为 0，答案正确<br>你可能想问结果为什么不是五位数，因为机器码的位数在操作系统中是固定位，假设固定为 4 位，那么结果就只有四位码</p>
+</blockquote>
+<h4 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h4><p>这里听劝去看了下灵神的知识点。<a href="%5B%E7%81%B5%E7%A5%9E%E4%BD%8D%E8%BF%90%E7%AE%97%E9%A2%98%E5%8D%95%5D(https://leetcode.cn/discuss/post/dHn9Vk/)">^1</a></p>
+<p>集合可以用二进制来表示，二进制从低到高第 i 位表示 i 在集合中，0 表示 i 不在集合中。比如这样一个集合{0,2,3}可以用二进制数 1101 表示；</p>
+<blockquote>
+<p>第 0 位为 1 表示 0 在集合中<br>第 1 位为 0 表示 1 不在集合中<br>第 2 位为 1 表示 2 在集合中<br>第 3 位为 1 表示 3 在集合中</p>
+</blockquote>
+<p>反过来二进制数 1101 就对应集合{1101}。所以，包含非负整数的集合 S 可以通过 $f(s)&#x3D;​∑2^i (i\in S)$ 压缩成一个数字。</p>
+<p>例如集合{0,2,3}可以压缩成 2<sup>0</sup>+2<sup>2</sup>+2<sup>3</sup>&#x3D;13, 也就是二进制数 1101.</p>
+<h5 id="集合与集合"><a href="#集合与集合" class="headerlink" title="集合与集合"></a>集合与集合</h5><p>两个集合的对称差是只属于其中一个集合而不属于另一个集合的元素组成的集合，也就是不在交集中的元素组成的集合。ps: 又遇到了离散数学知识点</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>集合</th>
+<th>位运算</th>
+<th>集合示例</th>
+<th>位运算示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>交集</td>
+<td>$A\cap B$</td>
+<td>a&amp;b</td>
+<td>{0,2,3}$\cap${0,1,2}&#x3D;{0,2}</td>
+<td>1101&amp;0111&#x3D;0101</td>
+</tr>
+<tr>
+<td>并集</td>
+<td>$A\cup B$</td>
+<td>a|b</td>
+<td>{0,2,3}$\cup${0,1,2}&#x3D;{0,1,2,3}</td>
+<td>1101 | 0111&#x3D;1111</td>
+</tr>
+<tr>
+<td>对称差</td>
+<td>$A\Delta B$</td>
+<td>$a\oplus b$</td>
+<td>{0,2,3}$\Delta${0,1,2}&#x3D;{1,3}</td>
+<td>1101 $\oplus$ 0111&#x3D;1010</td>
+</tr>
+<tr>
+<td>差</td>
+<td>$A\setminus B$</td>
+<td>a&amp;~b</td>
+<td>{0,2,3}$\setminus${1,2}&#x3D;{0,3}</td>
+<td>1101&amp;1001&#x3D;1001</td>
+</tr>
+<tr>
+<td>差 (子集)</td>
+<td>$A\setminus B    ,B\subseteq A$</td>
+<td>$a\oplus b$</td>
+<td>{0,2,3}$\setminus${0,2}&#x3D;{3}</td>
+<td>1101 $\oplus$ 0101&#x3D;1000</td>
+</tr>
+<tr>
+<td>包含于</td>
+<td>$A\subseteq B$</td>
+<td>a&amp;b&#x3D;a<br>a|b&#x3D;b</td>
+<td>{0,2}$\subseteq${0,2,3}</td>
+<td>0101&amp;1101&#x3D;0101 <br>0101 | 1101&#x3D;1101</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>注：判断子集的两种位运算写法等价，写代码只需要写其中一种。也可以用 <code>(a&amp;~b)==0</code> 判断，也就是 a 和 b 的补集相交为空，如果成立也可以表示 A 是 B 的子集。</p>
+</blockquote>
+<h5 id="集合与元素"><a href="#集合与元素" class="headerlink" title="集合与元素"></a>集合与元素</h5><p>通常会用到[[#移位运算]]。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>集合</th>
+<th>位运算</th>
+<th>集合示例</th>
+<th>位运算示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>空集</td>
+<td>$\oslash$</td>
+<td>0</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>单元素集合</td>
+<td>{i}</td>
+<td>1&lt;&lt;i</td>
+<td>{2}</td>
+<td>1&lt;&lt;2</td>
+</tr>
+<tr>
+<td>全集</td>
+<td>U&#x3D;{0,1,2,3,…, n-1}</td>
+<td>(1&lt;&lt;n)-1</td>
+<td>{0,1,2,3}</td>
+<td>(1&lt;&lt;4)-1</td>
+</tr>
+<tr>
+<td>补集</td>
+<td>∁<sub>U</sub>​S&#x3D;U∖S</td>
+<td>((1&lt;&lt;n)-1) $\oplus$ s</td>
+<td>U&#x3D;{0,1,2,3}<br>∁<sub>U</sub>{1,2}&#x3D;{0,3}</td>
+<td>1111 $\oplus$ 0110&#x3D;1001</td>
+</tr>
+<tr>
+<td>属于</td>
+<td>$(i\in S)$</td>
+<td>(s&gt;&gt;i)&amp;1&#x3D;1</td>
+<td>2 $\in${0,2,3}</td>
+<td>(1101&gt;&gt;2)&amp;1&#x3D;1</td>
+</tr>
+<tr>
+<td>不属于</td>
+<td>$(i\notin S)$</td>
+<td>(s&gt;&gt;i)&amp;1&#x3D;0</td>
+<td>1 $\notin${0,2,3}</td>
+<td>(1101&gt;&gt;1)&amp;1&#x3D;0</td>
+</tr>
+<tr>
+<td>添加元素</td>
+<td>S U {i}</td>
+<td>s | (1&lt;&lt;i)</td>
+<td>{0,3} U {2}</td>
+<td>1001 | (1&lt;&lt;2)</td>
+</tr>
+<tr>
+<td>删除元素</td>
+<td>S \ {i}</td>
+<td>s&amp;~(1&lt;&lt;i)</td>
+<td>{0,2,3} \ {2}</td>
+<td>1101&amp;~(1&lt;&lt;2)</td>
+</tr>
+<tr>
+<td>删除元素（一定在集合中）</td>
+<td>S \ {i}, $(i\in S)$</td>
+<td>s $\oplus$ (1&lt;&lt;i)</td>
+<td>{0,2,3} \ {2}</td>
+<td>1101 $\oplus$ (1&lt;&lt;2)</td>
+</tr>
+<tr>
+<td>删除最小元素</td>
+<td></td>
+<td>s&amp;(s-1)</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>这里解释一下位运算的表示。<br>1.1&lt;&lt;2 表示将 1 的二进制表示向左移动两位 0100，第二位是 1 表示 2 在集合中。<br>2.1 的二进制左移 4 位后是 00010000，减 1 后 00001111，表示集合{0,1,2,3}<br>3. 这里 1101 表示集合{0,2,3}，向右移动 2位后为 0011，与 0001 进行按位与操作结果是 0001，所以结果是 1；第 5 个结果为 0 就不解释了。<br>4. 集合{0,3}用 1001 表示，要添加元素 2 那就可以让第 2 位为 1。1&lt;&lt;2 就是元素 2 的集合，然后用或运算(有一位是1就为1)就可以实现<br>5. 集合{0,2,3}用 1101 表示，要删除元素 2 可以通过让第 2位为 0 。1&lt;&lt;2 是元素为 2 的集合，按位取反后为 1011，然后和原集合取交集即为无 2 的集合。与操作取交集 (都为 1 时才为 1)<br>6. 集合{0,2,3}用 1101 表示，要删除元素 2 可以通过让第 2位为 0 。这里可以保证要删除的元素一定在集合中。所以就可以用按位异或的运算 (不同时为 1)，0100 是只有2，和 1101 异或之后变为 1001。所以这里是保证元素一定在集合中才可以用，<u>不然就会向集合中添加不存在的元素</u><br>7. 假设我们有一个集合 s 用二进制来表示。要删除最小的元素即为删除最右边的 1。这里假设集合为 101100，那么 s-1 即为 101011 按位与操作后为 101000 这样就把最右侧的 1 去掉了<br>8. <em>当 s 是 2 的幂，那么s&amp;(s−1)&#x3D;0</em>，如何解释呢，二进制的幂的二进制表示(以 2<sup>2</sup>为例)为 0100 那么去除最右侧 1 之后就为 0000 结果为 0。</p>
+</blockquote>
+<p>c++中提供了一些和二进制有关的函数</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>C++</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>集合大小</td>
+<td>__builtin_popcount(s)</td>
+</tr>
+<tr>
+<td>二进制长度</td>
+<td>__lg(s)+1</td>
+</tr>
+<tr>
+<td>集合最大元素</td>
+<td>__lg(s)</td>
+</tr>
+<tr>
+<td>集合最小元素</td>
+<td>__builtin_ctz(s)</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>当 s&#x3D;0 时,对于 c++来说 <code>__lg(0)</code> 和 <code>__builtin_ctz(0)</code> 是未定义行为。<br>特别地，只包含最小元素的子集，即二进制最低 1 及其后面的 0，也叫 lowbit，可以用 <code>s &amp; -s</code> 算出。</p>
+</blockquote>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">s=101100</span><br><span class="line">~s=010011</span><br><span class="line">~s+1=010100</span><br><span class="line">s&amp;~s=000100//lowbit</span><br></pre></td></tr></table></figure></div>
+<h5 id="遍历集合"><a href="#遍历集合" class="headerlink" title="遍历集合"></a>遍历集合</h5><p>设元素范围从 0~n-1，枚举范围中的元素 i，判断 i 是否在集合 s 中。</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;n;i++)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span>((s&gt;&gt;i)&amp;<span class="number">1</span>)&#123;<span class="comment">//i在s中</span></span><br><span class="line">	<span class="comment">//处理i的逻辑</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>也可以直接遍历集合 s 中的元素：不断地计算集合最小元素、去掉最小元素，直到集合为空。</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">int</span> t=s;t;t&amp;=t<span class="number">-1</span>)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">int</span> i=__builtin_ctz(t); </span><br><span class="line">	<span class="comment">//处理i的逻辑</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<h5 id="枚举集合"><a href="#枚举集合" class="headerlink" title="枚举集合"></a>枚举集合</h5><p><strong>4.1 枚举所有集合</strong><br>设元素范围从 0 到 n-1，从空集枚举到全集：</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="type">int</span> s=<span class="number">0</span>;s&lt;(<span class="number">1</span>&lt;&lt;n);s++)&#123;</span><br><span class="line"><span class="comment">//处理s的逻辑</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p><strong>4.2枚举非空子集</strong><br>设集合为 s，从大到小枚举 s 的所有非空子集 sub：</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="type">int</span> sub=s;sub=(sub<span class="number">-1</span>)&amp;s)&#123;</span><br><span class="line"><span class="comment">//处理sub的逻辑</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<blockquote>
+<p>为什么写成 <code>sub=(sub-1)&amp;s</code>?<br>暴力的做法是从 s 出发不断减一，直到 0. 这样做会遇到很多不是 s 子集的情况。比如 s&#x3D;10101 时，减一得到 10100 这是 s 的子集，再减一得到 10011 这不是 s 的子集，下一个子集应该是 10001。<br>这里我们就需要进行处理，把最低位的 1 变成 0，对于最低位 1 右侧的 0 只有在 s 中的 1才变成 1. 所以在减一后&amp;s 就可以。</p>
+</blockquote>
+<p><strong>4.3枚举子集(包含空集)</strong><br>从大到小枚举 s 的所有子集 sub</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> sub=s;</span><br><span class="line"><span class="keyword">do</span>&#123;</span><br><span class="line"><span class="comment">//处理sub的逻辑</span></span><br><span class="line">sub=(sub<span class="number">-1</span>)&amp;s;</span><br><span class="line">&#125;<span class="keyword">while</span>(sub!=s)</span><br></pre></td></tr></table></figure></div>
+<blockquote>
+<p>还可以枚举全集 U 的所有大小恰好为 k 的子集，Gosper’s Hack 算法[^2]</p>
+</blockquote>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">GospersHack</span><span class="params">(<span class="type">int</span> k,<span class="type">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="type">int</span> subset=(<span class="number">1</span>&lt;&lt;k)<span class="number">-1</span>;</span><br><span class="line">	<span class="type">int</span> limit=(<span class="number">1</span>&lt;&lt;n);</span><br><span class="line">	<span class="keyword">while</span>(subset&lt;limit)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="comment">//do something</span></span><br><span class="line">		<span class="comment">//计算lowbit</span></span><br><span class="line">		<span class="type">int</span> lb=subset&amp;-subset;</span><br><span class="line">		 <span class="comment">//左边部分计算</span></span><br><span class="line">		 <span class="comment">//subset+lb达到的效果就是将最右边的01变成10</span></span><br><span class="line">		<span class="type">int</span> r=subset+lb;</span><br><span class="line">		subset=((r^subset))&gt;&gt;_built_ctz(lb)<span class="number">+2</span>|r;</span><br><span class="line">		<span class="comment">//或subset=(((r^subset)&gt;&gt;2)/b)|r;</span></span><br><span class="line">		<span class="comment">//(subset^r)/lb&gt;&gt;2 右边部分公式。也就是将左边部分之后的1全部集中到最右边。右移两位是把左边部分改变的两位影响去除</span></span><br><span class="line">		 <span class="comment">//|r将两个数的1合并起来，不使用+避免影响1的位置</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>如果调用 <code>GospersHack(3,5)</code> 会得到以下二进制数：</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">00111</span><br><span class="line">01011</span><br><span class="line">01101</span><br><span class="line">01110</span><br><span class="line">10011</span><br><span class="line">10101</span><br><span class="line">10110</span><br><span class="line">11001</span><br><span class="line">11010</span><br><span class="line">11100</span><br></pre></td></tr></table></figure></div>
+<p><strong>4.4枚举超集</strong><br>如果 T 是 S 的子集，那么称 S 是 T 的超集</p>
+<p>枚举超集和枚举子集是类似的，通过或运算保证枚举的集合 S 一定包含集合 T 中的所有元素。</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="type">int</span> s=t;s&lt;(<span class="number">1</span>&lt;&lt;n);s=(s<span class="number">+1</span>)|t) &#123;</span><br><span class="line">    <span class="comment">//处理s的逻辑</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<h4 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h4><p>对于位运算，我感觉应用还是比较广泛的，在牛客周赛上见到学长有用过。</p>
+<ul>
+<li>一方面是在状压 DP 中会用到，用来表示集合或者是状态</li>
+<li>或者有些题目就是位运算的题（求异或和之类的）</li>
+<li>或者可以通过位运算来高效进行一些运算（这个看个人能力吧）</li>
+</ul>
+<h3 id="做题吧-💡💡💡"><a href="#做题吧-💡💡💡" class="headerlink" title="做题吧~💡💡💡"></a>做题吧~💡💡💡</h3><h4 id="AcWing-801-二进制中1的个数"><a href="#AcWing-801-二进制中1的个数" class="headerlink" title="AcWing 801. 二进制中1的个数"></a>AcWing 801. 二进制中1的个数</h4><p>这个题的意思非常简单，就是要求出数列中每个数的二进制表示中 1 的个数。</p>
+<p>一个 int 类型的变量的长度是 32，所以我们可以通过循环 32 次求出它的每一位是几。也就是我们可以使用上面的右移方法来判断它的每一位是否为 1，通过或运算来验证。</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> n;</span><br><span class="line">    cin&gt;&gt;n;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">1</span>,x;i&lt;=n;i++)</span><br><span class="line">    &#123;</span><br><span class="line">        cin&gt;&gt;x;</span><br><span class="line">        <span class="type">int</span> res=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;=<span class="number">31</span>;i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(x&gt;&gt;i&amp;<span class="number">1</span>)res++;</span><br><span class="line">        &#125;</span><br><span class="line">        cout&lt;&lt;res&lt;&lt;<span class="string">&quot; &quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>我们也可以通过 lowbit (x) 操作，表示 x 的最后一位。每次 lowbit 操作截取一个数字最后一个 1 后面的所有位，每次减去 lowbit 得到的数字，直到数字减到 0，就得到了最终 1 的个数。C++中负数是用补码，补码等于反码+1；所以 <code>x&amp;-x=x&amp;(~x+1)</code>。</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">lowbit</span><span class="params">(<span class="type">int</span> x)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> x&amp;-x;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> n;</span><br><span class="line">    cin&gt;&gt;n;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">1</span>,x;i&lt;=n;i++)</span><br><span class="line">    &#123;</span><br><span class="line">        cin&gt;&gt;x;</span><br><span class="line">        <span class="type">int</span> res=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span>(x) x-=<span class="built_in">lowbit</span>(x),res++;</span><br><span class="line">        cout&lt;&lt;res&lt;&lt;<span class="string">&quot; &quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<h4 id="AcWing-89-a-b"><a href="#AcWing-89-a-b" class="headerlink" title="AcWing 89. a^b"></a>AcWing 89. a^b</h4><p>这个题其实是快速幂(可以快速求出 a^k mod p 的结果)的模板题和 AcWing 857 其实是同一道题</p>
+<p>暴力思路其实很好想 (当然会 TLE)</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">using</span> ll=<span class="type">long</span> <span class="type">long</span>;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ll a,b,p;</span><br><span class="line">    cin&gt;&gt;a&gt;&gt;b&gt;&gt;p;</span><br><span class="line">    ll res=<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span>(ll i=<span class="number">1</span>;i&lt;=b;i++)</span><br><span class="line">    &#123;</span><br><span class="line">        res=res*a%p;</span><br><span class="line">    &#125;</span><br><span class="line">    cout&lt;&lt;res;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<ol>
+<li>这里我们需要先预处理出 a<sup>2<sup>0</sup></sup>, a<sup>2<sup>1</sup></sup>, a<sup>2<sup>1</sup></sup>,…, a<sup>2<sup>logk</sup></sup>.这 log k个数</li>
+<li>对于一个数字 a<sup>k</sup>, 可以用a<sup>2<sup>0</sup></sup>, a<sup>2<sup>1</sup></sup>, a<sup>2<sup>1</sup></sup>,…, a<sup>2<sup>logk</sup></sup>.这 log k个数来组合，也就是 k用二进制形式来表示。<br>这个是处理多组数据的代码</li>
+</ol>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">using</span> ll=<span class="type">long</span> <span class="type">long</span>;</span><br><span class="line"><span class="function">ll <span class="title">qmi</span><span class="params">(<span class="type">int</span> a,<span class="type">int</span> k,<span class="type">int</span> p)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ll res=<span class="number">1</span>%p;</span><br><span class="line">    <span class="keyword">while</span>(k)<span class="comment">//对k进行二进制化,从低位到高位</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span>(k&amp;<span class="number">1</span>) res=res*a%p;</span><br><span class="line">        k&gt;&gt;=<span class="number">1</span>;</span><br><span class="line">        <span class="comment">//更新a,a依次为a^&#123;2^0&#125;,a^&#123;2^1&#125;,a^&#123;2^2&#125;,....,a^&#123;2^logk&#125;</span></span><br><span class="line">        a=(ll)a*a%p;<span class="comment">//这里逐步更新a，边计算边处理</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res; </span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> n;</span><br><span class="line">    cin&gt;&gt;n;</span><br><span class="line">    <span class="keyword">while</span>(n--)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> a,p,k;</span><br><span class="line">        cin&gt;&gt;a&gt;&gt;k&gt;&gt;p;</span><br><span class="line">        cout&lt;&lt;<span class="built_in">qmi</span>(a,k,p)&lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>下面是针对这个题的代码</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">using</span> ll=<span class="type">long</span> <span class="type">long</span>;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> a,p,k;</span><br><span class="line">    cin&gt;&gt;a&gt;&gt;k&gt;&gt;p;</span><br><span class="line">    ll res=<span class="number">1</span>%p;</span><br><span class="line">    <span class="keyword">while</span>(k)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span>(k&amp;<span class="number">1</span>) res=res*a%p;</span><br><span class="line">        a=(ll)a*a%p;</span><br><span class="line">        k&gt;&gt;=<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    cout&lt;&lt;res&lt;&lt;endl;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>这里顺便把洛谷 P 1226 快速幂也做了，代码如下</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">using</span> ll=<span class="type">long</span> <span class="type">long</span>;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> a,p,k;</span><br><span class="line">    cin&gt;&gt;a&gt;&gt;k&gt;&gt;p;</span><br><span class="line">    ll res=<span class="number">1</span>%p;</span><br><span class="line">    cout&lt;&lt;a&lt;&lt;<span class="string">&quot;^&quot;</span>&lt;&lt;k&lt;&lt;<span class="string">&quot; mod &quot;</span>&lt;&lt;p&lt;&lt;<span class="string">&quot;=&quot;</span>;</span><br><span class="line">    <span class="keyword">while</span>(k)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span>(k&amp;<span class="number">1</span>) res=res*a%p;</span><br><span class="line">        a=(ll)a*a%p;</span><br><span class="line">        k&gt;&gt;=<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    cout&lt;&lt;res&lt;&lt;endl;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<h4 id="AcWing-5579-增加模数"><a href="#AcWing-5579-增加模数" class="headerlink" title="AcWing 5579. 增加模数"></a>AcWing 5579. 增加模数</h4><p>这个题真够折磨人的，我尝试了 16 次，这个题其实就是把上一个快速幂变成了多个快速幂，所以我们只需要每次输入 a, b 然后直接计算就可以。思路上没有什么问题。</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="comment">// using ll=long long;</span></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">10</span>;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">qmi</span><span class="params">(<span class="type">int</span> a,<span class="type">int</span> k,<span class="type">int</span> p)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> res=<span class="number">1</span>;</span><br><span class="line">    a%=p;</span><br><span class="line">    <span class="keyword">while</span>(k)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span>(k&amp;<span class="number">1</span>)res=res*a%p;</span><br><span class="line">        k&gt;&gt;=<span class="number">1</span>;</span><br><span class="line">        a=a*a%p;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ios::<span class="built_in">sync_with_stdio</span>(<span class="number">0</span>),cin.<span class="built_in">tie</span>(<span class="number">0</span>),cout.<span class="built_in">tie</span>(<span class="number">0</span>);</span><br><span class="line">    <span class="type">int</span> t;</span><br><span class="line">    cin&gt;&gt;t;</span><br><span class="line">    <span class="keyword">while</span>(t--)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> result=<span class="number">0</span>;</span><br><span class="line">        <span class="type">int</span> m,h;</span><br><span class="line">        cin&gt;&gt;m&gt;&gt;h;;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;h;i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="type">int</span> a,b;</span><br><span class="line">            cin&gt;&gt;a&gt;&gt;b;</span><br><span class="line">            result=(result+<span class="built_in">qmi</span>(a,b,m))%m;</span><br><span class="line">        &#125;</span><br><span class="line">        cout&lt;&lt;result&lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>这个代码最大的注意事项就是不能用 long long，开了就 TLE，具体原因鄙人未知。</p>
+<h4 id="AcWing-90-64位整数乘法"><a href="#AcWing-90-64位整数乘法" class="headerlink" title="AcWing 90. 64位整数乘法"></a>AcWing 90. 64位整数乘法</h4><p>这里如果直接相乘那就会爆 longlong，可以去考虑高精度的做法，但是我现在还没有复习到。<br>这里我们考虑对 b 进行二进制拆分，当然拆 a 也可以。然后如果某位上为 1 就加上 $a^2^n mod p$</p>
+<blockquote>
+<p>这里还是举个🌰<br>3*7； 7 可以用二进制表示为 111，7&#x3D;2<sup>0</sup>+2<sup>1</sup>+2<sup>2</sup>;<br>所以就可以根据乘法分配律 3*(2<sup>0</sup>+2<sup>1</sup>+2<sup>2</sup>)&#x3D;3*2<sup>0</sup>+3*2<sup>1</sup>+3*2<sup>2</sup>&#x3D;3+6+12&#x3D;21&#x3D;3*7;<br>这里可以看出，每一次都可以通过前一次乘二来推出<br>再用 3*6 来演示一下，7 可以用二进制表示为 110，6&#x3D;2<sup>1</sup>+2<sup>2</sup>;<br>3*(2<sup>1</sup>+2<sup>2</sup>)&#x3D;6+12<br>这里起初 a 为 3 但是 6 的二进制第一位为 0，所以不加，a&#x3D;a*2%p;<br>a 变为了 6，之后的累加就自然说通了<br>看到这里应该明白这个意思了叭🍉🍉🍉</p>
+</blockquote>
+<p>代码思路和上方一直，可以结合演示来理解。</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">using</span> ll=<span class="type">long</span> <span class="type">long</span>;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ll a,b,p,res=<span class="number">0</span>;</span><br><span class="line">    cin&gt;&gt;a&gt;&gt;b&gt;&gt;p;</span><br><span class="line">    <span class="keyword">while</span>(b)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span>(b&amp;<span class="number">1</span>)res=(res+a)%p;</span><br><span class="line">        b&gt;&gt;=<span class="number">1</span>;</span><br><span class="line">        a=a*<span class="number">2</span>%p;</span><br><span class="line">    &#125;</span><br><span class="line">    cout&lt;&lt;res;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<h4 id="AcWing-91-最短Hamilton路径"><a href="#AcWing-91-最短Hamilton路径" class="headerlink" title="AcWing 91. 最短Hamilton路径"></a>AcWing 91. 最短Hamilton路径</h4><p>这个题如果暴力去做是会 TLE 的，这里就用到上面说的优化就是状压 DP。我们可以用二进制数来表示哪些点走过，0 表示没走，1 表示走了。当二进制数全为 1 时就代表走完了。2<sup>n</sup>的二进制表示为 1111…11</p>
+<p>这里我们分析一下 DP，我们这里需要输出的也是最优解，所以 f<sub>i, j</sub>表示经过 i 集合的所有点到 j 点的最短 Hamilton 路径，属性就是最小值。那么就不难得到状态转移方程：<em>f[i]][j]&#x3D;min (f[i][j], f[i^(1&lt;&lt;j)][k]+weight[k][j])</em>。</p>
+<ul>
+<li>这里的 weight 数组是权值，表示从 k 点到 j 的距离。</li>
+<li>i^(1&lt;&lt;j) 的意思是，i 异或 1 右移 j 位，具体来说就是 i 这个方案集合 xor 10……0, (其中 1 的位置在第 j 位)。其实就是将 i 的第 j 位改为 0，这样就符合了走到点 k的路径就不能经过点 j这个条件。<ul>
+<li>如果 i 的第 j 位上是 1 那么将其改为 0；</li>
+<li>否则将 i 的第 j 位改为 1；<br>可能表述的比较混乱，具体逻辑在代码中体现</li>
+</ul>
+</li>
+</ul>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N=<span class="number">20</span>,M=<span class="number">1</span>&lt;&lt;N;<span class="comment">//一共最多有20个1种状态</span></span><br><span class="line"><span class="comment">//解释一下1&lt;&lt;N：因为i是二进制数，表示从0到当前点的状态，所以每个点都有两个状态0和1，所以是2的N次方</span></span><br><span class="line"><span class="type">int</span> n,i,j,k,f[M][N],w[N][N];</span><br><span class="line"><span class="comment">//f[i][j]:所有从0走到j,走过的所有点的情况是i的所有路径</span></span><br><span class="line"><span class="comment">//f记录距离的总和例如f[2][4]表示第两种情况，从0号点到4号点的距离总和。</span></span><br><span class="line"><span class="comment">//w用来存储点与点之间的距离权重</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    cin&gt;&gt;n;</span><br><span class="line">    <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;n;i++)</span><br><span class="line">        <span class="keyword">for</span>(j=<span class="number">0</span>;j&lt;n;j++)</span><br><span class="line">            cin&gt;&gt;w[i][j];</span><br><span class="line">    <span class="built_in">memset</span>(f,<span class="number">0x3f</span>,<span class="keyword">sizeof</span> f);<span class="comment">//f的属性是最小值，这里先设为最大值</span></span><br><span class="line">    f[<span class="number">1</span>][<span class="number">0</span>]=<span class="number">0</span>;<span class="comment">////第一个点是不需要任何费用的</span></span><br><span class="line">    <span class="keyword">for</span>(i=<span class="number">1</span>;i&lt;<span class="number">1</span>&lt;&lt;n;i++)<span class="comment">//i是遍历所有状态，从000000000到1111111111</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span>(j=<span class="number">0</span>;j&lt;n;j++)<span class="comment">//j遍历每个点。</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(i&gt;&gt;j&amp;<span class="number">1</span>)<span class="comment">//如果i集合中第j位是1，也就是到达过这个点</span></span><br><span class="line">            <span class="comment">//k表示走到j这个点之前，以k为终点的最短距离</span></span><br><span class="line">            <span class="keyword">for</span>(k=<span class="number">0</span>;k&lt;n;k++)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span>((i^(<span class="number">1</span>&lt;&lt;j))&gt;&gt;k&amp;<span class="number">1</span>)<span class="comment">//i除去j这个点后包含k这个点</span></span><br><span class="line">            <span class="comment">//如果从当前状态经过点集i中，去掉点j后，i仍然包含点k，那么才能从点k转移到点j。</span></span><br><span class="line">            <span class="comment">//当然这个if也可以不加，因为如果i去掉第j个点后，i不包含点k了，</span></span><br><span class="line">            <span class="comment">//那么f[i^1&lt;&lt;j][k]必然为正无穷，也就必然不会更新f[i][j]，所以去掉也可以AC。</span></span><br><span class="line">                &#123;</span><br><span class="line">                    f[i][j]=<span class="built_in">min</span>(f[i][j],f[i^(<span class="number">1</span>&lt;&lt;j)][k]+w[k][j]);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    cout&lt;&lt;f[(<span class="number">1</span>&lt;&lt;n)<span class="number">-1</span>][n<span class="number">-1</span>];</span><br><span class="line">    <span class="comment">//(1&lt;&lt;n)-1表示：有n个1，也就是所有的点都走完了</span></span><br><span class="line">    <span class="comment">//n-1表示：终点</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<h4 id="AcWing-998-起床困难综合症"><a href="#AcWing-998-起床困难综合症" class="headerlink" title="AcWing 998. 起床困难综合症"></a>AcWing 998. 起床困难综合症</h4><p>这个题一共有 3 种操作，要得到经过 n 次操作后的最大值，这几个运算只有关该位上的数，不影响其他位上的数。所以我们可以从高到低来确定数的每一位。如果这一位上可以填 u 并且填 u 之后答案的该位是 1，那么在该位填 u 否则填!u;</p>
+<p>问题来了，如何确定该位可以填几？</p>
+<ul>
+<li>如果该位填 1 后，所得的数大于 m，那么该位填 0</li>
+<li>否则如果该位填 1 后所得的数对 n 个数都运算之后结果小于等于该位填 0 之后得到的结果，那么为了让剩下的能填的数更大，该位填0；</li>
+<li>否则该位填 1；<br>确定好每一位之后就可以得到 ans 的值</li>
+</ul>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N=<span class="number">1e5</span><span class="number">+5</span>;</span><br><span class="line"><span class="type">int</span> n,m;</span><br><span class="line"><span class="type">int</span> ans;</span><br><span class="line"><span class="type">int</span> t[N];</span><br><span class="line"><span class="type">short</span> op[N];<span class="comment">// op 存 n 个数对应的操作，1表示按位或，2表示按位异或，3表示与</span></span><br><span class="line">string s;</span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">calc</span><span class="params">(<span class="type">bool</span> x,<span class="type">int</span> j)</span><span class="comment">// calc 用于计算 x 经过所有数的第 j 位操作后所得到的结果</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;n;i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span>(op[i]==<span class="number">1</span>) x|=t[i]&gt;&gt;j&amp;<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(op[i]==<span class="number">2</span>) x^=t[i]&gt;&gt;j&amp;<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">else</span> x&amp;=t[i] &gt;&gt; j &amp; <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> x;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    cin&gt;&gt;n&gt;&gt;m;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;n;i++)</span><br><span class="line">    &#123;</span><br><span class="line">        cin&gt;&gt;s&gt;&gt;t[i];</span><br><span class="line">        <span class="keyword">if</span>(s==<span class="string">&quot;OR&quot;</span>)op[i]=<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(s==<span class="string">&quot;XOR&quot;</span>)op[i]=<span class="number">2</span>;</span><br><span class="line">        <span class="keyword">else</span> op[i]=<span class="number">3</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//本题中m最大是10^9，log2(10^9)=3log2(10^3)&lt;3*10=30，所以每次i从29往后枚举就可以了</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">29</span>;i&gt;=<span class="number">0</span>;i--)</span><br><span class="line">    &#123;</span><br><span class="line">         <span class="keyword">if</span>(<span class="number">1</span>&lt;&lt;i&lt;=m)<span class="comment">//如果填1后小于等于m，要看填完后对答案的影响来填</span></span><br><span class="line">         &#123;</span><br><span class="line">            <span class="type">bool</span> x=<span class="built_in">calc</span>(<span class="number">0</span>,i),y=<span class="built_in">calc</span>(<span class="number">1</span>,i);</span><br><span class="line">            <span class="keyword">if</span>(x&gt;=y) ans|=x&lt;&lt;i;<span class="comment">//如果该位填1并不比该位填0更优，那么为了让剩下能填的数更大，在该位填0</span></span><br><span class="line">            <span class="keyword">else</span> ans|=y&lt;&lt;i,m-=<span class="number">1</span>&lt;&lt;i;</span><br><span class="line">            <span class="comment">//否则在该位填1，填完后让m减去该位填1的结果，这样在后面填数的时候只用考虑是否大于m就可以了</span></span><br><span class="line">         &#125;<span class="keyword">else</span> ans|=<span class="built_in">calc</span>(<span class="number">0</span>,i)&lt;&lt;i;<span class="comment">// 否则该位只能填 0</span></span><br><span class="line">    &#125;</span><br><span class="line">    cout&lt;&lt;ans;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<h3 id="0x3f-位运算题单第一章🦄🦄"><a href="#0x3f-位运算题单第一章🦄🦄" class="headerlink" title="0x3f 位运算题单第一章🦄🦄"></a>0x3f 位运算题单第一章🦄🦄</h3><p>🍇这里简单加练一下也熟悉一下力扣怎么刷题</p>
+<h4 id="Leetcode-3370-仅含置位位的最小整数"><a href="#Leetcode-3370-仅含置位位的最小整数" class="headerlink" title="Leetcode 3370. 仅含置位位的最小整数"></a>Leetcode 3370. 仅含置位位的最小整数</h4><p>这个题是要求大于等于 n 的第一个二进制位全为 1 的数，所以我们求出 n 的二进制位数 m，返回长为 m 的全为 1 的二进制数即可</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">smallestNumber</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> ans=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span>(n)&#123;</span><br><span class="line">            ans=ans&lt;&lt;<span class="number">1</span>|<span class="number">1</span>;</span><br><span class="line">            <span class="comment">//这个操作是将ans不断左移，然后通过按位或的操作将1加到最低位上</span></span><br><span class="line">            n&gt;&gt;=<span class="number">1</span>;</span><br><span class="line">            <span class="comment">//这里把n右移减小位数</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+<p>这里呢灵茶的代码是这样的</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">smallestNumber</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (<span class="number">1</span> &lt;&lt; <span class="built_in">bit_width</span>((<span class="type">uint32_t</span>) n)) - <span class="number">1</span>;</span><br><span class="line">        <span class="comment">//这里用bit_width计算无符号32位整数的二进制表示的位宽，然后左移bit_width((uint32_t) n)位，使其最高位为1，减一操作得到一个全为1的二进制数</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+<h4 id="Leetcode-3226-使两个整数相等的位更改次数"><a href="#Leetcode-3226-使两个整数相等的位更改次数" class="headerlink" title="Leetcode 3226. 使两个整数相等的位更改次数"></a>Leetcode 3226. 使两个整数相等的位更改次数</h4><p>这里我们运用集合与集合的思想，n ,k为两个不同的集合，如果可以使 n 修改为 k，我们是从 n 中去掉元素使其等于 k，那么 k 应该为 n 的子集。否则返回-1，满足这一条件后，我们可以通过对称差 (按位异或) 操作来得到需要去除的元素。这里因为 k 是子集所以得到的元素都是 n 独有的。通过 <code>__builtin_popcount(n^k)</code> 操作可以得到二进制中 1 的位数。<br>验证是否为子集还可以通过求 n 和 k 的并集(按位或运算)验证是否为 n</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">minChanges</span><span class="params">(<span class="type">int</span> n, <span class="type">int</span> k)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (n&amp;k)!=k ? <span class="number">-1</span>:__builtin_popcount(n^k);</span><br><span class="line">        <span class="comment">//return  (n|k)!= n ? -1:__builtin_popcount(n^k);</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+<h4 id="Leetcode-1356-根据数字二进制下-1-的数目排序"><a href="#Leetcode-1356-根据数字二进制下-1-的数目排序" class="headerlink" title="Leetcode 1356. 根据数字二进制下 1 的数目排序"></a>Leetcode 1356. 根据数字二进制下 1 的数目排序</h4><div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">sortByBits</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; arr)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">sort</span>(arr.<span class="built_in">begin</span>(),arr.<span class="built_in">end</span>(),[&amp;](<span class="type">int</span> x, <span class="type">int</span> y)&#123;</span><br><span class="line">            <span class="type">int</span> x1=__builtin_popcount(x);</span><br><span class="line">            <span class="type">int</span> y1=__builtin_popcount(y);</span><br><span class="line">            <span class="keyword">if</span>(x1&lt;y1) <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">            <span class="keyword">if</span>(x1&gt;y1) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            <span class="keyword">return</span> x&lt;y;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="keyword">return</span> arr;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+<h4 id="Leetcode-461-汉明距离"><a href="#Leetcode-461-汉明距离" class="headerlink" title="Leetcode  461. 汉明距离"></a>Leetcode  461. 汉明距离</h4><p>这个题其实就是问两个集合中不同的元素有多少，那我们就可以继续沿用对称差方法，求出集合再用 <code>__builtin_popcount()</code> 来求出集合中的元素数目</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">hammingDistance</span><span class="params">(<span class="type">int</span> x, <span class="type">int</span> y)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> __builtin_popcount(x^y);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+<p>虽然直接用公式做题比较爽但是也学习一下用代码写这个操作</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">hammingDistance</span><span class="params">(<span class="type">int</span> x, <span class="type">int</span> y)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> s=x^y,cnt=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span>(s)&#123;</span><br><span class="line">            cnt+=s&amp;<span class="number">1</span>;</span><br><span class="line">            s&gt;&gt;=<span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> cnt;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+<h4 id="Leetcode-2220-转换数字的最少位翻转次数"><a href="#Leetcode-2220-转换数字的最少位翻转次数" class="headerlink" title="Leetcode 2220. 转换数字的最少位翻转次数"></a>Leetcode 2220. 转换数字的最少位翻转次数</h4><p>这个题目和之前的类似，只是多了一个可以增加元素的操作，所以仍然是按位异或得到集合 s，这个集合包含 state 中独有的 (需要删除的元素) 和 goal 中独有的 (需要添加的元素)</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">minBitFlips</span><span class="params">(<span class="type">int</span> start, <span class="type">int</span> goal)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> s=start^goal;</span><br><span class="line">        <span class="keyword">return</span> __builtin_popcount(s);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+<h4 id="Leetcode-1342-将数字变成-0-的操作次数"><a href="#Leetcode-1342-将数字变成-0-的操作次数" class="headerlink" title="Leetcode 1342. 将数字变成 0 的操作次数"></a>Leetcode 1342. 将数字变成 0 的操作次数</h4><p>这个题一般模拟就可以过, 就不写位运算了</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">numberOfSteps</span><span class="params">(<span class="type">int</span> num)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> ans=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span>(num)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(num%<span class="number">2</span>)&#123;</span><br><span class="line">                num--;</span><br><span class="line">            &#125;<span class="keyword">else</span> num/=<span class="number">2</span>;</span><br><span class="line">            ans++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+<h4 id="Leetcode-476-数字的补数"><a href="#Leetcode-476-数字的补数" class="headerlink" title="Leetcode 476. 数字的补数"></a>Leetcode 476. 数字的补数</h4><p>我们从左边到右边找到该二进制的第一个 1，t - 1，则该位后面的数都是 1111 这样形式，数字取反后和 t 与操作表明取取反结果后面的二进制</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">findComplement</span><span class="params">(<span class="type">int</span> num)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!num) <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        <span class="type">int</span> t=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">30</span>;i&gt;=<span class="number">0</span>;i--)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(num&gt;&gt;i&amp;<span class="number">1</span>)&#123;</span><br><span class="line">                t=<span class="number">1</span>&lt;&lt;i;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        t--;</span><br><span class="line">        <span class="keyword">return</span> ~num&amp;t;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+<h4 id="Leetcode-1009-十进制整数的反码"><a href="#Leetcode-1009-十进制整数的反码" class="headerlink" title="Leetcode 1009. 十进制整数的反码"></a>Leetcode 1009. 十进制整数的反码</h4><p>这个题用上面的代码就可以过了</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">findComplement</span><span class="params">(<span class="type">int</span> num)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!num) <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        <span class="type">int</span> t=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">30</span>;i&gt;=<span class="number">0</span>;i--)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(num&gt;&gt;i&amp;<span class="number">1</span>)&#123;</span><br><span class="line">                t=<span class="number">1</span>&lt;&lt;i;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        t--;</span><br><span class="line">        <span class="keyword">return</span> ~num&amp;t;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+<p>也看到了用掩码做题的；那就来学习一下吧</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">bitwiseComplement</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (n==<span class="number">0</span>) <span class="keyword">return</span> <span class="number">1</span>; <span class="comment">// 特殊情况处理</span></span><br><span class="line">        <span class="type">int</span> ans=<span class="number">1</span>;          <span class="comment">// 初始化掩码为 1</span></span><br><span class="line">        <span class="keyword">while</span>(ans&lt;=n)&#123;    <span class="comment">// 循环直到掩码大于 n</span></span><br><span class="line">            ans&lt;&lt;=<span class="number">1</span>;        <span class="comment">// 将掩码左移一位</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans<span class="number">-1</span>-n;   <span class="comment">// 计算补数</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+<h4 id="Leetcode-868-二进制间距"><a href="#Leetcode-868-二进制间距" class="headerlink" title="Leetcode 868. 二进制间距"></a>Leetcode 868. 二进制间距</h4><p>这个题要求相邻 1 的最远距离，我们可以每次取 n 最后一位判断是否为 1，如果上一位为 1 则更新距离</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">binaryGap</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> l=<span class="number">-1</span>,ans=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;n;i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(n&amp;<span class="number">1</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span>(l!=<span class="number">-1</span>)</span><br><span class="line">                &#123;</span><br><span class="line">                    ans=<span class="built_in">max</span>(ans,i-l);</span><br><span class="line">                &#125;</span><br><span class="line">                l=i;</span><br><span class="line">            &#125;</span><br><span class="line">            n&gt;&gt;=<span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+<h4 id="Leetcode-2917-找出数组中的-K-or-值"><a href="#Leetcode-2917-找出数组中的-K-or-值" class="headerlink" title="Leetcode 2917. 找出数组中的 K-or 值"></a>Leetcode 2917. 找出数组中的 K-or 值</h4><p>这里我们枚举每个元素的 0~30 比特位，统计该位为 1 的个数再对 ans 进行操作</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">findKOr</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; nums, <span class="type">int</span> k)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> ans=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;<span class="number">31</span>;i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="type">int</span> cnt1=<span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span>(<span class="type">int</span> x:nums)&#123;</span><br><span class="line">                cnt1+=x&gt;&gt;i&amp;<span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span>(cnt1&gt;=k)&#123;</span><br><span class="line">                ans|=<span class="number">1</span>&lt;&lt;i;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ans;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+<h4 id="Leetcode-693-交替位二进制数"><a href="#Leetcode-693-交替位二进制数" class="headerlink" title="Leetcode 693. 交替位二进制数"></a>Leetcode 693. 交替位二进制数</h4><p>我的想法就是逐步遍历每一个二进制位</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">hasAlternatingBits</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> l=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span>(n)&#123;</span><br><span class="line">            <span class="keyword">if</span>(n&amp;<span class="number">1</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span>(l==<span class="number">1</span>)&#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                l=<span class="number">1</span>;</span><br><span class="line">                n&gt;&gt;=<span class="number">1</span>;</span><br><span class="line">            &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">if</span>(l==<span class="number">-1</span>)&#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                l=<span class="number">-1</span>;</span><br><span class="line">                n&gt;&gt;=<span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+<p>这样看起来就很复杂所以可以优化一下</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">hasAlternatingBits</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> l=<span class="number">-1</span>;</span><br><span class="line">        <span class="keyword">for</span>(;n;n&gt;&gt;=<span class="number">1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(l==(n&amp;<span class="number">1</span>)) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            l=n&amp;<span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+<h4 id="Leetcode-2657-找到两个数组的前缀公共数组"><a href="#Leetcode-2657-找到两个数组的前缀公共数组" class="headerlink" title="Leetcode 2657. 找到两个数组的前缀公共数组"></a>Leetcode 2657. 找到两个数组的前缀公共数组</h4><p>这里是要取两个集合的交集，我们可以用 set 来去重，把两个数组中的元素均存入 set 中，然后减去 set 的大小即为重复元素的数量。</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">findThePrefixCommonArray</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; A, vector&lt;<span class="type">int</span>&gt;&amp; B)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> n=A.<span class="built_in">size</span>();</span><br><span class="line">        vector&lt;<span class="type">int</span>&gt; c;</span><br><span class="line">        unordered_set&lt;<span class="type">int</span>&gt; cnt;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;n;i++)</span><br><span class="line">        &#123;</span><br><span class="line">            cnt.<span class="built_in">insert</span>(A[i]);</span><br><span class="line">            cnt.<span class="built_in">insert</span>(B[i]);</span><br><span class="line">            c.<span class="built_in">push_back</span>(<span class="number">2</span>*(i<span class="number">+1</span>)-cnt.<span class="built_in">size</span>());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> c;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+<p>看看灵神的优雅代码把</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">findThePrefixCommonArray</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; A, vector&lt;<span class="type">int</span>&gt;&amp; B)</span> </span>&#123;</span><br><span class="line">        <span class="type">uint64_t</span> p=<span class="number">0</span>,q=<span class="number">0</span>;<span class="comment">//初始化两个 64 位无符号整数 p 和 q，用于存储两个数组中元素的位掩码。</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;A.<span class="built_in">size</span>();i++)</span><br><span class="line">        &#123;</span><br><span class="line">            p|=<span class="number">1ULL</span>&lt;&lt;A[i];</span><br><span class="line">    <span class="comment">//将a[i]的位置在p中标记为1。1ULL&lt;&lt;a[i]生成一个只有第a[i]位为1的二进制数，然后与p进行按位或操作，将该位置标记为1。</span></span><br><span class="line">            q|=<span class="number">1ULL</span>&lt;&lt;B[i];</span><br><span class="line">            A[i]=<span class="built_in">popcount</span>(p&amp;q);</span><br><span class="line">            <span class="comment">//计算 p 和 q 的按位与结果中 1 的个数，即两个数组中相同元素的个数。</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> A;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+<h4 id="Leetcode-231-2-的幂"><a href="#Leetcode-231-2-的幂" class="headerlink" title="Leetcode 231. 2 的幂"></a>Leetcode 231. 2 的幂</h4><p>这个问的是 2 的幂次，而不是偶数，如果 n 小于等于 0 那结果一定为 false。否则如果 n 是 2 的幂其二进制表示应该从第一位开始数第一个 1 即为最高位，也就是只有一个 1 。这个呢就是进行一次 lowbit 运算。</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">isPowerOfTwo</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> n&gt;<span class="number">0</span>&amp;&amp;((n&amp;-n)==n);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+<p>这里的判断方法还可以是我们对 n 减 1 再和 n 进行与运算</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">isPowerOfTwo</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> n&gt;<span class="number">0</span>&amp;&amp;(n&amp;(n<span class="number">-1</span>))==<span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+<h4 id="Leetcode-342-4-的幂"><a href="#Leetcode-342-4-的幂" class="headerlink" title="Leetcode 342. 4 的幂"></a>Leetcode 342. 4 的幂</h4><p>可以确定一个数如果是 4 的幂一定是 2 的幂，那么就可以开平方后再验证是否为 2 的幂</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">isPowerOfFour</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(n&lt;=<span class="number">0</span>)<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        <span class="type">int</span> t=<span class="built_in">sqrt</span>(n);</span><br><span class="line">        <span class="keyword">return</span> t*t==n&amp;&amp;(t&amp;(t<span class="number">-1</span>))==<span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+<h4 id="Leetcode-191-位-1-的个数"><a href="#Leetcode-191-位-1-的个数" class="headerlink" title="Leetcode 191. 位 1 的个数"></a>Leetcode 191. 位 1 的个数</h4><p>这个题一般思想就是直接遍历</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">hammingWeight</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> ans=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;<span class="number">32</span>;i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(n&amp;(<span class="number">1</span>&lt;&lt;i)) ans++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+<p>当然也可以找找捷径直接用函数</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">hammingWeight</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> __builtin_popcount(n);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+<h4 id="Leetcode-338-比特位计数"><a href="#Leetcode-338-比特位计数" class="headerlink" title="Leetcode 338. 比特位计数"></a>Leetcode 338. 比特位计数</h4><div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">countBits</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">a</span><span class="params">(n<span class="number">+1</span>)</span></span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;=n;i++)</span><br><span class="line">        &#123;</span><br><span class="line">            a[i]=__builtin_popcount(i);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> a;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+<h4 id="Leetcode-2595-奇偶位数"><a href="#Leetcode-2595-奇偶位数" class="headerlink" title="Leetcode 2595. 奇偶位数"></a>Leetcode 2595. 奇偶位数</h4><div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">evenOddBit</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">ans</span><span class="params">(<span class="number">2</span>)</span></span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;<span class="number">32</span>;i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(n&amp;(<span class="number">1</span>&lt;&lt;i))&#123;</span><br><span class="line">                <span class="keyword">if</span>(i%<span class="number">2</span>) ans[<span class="number">1</span>]++;</span><br><span class="line">                <span class="keyword">else</span> ans[<span class="number">0</span>]++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+<h4 id="Leetcode-2154-将找到的值乘以-2"><a href="#Leetcode-2154-将找到的值乘以-2" class="headerlink" title="Leetcode 2154. 将找到的值乘以 2"></a>Leetcode 2154. 将找到的值乘以 2</h4><p>这个题我们可以用哈希表记录数组元素，再用函数判断元素是否在数组中。</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">findFinalValue</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; nums, <span class="type">int</span> original)</span> </span>&#123;</span><br><span class="line">        <span class="function">unordered_set&lt;<span class="type">int</span>&gt; <span class="title">s</span><span class="params">(nums.begin(),nums.end())</span></span>;</span><br><span class="line">        <span class="keyword">while</span>(s.<span class="built_in">count</span>(original))original*=<span class="number">2</span>;</span><br><span class="line">        <span class="keyword">return</span> original;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+<p>也可以排序一下直接找</p>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">findFinalValue</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; nums, <span class="type">int</span> original)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">sort</span>(nums.<span class="built_in">begin</span>(),nums.<span class="built_in">end</span>());</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> x:nums)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(x==original) original*=<span class="number">2</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> original;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+<h4 id="Leetcode-3211-生成不含相邻零的二进制字符串"><a href="#Leetcode-3211-生成不含相邻零的二进制字符串" class="headerlink" title="Leetcode 3211. 生成不含相邻零的二进制字符串"></a>Leetcode 3211. 生成不含相邻零的二进制字符串</h4><p>&#x2F;&#x2F;偷个懒先空着吧</p>
+<p>[^2]: 这里学了知乎 pecco 大神的算法学习笔记 (75)</p>
+
+		</div>
+
+		
+		<div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+			<div class="article-copyright-info-container">
+    <ul>
+        <li><strong>标题:</strong> </li>
+        <li><strong>作者:</strong> Lionlnuc</li>
+        <li><strong>创建于
+                :</strong> 2025-12-16 23:13:07</li>
+        
+            <li>
+                <strong>更新于
+                    :</strong> 2025-08-29 22:19:51
+            </li>
+        
+        <li>
+            <strong>链接:</strong> https://lionlnuc.github.io/2025/12/16/位运算的总结/
+        </li>
+        <li>
+            <strong>
+                版权声明:
+            </strong>
+            
+
+            
+                本文章采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a> 进行许可。
+            
+        </li>
+    </ul>
+</div>
+
+		</div>
+		
+
+		
+
+		
+
+		
+		<div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+			
+			
+			<div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="next" rel="next" href="/2025/12/15/hello-world/">
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">Hello World</span>
+						<span class="post-nav-item">下一篇</span>
+					</span>
+					<span class="right arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-right"></i>
+					</span>
+				</a>
+			</div>
+			
+		</div>
+		
+
+
+		
+		<div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+			<div class="comments-container mt-10 w-full ">
+    <div id="comment-anchor" class="w-full h-2.5"></div>
+    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
+        评论
+    </div>
+    
+
+        
+            
+    <div id="waline"></div>
+    <script type="module" data-swup-reload-script>
+      import { init } from '/js/libs/waline.js';
+
+      function loadWaline() {
+        init({
+          el: '#waline',
+          serverURL: 'blog-walines.vercel.app',
+          dark: 'body[class~="dark-mode"]',
+          reaction: false,
+          requiredMeta: ['nick', 'mail'],
+          emoji: [],
+                    lang: 'zh-CN',
+        });
+      }
+
+      if (typeof swup !== 'undefined') {
+        loadWaline();
+      } else {
+        window.addEventListener('DOMContentLoaded', loadWaline);
+      }
+    </script>
+
+
+
+        
+    
+</div>
+
+		</div>
+		
+	</div>
+
+	
+	<div class="toc-content-container">
+		<div class="post-toc-wrap">
+	<div class="post-toc">
+		<div class="toc-title">目录</div>
+		<div class="page-title"></div>
+		<ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9E%E5%BF%86%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="nav-text">回忆知识点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%81%9A%E9%A2%98%E5%90%A7-%F0%9F%92%A1%F0%9F%92%A1%F0%9F%92%A1"><span class="nav-text">做题吧~💡💡💡</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x3f-%E4%BD%8D%E8%BF%90%E7%AE%97%E9%A2%98%E5%8D%95%E7%AC%AC%E4%B8%80%E7%AB%A0%F0%9F%A6%84%F0%9F%A6%84"><span class="nav-text">0x3f 位运算题单第一章🦄🦄</span></a></li></ol>
+
+	</div>
+</div>
+	</div>
+	
+</div>
+			</div>
+
+			
+		</div>
+
+		<div class="main-content-footer">
+			<footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2025</span>
+              -
+            
+            2025&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">Lionlnuc</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        共撰写了 2 篇文章
+                    </span>
+                    
+                </p>
+            
+        </div>
+        
+            <script data-swup-reload-script src="https://cn.vercount.one/js"></script>
+            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
+                
+                    <span id="busuanzi_container_site_uv" class="lg:!block">
+                        <span class="text-sm">访问人数</span>
+                        <span id="busuanzi_value_site_uv"></span>
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv" class="lg:!block">
+                        <span class="text-sm">总访问量</span>
+                        <span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">由 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a> 驱动</span>
+            <span class="text-sm lg:block">主题&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.8.5</a></span>
+        </div>
+        
+        
+            <div>
+                博客已运行 <span class="odometer" id="runtime_days" ></span> 天 <span class="odometer" id="runtime_hours"></span> 小时 <span class="odometer" id="runtime_minutes"></span> 分钟 <span class="odometer" id="runtime_seconds"></span> 秒
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+        
+    </div>  
+</footer>
+		</div>
+	</div>
+
+	
+	<div class="post-tools">
+		<div class="post-tools-container">
+	<ul class="article-tools-list">
+		<!-- TOC aside toggle -->
+		
+		<li class="right-bottom-tools page-aside-toggle">
+			<i class="fa-regular fa-outdent"></i>
+		</li>
+		
+
+		<!-- go comment -->
+		
+		<li class="go-comment">
+			<i class="fa-regular fa-comments"></i>
+		</li>
+		
+	</ul>
+</div>
+	</div>
+	
+
+	<div class="right-side-tools-container">
+		<div class="side-tools-container">
+	<ul class="hidden-tools-list">
+		<li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-plus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-minus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+			<i class="fa-regular fa-moon"></i>
+		</li>
+
+		<!-- rss -->
+		
+
+		
+
+		<li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+			<i class="fa-regular fa-arrow-down"></i>
+		</li>
+	</ul>
+
+	<ul class="visible-tools-list">
+		<li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+			<i class="fa-regular fa-cog fa-spin"></i>
+		</li>
+		
+		<li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+			<i class="arrow-up fas fa-arrow-up"></i>
+			<span class="percent"></span>
+		</li>
+		
+		
+	</ul>
+</div>
+	</div>
+
+	<div class="image-viewer-container">
+	<img src="">
+</div>
+
+	
+	<div class="search-pop-overlay">
+	<div class="popup search-popup">
+		<div class="search-header">
+			<span class="search-input-field-pre">
+				<i class="fa-solid fa-keyboard"></i>
+			</span>
+			<div class="search-input-container">
+				<input autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="站内搜索您需要的内容..." spellcheck="false" type="search" class="search-input">
+			</div>
+			<span class="popup-btn-close">
+				<i class="fa-solid fa-times"></i>
+			</span>
+		</div>
+		<div id="search-result">
+			<div id="no-result">
+				<i class="fa-solid fa-spinner fa-spin-pulse fa-5x fa-fw"></i>
+			</div>
+		</div>
+	</div>
+</div>
+	
+
+</main>
+
+
+
+<script src="/js/build/libs/Swup.min.js"></script>
+
+<script src="/js/build/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/build/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+</script>
+
+
+
+
+	
+<script src="/js/build/tools/imageViewer.js" type="module"></script>
+
+<script src="/js/build/utils.js" type="module"></script>
+
+<script src="/js/build/main.js" type="module"></script>
+
+<script src="/js/build/layouts/navbarShrink.js" type="module"></script>
+
+<script src="/js/build/tools/scrollTopBottom.js" type="module"></script>
+
+<script src="/js/build/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/build/layouts/categoryList.js" type="module"></script>
+
+
+
+    
+<script src="/js/build/tools/localSearch.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/tools/codeBlock.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/layouts/lazyload.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/tools/runtime.js"></script>
+
+    
+<script src="/js/build/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+  
+<script src="/js/build/libs/Typed.min.js"></script>
+
+  
+<script src="/js/build/plugins/typed.js" type="module"></script>
+
+
+
+
+
+
+
+
+    
+<script src="/js/build/libs/anime.min.js"></script>
+
+
+
+
+
+    
+<script src="/js/build/tools/tocToggle.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/layouts/toc.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/plugins/tabs.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+<script src="/js/build/libs/moment-with-locales.min.js" data-swup-reload-script=""></script>
+
+
+<script src="/js/build/layouts/essays.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+
+	
+</body>
+
+</html>
