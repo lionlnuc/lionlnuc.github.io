@@ -94,7 +94,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://lionlnuc.github.io/images/redefine-og.webp">
 <meta property="article:published_time" content="2025-12-27T14:47:48.348Z">
-<meta property="article:modified_time" content="2025-12-27T14:51:32.597Z">
+<meta property="article:modified_time" content="2025-12-27T14:54:57.885Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="CF">
 <meta property="article:tag" content="每日一题">
@@ -737,8 +737,8 @@ mjx-container[display="true"] + br {
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2025-12-27 22:51:32</span>
-            <span class="mobile">2025-12-27 22:51:32</span>
+            <span class="desktop">2025-12-27 22:54:57</span>
+            <span class="mobile">2025-12-27 22:54:57</span>
             <span class="hover-info">更新</span>
         </span>
     
@@ -804,6 +804,9 @@ mjx-container[display="true"] + br {
 <h2 id="摩尔投票算法"><a href="#摩尔投票算法" class="headerlink" title="摩尔投票算法"></a>摩尔投票算法</h2><p>其核心思想是：如果一个元素出现的次数在数组中超过一半，那么该元素的出现次数一定大于其他元素的出现次数之和。<br>这个算法的核心是“计数抵消”，让不同元素相互抵消，最终筛选出候选元素，再通过验证确认是否为目标。<br>分为两个阶段：<br>候选阶段（投票）：先选数组第一个元素为候选元素，<code>count = 1</code>。<br>之后遍历数组元素，1）若当前元素与候选元素相同：<code>count++</code>；2）若当前元素与候选元素不同：count–；<br>当计数 count 减为 0 时，更换候选元素为当前元素，并将 count 重置为1。<br>验证阶段（验票）：遍历结束后，候选元素是 “可能的多数元素”，但需要再次遍历数组，统计其实际出现次数。若实际次数超过总元素数的一半，则确认为主元素；否则说明不存在主元素（这里说明，如果题目已经标注明确存在多数元素的情况下可以省略）<br>这个统计多数可以通过桶来计数。</p>
 <h3 id="Acwing-4547-伊格内修斯和公主IV"><a href="#Acwing-4547-伊格内修斯和公主IV" class="headerlink" title="Acwing 4547. 伊格内修斯和公主IV"></a>Acwing 4547. 伊格内修斯和公主IV</h3><p>看一道模板题吧。<br>链接：[<a class="link" target="_blank" rel="noopener" href="https://www.acwing.com/problem/content/description/4550/">https://www.acwing.com/problem/content/description/4550/<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a><br>思路：摩尔投票算法，和上方思路一致</p>
 <div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="meta">#<span class="keyword">define</span> IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);</span></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N=<span class="number">1e6</span><span class="number">+5</span>;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">solve</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>{</span><br><span class="line">    <span class="type">int</span> n;</span><br><span class="line">    <span class="keyword">while</span>(cin&gt;&gt;n)</span><br><span class="line">    {</span><br><span class="line">        <span class="type">int</span> cnt=<span class="number">0</span>,ans=<span class="number">0</span>,a,lst=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span>(n--)</span><br><span class="line">        {</span><br><span class="line">            cin&gt;&gt;a;</span><br><span class="line">            <span class="keyword">if</span>(a==lst)cnt++;</span><br><span class="line">            <span class="keyword">else</span>{</span><br><span class="line">                <span class="keyword">if</span>(!cnt)lst=a,cnt=<span class="number">1</span>;<span class="comment">//数组开头第一个数，或者是计数cnt减到0时更换主元素。</span></span><br><span class="line">                <span class="keyword">else</span> cnt--;<span class="comment">//不一致时cnt--</span></span><br><span class="line">            }</span><br><span class="line">        }</span><br><span class="line">        cout&lt;&lt;lst&lt;&lt;endl;</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"><span class="function"><span class="type">signed</span> <span class="title">main</span><span class="params">()</span></span>{</span><br><span class="line">	IOS</span><br><span class="line">	<span class="type">int</span> t=<span class="number">1</span>;</span><br><span class="line">	<span class="keyword">while</span>(t--)</span><br><span class="line">	{</span><br><span class="line">		<span class="built_in">solve</span>();</span><br><span class="line">	}</span><br><span class="line">}</span><br></pre></td></tr></table></figure></div>
+
+<p>欢迎关注我的微信公众号呀[微信公众号文章链接][<a class="link" target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/hM1xmWovBVf9PMt2VZUDnA]">https://mp.weixin.qq.com/s/hM1xmWovBVf9PMt2VZUDnA]<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></p>
+
 		</div>
 
 		
@@ -817,7 +820,7 @@ mjx-container[display="true"] + br {
         
             <li>
                 <strong>更新于
-                    :</strong> 2025-12-27 22:51:32
+                    :</strong> 2025-12-27 22:54:57
             </li>
         
         <li>
