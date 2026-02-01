@@ -1,6 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>02Java学习day(2)</title>
+    <url>/2026/01/31/02Java%E5%AD%A6%E4%B9%A0day(2)/</url>
+    <content><![CDATA[字符运算字符和整数之间的联系可通过查阅 ASCII 码表。两者之间是可以相互转化的。’A'~'Z' 是 65~90，'a' - 'z' 是 97 - 122，0 - 9 是 48 - 57。
+public class demo1 {      public static void main(String[] args) {          int a='A';          System.out.println((int)a);          int b=68;          System.out.println((char)b);      }  }
+
+字符串运算在 Java 中字符串可以通过 + 进行拼接。
+package string;    public class demo1 {      public static void main(String[] args) {          String s1="123456";          String s2="7894556";          String s3=s1+s2;          System.out.println("s1:"+s1);          System.out.println("s2:"+s2);          System.out.println("s3:"+s3);          int sec=15006;          int hour=sec/3600;          int min=sec%3600/60;          sec=sec%3600%60;          System.out.println(hour+"小时"+min+"分钟"+sec+"秒");      }  }
+
+常用的字符串操作在 Java 中提供一些常用的字符串操作函数。length ()：返回长度split (String regex)：分割字符串indexOf (char c)、indexOf (String str)、lastIndexOf (char c)、lastIndexOf (String str)：查找，找不到返回-1equals ()：判断两个字符串是否相等，注意不能直接用==compareTo ()：判断两个字符串的字典序大小，负数表示小于，0 表示相等，正数表示大于startsWith ()：判断是否以某个前缀开头endsWith ()：判断是否以某个后缀结尾trim ()：去掉首尾的空白字符toLowerCase ()：全部用小写字符toUpperCase ()：全部用大写字符replace (char oldChar, char newChar)：替换字符replace (String oldRegex, String newRegex)：替换字符串substring (int beginIndex, int endIndex)：返回[beginIndex, endIndex) 中的子串toCharArray ()：将字符串转化成字符数组
+public class demo1 {      public static void main(String[] args) {         String str1="Hello World";         System.out.println("字符串"+str1+"的长度是："+str1.length());         System.out.println();         String csv = "apple,banana,orange,grape";         String[] fruits = csv.split(",");         for (String fruit : fruits) {             System.out.println(fruit);         }         System.out.println();         System.out.println("'o' 第一次出现位置: " + str1.indexOf('o'));         System.out.println("'o' 最后一次出现位置: " + str1.lastIndexOf('o'));         System.out.println("\"World\" 位置: " + str1.indexOf("World"));         System.out.println("\"Java\" 位置: " + str1.indexOf("Java")); // 返回 -1       System.out.println();         String str2 = "Hello World";         String str3 = new String("Hello World");         System.out.println("str1 == str2: " + (str1 == str2)); // true (字符串常量池)         System.out.println("str1 == str3: " + (str1 == str3)); // false (不同对象)         System.out.println("str1.equals(str3): " + str1.equals(str3)); // true (内容相同)         System.out.println();         String a = "apple";         String b = "banana";         String c = "apple";         System.out.println("apple和banana比较："+a.compareTo(b));         System.out.println("banana和apple比较："+b.compareTo(a));         System.out.println("apple和apple比较："+a.compareTo(c));         System.out.println();         String filename = "document.pdf";         System.out.println("这个文件开头是doc吗？"+filename.startsWith("doc"));         System.out.println("这个文件是pdf格式吗？"+filename.endsWith(".pdf"));         System.out.println();         String str4="     HELLO WORLD     ";         System.out.println("去除首尾空格前："+str4);         System.out.println("去除空格后："+str4.trim());         System.out.println();         String str5="HELLO World";         System.out.println(str5+"全部转为大写为："+str5.toUpperCase());         System.out.println(str5+"全部转为小写为："+str5.toLowerCase());         System.out.println();         String text = "I love cats. Cats are cute.";         System.out.println("原文本"+text);         System.out.println("替换字符"+text.replace('I','i'));         System.out.println("替换字符串"+text.replace("cats","dogs"));         System.out.println("替换全部(不区分大小写): " + text.replaceAll("(?i)cats", "dogs"));         System.out.println();         System.out.println("substring(6): " + text.substring(6));         System.out.println("substring(6, 10): " + text.substring(6, 10));         char[] charArray = text.toCharArray();         for (char ch : charArray) {             System.out.print(ch + " ");         }         System.out.println();      }  }
+运行结果：
+字符串Hello World的长度是：11applebananaorangegrape'o' 第一次出现位置: 4'o' 最后一次出现位置: 7"World" 位置: 6"Java" 位置: -1str1 == str2: truestr1 == str3: falsestr1.equals(str3): trueapple和banana比较：-1banana和apple比较：1apple和apple比较：0这个文件开头是doc吗？true这个文件是pdf格式吗？true去除首尾空格前：     HELLO WORLD     去除空格后：HELLO WORLDHELLO World全部转为大写为：HELLO WORLDHELLO World全部转为小写为：hello world原文本I love cats. Cats are cute.替换字符i love cats. Cats are cute.替换字符串I love dogs. Cats are cute.替换全部(不区分大小写): I love dogs. dogs are cute.substring(6):  cats. Cats are cute.substring(6, 10):  catI   l o v e   c a t s .   C a t s   a r e   c u t e . 
+字符串的输入输出sc.next () 在遇到空格、回车等空白字符时停止输入。sc.nextLine () 在遇到空格时不会停止输入。遇到回车才会停止。
+StringBuilder、StringBufferString拼接字符串后原字符串还存在于内存中，浪费内存。String 不能被修改，如果打算修改字符串，可以使用 StringBuilder 和 StringBuffer。StringBuffer 线程安全，速度较慢；StringBuilder 线程不安全，速度较快。
+public class demo1 {      public static void main(String[] args) {         StringBuilder sb=new StringBuilder("Hello");         sb.append("World");// 拼接字符串         System.out.println(sb);         //StringBuilder转String         String s=sb.toString();         System.out.println(s);         sb.reverse();//字符串翻转         System.out.println(sb);      }  }
+]]></content>
+      <categories>
+        <category>Java学习</category>
+      </categories>
+      <tags>
+        <tag>Java学习</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Acwing 125. 耍杂技的牛</title>
+    <url>/2025/12/31/Acwing%20125.%20%E8%80%8D%E6%9D%82%E6%8A%80%E7%9A%84%E7%89%9B/</url>
+    <content><![CDATA[做完这个题之后 C - Reindeer and Sleigh 2，就想起来之前做的 125. 耍杂技的牛这个题了。知识点： 贪心分析：这个题的数据也是重量和力量，风险值(一头牛支撑不住的可能性)取决于它头上所有牛的总重量减去它的身体强壮程度的值这里把该牛上方 k 头牛的体重 w 求和与自身的强壮值 s 相减。要得到最大风险值的最小可能值， 这句话可能比较难懂，就是要让所有牛的风险值最小，然后在这些最小的风险值中找一个最大的，我的想法是让下面的牛越强壮越好，上面的牛越轻越好(反过来就是下面的牛越重越好)，这样的话就是使  越大越好。这里上次那个题是很像的。证明：我们假设第 i 位上的牛的  ⬅第 i+1 位的牛。这里假设第 i 头牛是在第 i+1 头牛的上面。按我们的想法当上面的牛的  大于下面的牛的  时我们就要进行交换
+
+
+
+
+第 i 位上的牛
+第 i+1 位上的牛
+
+
+
+交换前
+
+
+
+
+交换后
+
+
+
+
+交换后第 i+1 位上的牛上升，所以加上 w[i+1]。再来分析一下风险值，我们可以看出四个值都带有 ，将它减去。
+
+
+
+
+第 i 位上的牛
+第 i+1 位上的牛
+
+
+
+交换前
+
+
+
+
+交换后
+
+
+
+
+很容易得到  和 现在只需要比较  和 。当  时，，交换前更优。当  时，， 交换后更优由此可以得出当上面的牛的  大于下面的牛的  时我们就要进行交换。代码实现：
+#include &lt;bits/stdc++.h&gt;using namespace std;#define x first#define y second#define int long longtypedef pair&lt;int,int&gt;PII;const int N=5e4+5;PII cow[N];void solve(){    int n;    cin&gt;&gt;n;    for(int i=0;i&lt;n;i++)    {        int s,w;        cin&gt;&gt;w&gt;&gt;s;        cow[i].x=s+w;        cow[i].y=w;    }    sort(cow,cow+n);    int sum=0,res=-1e9;    //用来存最小的最大危险值,要用到max，所以起初定义很小。    for(int i=0;i&lt;n;i++)    {        int s=cow[i].x-cow[i].y,w=cow[i].y;        res=max(sum-s,res);        sum+=w;//记录总重    }    cout&lt;&lt;res;    return;}signed main(){    int t=1;    while(t--)    {        solve();    }}
+
+欢迎来我的公众号参观，公众号文章链接
+]]></content>
+      <categories>
+        <category>每日一题</category>
+      </categories>
+      <tags>
+        <tag>每日一题</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>CF2113C Smilo and Minecraft</title>
+    <url>/2026/01/29/CF2113C%20Smilo%20and%20Minecraft/</url>
+    <content><![CDATA[题目链接： https://codeforces.com/problemset/problem/2113/C题意：给定一个  的区域，某些位置有金块，每次可以在空格子放置一个 TNT，炸掉以 TNT 为中心、边长  的正方形区域中的所有物品，并获得位于正方形边界上的所有金块，求可以收集到金块的最大值。思路：假如我们把第一个爆炸点选在 ，这周围的金子就被炸没了，之后我们在这片区域四周选择新的爆炸点就不会让其他的金子消失。所以可以枚举第一个爆炸点选取的位置所炸掉的金子个数。用所有金子的数量减去，来达到最大值。可以使用二维前缀和进行优化。代码： 
+#include &lt;bits/stdc++.h&gt;using namespace std;#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=505;char a[N][N];int s[N][N];void solve(){    int n,m,k;    cin&gt;&gt;n&gt;&gt;m&gt;&gt;k;    k--;//处在爆炸内部的才会消失    int sum=0;    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=m;j++)        {            cin&gt;&gt;a[i][j];            s[i][j]=s[i-1][j]+s[i][j-1]-s[i-1][j-1];            if(a[i][j]=='g'){s[i][j]++;sum++;}        }    }    int ans=0x3f3f3f3f;    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=m;j++)        {            if(a[i][j]=='.')            {                //画个正方形                int l=max(1,j-k);                int r=min(m,j+k);                int u=max(1,i-k);                int b=min(n,i+k);                ans=min(ans,s[b][r]-s[u-1][r]-s[b][l-1]+s[u-1][l-1]);            }        }    }    cout&lt;&lt;sum-ans&lt;&lt;endl;}signed main(){    IOS    int t;    cin&gt;&gt;t;    while(t--)    {        solve();    }}]]></content>
+      <categories>
+        <category>每日一题</category>
+      </categories>
+      <tags>
+        <tag>每日一题</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>CF581B Luxurious Houses</title>
+    <url>/2026/01/31/CF581B%20Luxurious%20Houses/</url>
+    <content><![CDATA[题目链接： https://codeforces.com/problemset/problem/2113/C题意：有 n 座从左到右排列的建筑，其初始高度已知。对于每个位置 i（1 ≤ i ≤ n），问：最少给第 i 座建筑增加多少层，才能使其高度 严格大于 它右侧所有建筑的高度（即成为“豪华型房屋”）？所有询问相互独立，实际高度不改变。思路：从后往前找，每次更新右侧楼房高度最大值，如果当前楼房比最大高度低，则在最大高度上加一层。代码： 
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long longconst int N=1e5+5;int a[N];int ans[N];void solve(){    int n;    cin&gt;&gt;n;    for(int i=1;i&lt;=n;i++)    {        cin&gt;&gt;a[i];    }    int h=0;    for(int i=n;i&gt;0;i--)    {        if(a[i]&gt;h)ans[i]=0;        else ans[i]=h+1-a[i];        h=max(h,a[i]);    }    for(int i=1;i&lt;=n;i++)cout&lt;&lt;ans[i]&lt;&lt;" ";}signed main(){    int t=1;    while(t--)    {        solve();    }}]]></content>
+      <categories>
+        <category>每日一题</category>
+      </categories>
+      <tags>
+        <tag>每日一题</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>01Java学习day(1)</title>
     <url>/2026/01/30/01Java%E5%AD%A6%E4%B9%A0day(1)/</url>
     <content><![CDATA[经典 Hello World开始学一门语言的第一步当然是输出 Hello World。
@@ -137,101 +240,12 @@ int a=100;byte b=(byte)a;
       </tags>
   </entry>
   <entry>
-    <title>02Java学习day(2)</title>
-    <url>/2026/01/31/02Java%E5%AD%A6%E4%B9%A0day(2)/</url>
-    <content><![CDATA[字符运算字符和整数之间的联系可通过查阅 ASCII 码表。两者之间是可以相互转化的。’A'~'Z' 是 65~90，'a' - 'z' 是 97 - 122，0 - 9 是 48 - 57。
-public class demo1 {      public static void main(String[] args) {          int a='A';          System.out.println((int)a);          int b=68;          System.out.println((char)b);      }  }
-
-字符串运算在 Java 中字符串可以通过 + 进行拼接。
-package string;    public class demo1 {      public static void main(String[] args) {          String s1="123456";          String s2="7894556";          String s3=s1+s2;          System.out.println("s1:"+s1);          System.out.println("s2:"+s2);          System.out.println("s3:"+s3);          int sec=15006;          int hour=sec/3600;          int min=sec%3600/60;          sec=sec%3600%60;          System.out.println(hour+"小时"+min+"分钟"+sec+"秒");      }  }
-
-常用的字符串操作在 Java 中提供一些常用的字符串操作函数。length ()：返回长度split (String regex)：分割字符串indexOf (char c)、indexOf (String str)、lastIndexOf (char c)、lastIndexOf (String str)：查找，找不到返回-1equals ()：判断两个字符串是否相等，注意不能直接用==compareTo ()：判断两个字符串的字典序大小，负数表示小于，0 表示相等，正数表示大于startsWith ()：判断是否以某个前缀开头endsWith ()：判断是否以某个后缀结尾trim ()：去掉首尾的空白字符toLowerCase ()：全部用小写字符toUpperCase ()：全部用大写字符replace (char oldChar, char newChar)：替换字符replace (String oldRegex, String newRegex)：替换字符串substring (int beginIndex, int endIndex)：返回[beginIndex, endIndex) 中的子串toCharArray ()：将字符串转化成字符数组
-public class demo1 {      public static void main(String[] args) {         String str1="Hello World";         System.out.println("字符串"+str1+"的长度是："+str1.length());         System.out.println();         String csv = "apple,banana,orange,grape";         String[] fruits = csv.split(",");         for (String fruit : fruits) {             System.out.println(fruit);         }         System.out.println();         System.out.println("'o' 第一次出现位置: " + str1.indexOf('o'));         System.out.println("'o' 最后一次出现位置: " + str1.lastIndexOf('o'));         System.out.println("\"World\" 位置: " + str1.indexOf("World"));         System.out.println("\"Java\" 位置: " + str1.indexOf("Java")); // 返回 -1       System.out.println();         String str2 = "Hello World";         String str3 = new String("Hello World");         System.out.println("str1 == str2: " + (str1 == str2)); // true (字符串常量池)         System.out.println("str1 == str3: " + (str1 == str3)); // false (不同对象)         System.out.println("str1.equals(str3): " + str1.equals(str3)); // true (内容相同)         System.out.println();         String a = "apple";         String b = "banana";         String c = "apple";         System.out.println("apple和banana比较："+a.compareTo(b));         System.out.println("banana和apple比较："+b.compareTo(a));         System.out.println("apple和apple比较："+a.compareTo(c));         System.out.println();         String filename = "document.pdf";         System.out.println("这个文件开头是doc吗？"+filename.startsWith("doc"));         System.out.println("这个文件是pdf格式吗？"+filename.endsWith(".pdf"));         System.out.println();         String str4="     HELLO WORLD     ";         System.out.println("去除首尾空格前："+str4);         System.out.println("去除空格后："+str4.trim());         System.out.println();         String str5="HELLO World";         System.out.println(str5+"全部转为大写为："+str5.toUpperCase());         System.out.println(str5+"全部转为小写为："+str5.toLowerCase());         System.out.println();         String text = "I love cats. Cats are cute.";         System.out.println("原文本"+text);         System.out.println("替换字符"+text.replace('I','i'));         System.out.println("替换字符串"+text.replace("cats","dogs"));         System.out.println("替换全部(不区分大小写): " + text.replaceAll("(?i)cats", "dogs"));         System.out.println();         System.out.println("substring(6): " + text.substring(6));         System.out.println("substring(6, 10): " + text.substring(6, 10));         char[] charArray = text.toCharArray();         for (char ch : charArray) {             System.out.print(ch + " ");         }         System.out.println();      }  }
-运行结果：
-字符串Hello World的长度是：11applebananaorangegrape'o' 第一次出现位置: 4'o' 最后一次出现位置: 7"World" 位置: 6"Java" 位置: -1str1 == str2: truestr1 == str3: falsestr1.equals(str3): trueapple和banana比较：-1banana和apple比较：1apple和apple比较：0这个文件开头是doc吗？true这个文件是pdf格式吗？true去除首尾空格前：     HELLO WORLD     去除空格后：HELLO WORLDHELLO World全部转为大写为：HELLO WORLDHELLO World全部转为小写为：hello world原文本I love cats. Cats are cute.替换字符i love cats. Cats are cute.替换字符串I love dogs. Cats are cute.替换全部(不区分大小写): I love dogs. dogs are cute.substring(6):  cats. Cats are cute.substring(6, 10):  catI   l o v e   c a t s .   C a t s   a r e   c u t e . 
-字符串的输入输出sc.next () 在遇到空格、回车等空白字符时停止输入。sc.nextLine () 在遇到空格时不会停止输入。遇到回车才会停止。
-StringBuilder、StringBufferString拼接字符串后原字符串还存在于内存中，浪费内存。String 不能被修改，如果打算修改字符串，可以使用 StringBuilder 和 StringBuffer。StringBuffer 线程安全，速度较慢；StringBuilder 线程不安全，速度较快。
-public class demo1 {      public static void main(String[] args) {         StringBuilder sb=new StringBuilder("Hello");         sb.append("World");// 拼接字符串         System.out.println(sb);         //StringBuilder转String         String s=sb.toString();         System.out.println(s);         sb.reverse();//字符串翻转         System.out.println(sb);      }  }
+    <title>CF1610B. Kalindrome Array</title>
+    <url>/2026/02/01/CF1610B.%20Kalindrome%20Array/</url>
+    <content><![CDATA[题目链接： Problem - 1610B - Codeforces题意：判断一个数组是否是kalindrome（卡林德数组）。如果删去 k 个数组中等于 x 的元素能使其变为回文数组则为卡林德数组。k 可以等于 0。思路：如果一个数组刚开始就是回文数组，那么直接输出 YES。如果不是的话就开始从左右两边向里推进找到对称位置不相同的元素。可以发现，若存在一种不完全的删数方法，那么所有的数全都删掉也一定是可以的，这样就可以简化判断了。而且只会删两端第一次不匹配的两种数（否则一定不合法）。代码： 
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=2e5+5;int a[N];int b[N];int c[N];bool is_hw(int a[],int cnt){    for(int i=1;i&lt;=cnt/2;i++)    {        if(a[i]!=a[cnt-i+1])return false;    }    return true;}void solve(){    int n;    cin&gt;&gt;n;    for(int i=1;i&lt;=n;i++)cin&gt;&gt;a[i];    if(is_hw(a,n)){        cout&lt;&lt;"YES"&lt;&lt;endl;        return;    }    int x,y;    for(int i=1;i&lt;=n;i++)    {        if(a[i]!=a[n-i+1])        {            x=a[i];            y=a[n-i+1];            break;        }    }    int cnt1=0,cnt2=0;    //下面构造一下删去两种元素后的数组    for(int i=1;i&lt;=n;i++)    {        if(a[i]!=x)b[++cnt1]=a[i];        if(a[i]!=y)c[++cnt2]=a[i];    }    if(is_hw(b,cnt1)||is_hw(c,cnt2))cout&lt;&lt;"YES"&lt;&lt;endl;    else cout&lt;&lt;"NO"&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
+认为这种简单又粗糙的方式很顺手☺️☺️
 ]]></content>
-      <categories>
-        <category>Java学习</category>
-      </categories>
-      <tags>
-        <tag>Java学习</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Acwing 125. 耍杂技的牛</title>
-    <url>/2025/12/31/Acwing%20125.%20%E8%80%8D%E6%9D%82%E6%8A%80%E7%9A%84%E7%89%9B/</url>
-    <content><![CDATA[做完这个题之后 C - Reindeer and Sleigh 2，就想起来之前做的 125. 耍杂技的牛这个题了。知识点： 贪心分析：这个题的数据也是重量和力量，风险值(一头牛支撑不住的可能性)取决于它头上所有牛的总重量减去它的身体强壮程度的值这里把该牛上方 k 头牛的体重 w 求和与自身的强壮值 s 相减。要得到最大风险值的最小可能值， 这句话可能比较难懂，就是要让所有牛的风险值最小，然后在这些最小的风险值中找一个最大的，我的想法是让下面的牛越强壮越好，上面的牛越轻越好(反过来就是下面的牛越重越好)，这样的话就是使  越大越好。这里上次那个题是很像的。证明：我们假设第 i 位上的牛的  ⬅第 i+1 位的牛。这里假设第 i 头牛是在第 i+1 头牛的上面。按我们的想法当上面的牛的  大于下面的牛的  时我们就要进行交换
-
-
-
-
-第 i 位上的牛
-第 i+1 位上的牛
-
-
-
-交换前
-
-
-
-
-交换后
-
-
-
-
-交换后第 i+1 位上的牛上升，所以加上 w[i+1]。再来分析一下风险值，我们可以看出四个值都带有 ，将它减去。
-
-
-
-
-第 i 位上的牛
-第 i+1 位上的牛
-
-
-
-交换前
-
-
-
-
-交换后
-
-
-
-
-很容易得到  和 现在只需要比较  和 。当  时，，交换前更优。当  时，， 交换后更优由此可以得出当上面的牛的  大于下面的牛的  时我们就要进行交换。代码实现：
-#include &lt;bits/stdc++.h&gt;using namespace std;#define x first#define y second#define int long longtypedef pair&lt;int,int&gt;PII;const int N=5e4+5;PII cow[N];void solve(){    int n;    cin&gt;&gt;n;    for(int i=0;i&lt;n;i++)    {        int s,w;        cin&gt;&gt;w&gt;&gt;s;        cow[i].x=s+w;        cow[i].y=w;    }    sort(cow,cow+n);    int sum=0,res=-1e9;    //用来存最小的最大危险值,要用到max，所以起初定义很小。    for(int i=0;i&lt;n;i++)    {        int s=cow[i].x-cow[i].y,w=cow[i].y;        res=max(sum-s,res);        sum+=w;//记录总重    }    cout&lt;&lt;res;    return;}signed main(){    int t=1;    while(t--)    {        solve();    }}
-
-欢迎来我的公众号参观，公众号文章链接
-]]></content>
-      <categories>
-        <category>每日一题</category>
-      </categories>
-      <tags>
-        <tag>每日一题</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>CF581B Luxurious Houses</title>
-    <url>/2026/01/31/CF581B%20Luxurious%20Houses/</url>
-    <content><![CDATA[题目链接： https://codeforces.com/problemset/problem/2113/C题意：有 n 座从左到右排列的建筑，其初始高度已知。对于每个位置 i（1 ≤ i ≤ n），问：最少给第 i 座建筑增加多少层，才能使其高度 严格大于 它右侧所有建筑的高度（即成为“豪华型房屋”）？所有询问相互独立，实际高度不改变。思路：从后往前找，每次更新右侧楼房高度最大值，如果当前楼房比最大高度低，则在最大高度上加一层。代码： 
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long longconst int N=1e5+5;int a[N];int ans[N];void solve(){    int n;    cin&gt;&gt;n;    for(int i=1;i&lt;=n;i++)    {        cin&gt;&gt;a[i];    }    int h=0;    for(int i=n;i&gt;0;i--)    {        if(a[i]&gt;h)ans[i]=0;        else ans[i]=h+1-a[i];        h=max(h,a[i]);    }    for(int i=1;i&lt;=n;i++)cout&lt;&lt;ans[i]&lt;&lt;" ";}signed main(){    int t=1;    while(t--)    {        solve();    }}]]></content>
-      <categories>
-        <category>每日一题</category>
-      </categories>
-      <tags>
-        <tag>每日一题</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>CF2113C Smilo and Minecraft</title>
-    <url>/2026/01/29/CF2113C%20Smilo%20and%20Minecraft/</url>
-    <content><![CDATA[题目链接： https://codeforces.com/problemset/problem/2113/C题意：给定一个  的区域，某些位置有金块，每次可以在空格子放置一个 TNT，炸掉以 TNT 为中心、边长  的正方形区域中的所有物品，并获得位于正方形边界上的所有金块，求可以收集到金块的最大值。思路：假如我们把第一个爆炸点选在 ，这周围的金子就被炸没了，之后我们在这片区域四周选择新的爆炸点就不会让其他的金子消失。所以可以枚举第一个爆炸点选取的位置所炸掉的金子个数。用所有金子的数量减去，来达到最大值。可以使用二维前缀和进行优化。代码： 
-#include &lt;bits/stdc++.h&gt;using namespace std;#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=505;char a[N][N];int s[N][N];void solve(){    int n,m,k;    cin&gt;&gt;n&gt;&gt;m&gt;&gt;k;    k--;//处在爆炸内部的才会消失    int sum=0;    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=m;j++)        {            cin&gt;&gt;a[i][j];            s[i][j]=s[i-1][j]+s[i][j-1]-s[i-1][j-1];            if(a[i][j]=='g'){s[i][j]++;sum++;}        }    }    int ans=0x3f3f3f3f;    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=m;j++)        {            if(a[i][j]=='.')            {                //画个正方形                int l=max(1,j-k);                int r=min(m,j+k);                int u=max(1,i-k);                int b=min(n,i+k);                ans=min(ans,s[b][r]-s[u-1][r]-s[b][l-1]+s[u-1][l-1]);            }        }    }    cout&lt;&lt;sum-ans&lt;&lt;endl;}signed main(){    IOS    int t;    cin&gt;&gt;t;    while(t--)    {        solve();    }}]]></content>
       <categories>
         <category>每日一题</category>
       </categories>
@@ -249,50 +263,6 @@ public class demo1 {      public static void main(String[] args) {         Strin
       </categories>
       <tags>
         <tag>每日一题</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>大一第一次周赛题解</title>
-    <url>/2025/12/22/acm%E5%A4%A7%E4%B8%80%E7%AC%AC%E4%B8%80%E6%AC%A1%E5%91%A8%E8%B5%9B%E9%A2%98%E8%A7%A3/</url>
-    <content><![CDATA[A - Sum of Round Numbers链接：Problem - 1352A - Codeforces这个题难度较低，题意就是问一个数字最少可以用几个整十数表示出来，统计一下这个数字里非零的数，然后乘上它对应的十位数的权值输出即可。下面是一个比较麻烦的代码，把数字转成字符串来储存了，然后去挨个统计计算。用 int 类型的 n 直接计算也可以。
-int n;cin&gt;&gt;n;while(n){	在循环内部直接进行n%10的运算。同样是乘权值再保存到数组里}
-
-``````cpp#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);void solve(){    string n;    cin&gt;&gt;n;    vector&lt;int&gt; a(n.size()+1);  //开一个大小为字符串长度相同的数组，当然也可以不用，每次push_back()就行。    int ans=0;    for(int i=n.size()-1;i&gt;=0;i--)    {        if(n[i]!='0')        {            a[i]=(n[i]-'0')*pow(10,n.size()-i-1);            ans++;        }            }    cout&lt;&lt;ans&lt;&lt;endl;    for(int i=n.size()-1;i&gt;=0;i--)    {        if(a[i])cout&lt;&lt;a[i]&lt;&lt;" ";    }    cout&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
-
-B - Division?链接： codeforces.com/problemset/problem/1669/A这个题就是简单的 if else 语句
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);void solve(){    int n;    cin&gt;&gt;n;    if(n&lt;=1399)cout&lt;&lt;"Division 4";    else if(n&gt;=1400&amp;&amp;n&lt;=1599)cout&lt;&lt;"Division 3";    else if(n&gt;=1600&amp;&amp;n&lt;=1899)cout&lt;&lt;"Division 2";    else cout&lt;&lt;"Division 1";    cout&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
-
-C - Triple链接： Problem - 1669B - Codeforces这个题也比较简单，统计每个数出现的次数，对于第一个出现三次的直接输出，然后把之后出现的数记录下来就可以了。
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=2e5+5;void solve(){    bool flag=true;    int n;    cin&gt;&gt;n;    int a[N];    memset(a,0,sizeof(a));    for(int i=0;i&lt;n;i++)    {        int m;        cin&gt;&gt;m;        a[m]++;        if(a[m]&gt;=3&amp;&amp;flag){            cout&lt;&lt;m&lt;&lt;endl;            flag=false;        }    }    if(flag)cout&lt;&lt;"-1"&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
-
-D - Odd/Even Increments链接：Problem - 1669C - Codeforces这个题的意思就是要使最终数组结果都为偶数或者奇数，每次操作是给相同奇偶性下标的位置进行加一。如果可以完成操作，那么相同奇偶性下标的数的奇偶性也应该相同。
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=2e5+5;void solve(){    int n;    cin&gt;&gt;n;    int a[N];    bool flag=true;    for(int i=1;i&lt;=n;i++)    {        cin&gt;&gt;a[i];    }    for(int i=1;i&lt;=n-2;i++)    {        if((a[i]%2==1)&amp;&amp;(a[i+2]%2==0)||(a[i]%2==0)&amp;&amp;(a[i+2]%2==1))        {            cout&lt;&lt;"NO"&lt;&lt;endl;            flag=false;            break;        }    }    if(flag)cout&lt;&lt;"YES"&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
-
-E - Colorful Stamp链接：Problem - 1669D - Codeforces当字符串长度为 1 时不可能实现操作直接输出 no 就可以了。对于所有颜色都为 R 或者 B 也不可能实现（每次盖章都会出现两种颜色）。那么我们来推理得到如果结果中存在 W 这个必然是没有被盖到的，那么我们可以以 W 为分界线。处理多段子串。如果这种字串长度为 1 或者所有颜色都一致无解。只要存在一个这样的子串则无解。
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);void solve(){    int n;    cin&gt;&gt;n;    string s;    cin&gt;&gt;s;    bool flag=false;//用flag表示前面是否进行染色。    int r=0,b=0;    for(int i=0;i&lt;s.size();i++)    {        if(s[i]=='W')//遇到白色格子时对前面的情况进行一次判断        {            if((r==0||b==0)&amp;&amp;flag){//纯色并且染色                cout&lt;&lt;"NO"&lt;&lt;endl;                return;            }else{flag=false,r=0,b=0;}        }else{            if(s[i]=='R') r++,flag=true;            if(s[i]=='B') b++,flag=true;        }    }    //从最后一个白色块到结尾也需要进行一次判断    if((r==0||b==0)&amp;&amp;flag)cout&lt;&lt;"NO"&lt;&lt;endl;    else cout&lt;&lt;"YES"&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
-
-F - Eating Candies链接：Problem - 1669F - Codeforces这是一个双指针问题，一个从前往后扫，另一个从后往前扫，所实现的就是前扫的和等于后扫的和。要使所得到的糖果总数最多。这里可以在前=后时记录下此时的糖果总数，然后对它取 max 就可以。
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=2e5+5;void solve(){    int n;    cin&gt;&gt;n;    int w[N];    for(int i=0;i&lt;n;i++)cin&gt;&gt;w[i];    int l=0,r=n-1;    int sum1=0,sum2=0;    int ans=0;    while(l&lt;=r)    {        sum1+=w[l];        while(l&lt;r&amp;&amp;sum1&gt;sum2)sum2+=w[r--];//当前后不等的时后加后面        if(sum1==sum2) ans=max(ans,l+n-r);        l++;    }    cout&lt;&lt;ans&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
-
-G - Same Parity Summands链接：Problem - 1352B - Codeforces要把 n 拆分成 k 个奇偶性相同的数。想一下一个奇数能不能拆分成偶数个？答案是不能。这里指的是拆分成奇偶性相同的数。这可以作为一个判断条件。那一个偶数能不能拆分成奇数个？需要特殊判断一下，要拆分成偶数，最小的偶数是 2，所以 n 必须大于等于 2*k。当 k&gt;n 时也不可能实现，当 k =n 时可以实现 (输出 k 个 1)。这样之后，对于一个奇数，拆分成奇数个，可以拆分成 k-1 个 1 和 n-k+1。（偶数个 1 加上一个奇数）。偶数+奇数=奇数
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);void solve(){    int n,k;    cin&gt;&gt;n&gt;&gt;k;    if(k&gt;n){        cout&lt;&lt;"NO"&lt;&lt;endl;        return;    }    if(n%2&amp;&amp;k%2==0)    {        cout&lt;&lt;"NO"&lt;&lt;endl;        return;    }    if(n==k)    {        cout&lt;&lt;"YES"&lt;&lt;endl;        for(int i=1;i&lt;=k;i++)cout&lt;&lt;"1 ";        cout&lt;&lt;endl;        return;    }    if(n%2)    {        cout&lt;&lt;"YES"&lt;&lt;endl;        for(int i=1;i&lt;=k-1;i++)cout&lt;&lt;"1 ";        cout&lt;&lt;n-k+1&lt;&lt;endl;    }else{        if(k%2&amp;&amp;n&lt;2*k)        {        cout&lt;&lt;"NO"&lt;&lt;endl;        return;        }        cout&lt;&lt;"YES"&lt;&lt;endl;        if(n&lt;2*k)        {            for(int i=1;i&lt;=k-1;i++)cout&lt;&lt;"1 ";            cout&lt;&lt;n-k+1&lt;&lt;endl;        }else{            for(int i=1;i&lt;=k-1;i++)cout&lt;&lt;"2 ";            cout&lt;&lt;n-2*(k-1)&lt;&lt;endl;        }    }}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
-
-H - K-th Not Divisible by n链接：Problem - 1352C - Codeforces
-来分析一下第一个示例3 7不能被三整除的数1 2 4 5 7 8 10 11 13第七个是10再看4 121 2 3 5 6 7 9 10 11 13 14 15 17 18 19我们可以发现被划分成每部分有(4-1)个元素
-所以 （n-1）个数为一组，那么 k 中有几个这样的组呢? k/(n-1) 个，那么剩下的一个组有几个数呢？k%(n-1) 个。所以最终结果就是 k/(n-1)*n+k%(n-1)如果 k 能够整除 n-1 时，此时需要减一。(PS: 怎么思考呢，就是我们在乘 n 操作时是认为前面有 k/(n-1) 个完整的组，然后加上余数，但是如果没有余数此时的这个树是可以被 n 整除的，此时最后一个组其实是不完整的，并没有走到最后一个位置，所以减一)
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);void solve(){    int n,k;    cin&gt;&gt;n&gt;&gt;k;    int a=k/(n-1);    int b=k%(n-1);    if(b)cout&lt;&lt;a*n+b&lt;&lt;endl;    else cout&lt;&lt;a*n+b-1&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
-
-I - Alice, Bob and Candies链接：Problem - 1352D - Codeforcesa从左往右枚举，b从右往左枚举。下一次吃的人要比上一次吃的人多。
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=1e3+5;void solve(){    int n;    cin&gt;&gt;n;    int a[N];    for(int i=1;i&lt;=n;i++)cin&gt;&gt;a[i];    int cnt=0,last=0,x=0,y=0;    int l=0,r=n;    while(l&lt;r){        cnt++;        int sum=0;        if(cnt%2){          while(l&lt;r&amp;&amp;sum&lt;=last)sum+=a[++l];          x+=sum;        }else{          while(l&lt;r&amp;&amp;sum&lt;=last)sum+=a[r--];          y+=sum;        }        last=sum;    }    cout&lt;&lt;cnt&lt;&lt;" "&lt;&lt;x&lt;&lt;" "&lt;&lt;y&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
-
-
-欢迎关注我的微信公众号呀微信公众号文章链接
-]]></content>
-      <categories>
-        <category>我的训练</category>
-      </categories>
-      <tags>
-        <tag>题解</tag>
       </tags>
   </entry>
   <entry>
@@ -695,44 +665,6 @@ P1462 通往奥格瑞玛的道路题目链接： https://www.luogu.com.cn/proble
       </tags>
   </entry>
   <entry>
-    <title>大一第七次周赛题解</title>
-    <url>/2025/12/28/%E5%A4%A7%E4%B8%80%E7%AC%AC%E4%B8%83%E6%AC%A1%E5%91%A8%E8%B5%9B/</url>
-    <content><![CDATA[A - 2链接： https://codeforces.com/problemset/problem/1692/A分析： 输入四个数后比较 a 和 b c d 的大小，如果 a 小了，ans加一，最后输出 ans即可。代码实现：
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);void solve(){    int a,b,c,d;    cin&gt;&gt;a&gt;&gt;b&gt;&gt;c&gt;&gt;d;    int ans=0;    if(b&gt;a)ans++;    if(c&gt;a)ans++;    if(d&gt;a)ans++;    cout&lt;&lt;ans&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	// int t=1;	while(t--)	{		solve();	}}
-B - 0链接： https://codeforces.com/problemset/problem/1692/B分析： 求至多剩多少个数就使这个数组的元素各不相同，我们每次找到两个元素个数大于一的数，把他删除，这样可以使数组长度尽可能大，最后删除次数是上取整的。可以用桶来计数。代码实现：
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=1e4+5;int a[N];void solve(){    int n;    cin&gt;&gt;n;    memset(a,0,sizeof a);    int ans=0;    for(int i=0;i&lt;n;i++)    {        int b;        cin&gt;&gt;b;        if(!a[b])a[b]++;        else ans++;    }    cout&lt;&lt;n-2*ceil(ans*1.0/2)&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	// int t=1;	while(t--)	{		solve();	}}
-C - 2链接： https://codeforces.com/problemset/problem/1692/C分析： 这个题我们可以看出来，在主教那一行、列都只有主教一个人，所以可以扫描行或列，就能找到答案。代码实现：
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);char a[9][9];void solve(){    for(int i=1;i&lt;=8;i++)    {        for(int j=1;j&lt;=8;j++)            cin&gt;&gt;a[i][j];    }    for(int i=2;i&lt;=7;i++)    {        for(int j=2;j&lt;=7;j++)        {            if(a[i-1][j-1]=='#'&amp;&amp;a[i+1][j-1]=='#'&amp;&amp;a[i-1][j+1]=='#'&amp;&amp;a[i+1][j+1]=='#'&amp;&amp;a[i][j]=='#')            {                cout&lt;&lt;i&lt;&lt;" "&lt;&lt;j&lt;&lt;endl;                break;            }        }    }}signed main(){	IOS	int t;	cin&gt;&gt;t;	// int t=1;	while(t--)	{		solve();	}}
-
-D - 6链接： https://codeforces.com/problemset/problem/1692/D分析： 从输入的时间点开始枚举直到这个时间点再次出现。把时间都转换为分钟会好看一些。代码实现：
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);bool check(int minute){    int h=minute/60;    minute=minute%60;    if(h%10==minute/10&amp;&amp;h/10==minute%10) return true;    else return false;}void solve(){    int t1,t2;    char s;    cin&gt;&gt;t1&gt;&gt;s&gt;&gt;t2;    int t,ans=0;    cin&gt;&gt;t;    int minute=t1*60+t2;    do{        if(check(minute))ans++;        minute+=t;        minute%=1440;//防止超过24小时，取余    }while(minute!=t1*60+t2);    cout&lt;&lt;ans&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	// int t=1;	while(t--)	{		solve();	}}
-
-也可以直接标记出回文时间的分钟数，直接进行匹配
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int p[16] = {0,70,140,210,280,350,601,671,741,811,881,951,1202,1272,1342,1412};//提前预处理出所有的回文时间。void solve(){    int t1,t2;    char s;    cin&gt;&gt;t1&gt;&gt;s&gt;&gt;t2;    int t,ans=0;    cin&gt;&gt;t;    int minute=t1*60+t2;    do{        for(int i=0;i&lt;16;i++)        {            if(minute==p[i])            {                ans++;                break;            }        }        minute+=t;        minute%=1440;//防止超过24小时，取余    }while(minute!=t1*60+t2);    cout&lt;&lt;ans&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	// int t=1;	while(t--)	{		solve();	}}
-
-E - 新链接： https://codeforces.com/problemset/problem/1692/E分析：显然，如果数组本身的和就小于 s，那是肯定无解的。然后从第一个数开始，用 l, r 代表左右端，然后进行遍历加入操作，直到达到数组长度，取最少的操作次数输出。代码实现：
-#include &lt;bits/stdc++.h&gt;using namespace std;//#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=2e5+5;int a[N];void solve(){    int n,s;    cin&gt;&gt;n&gt;&gt;s;    int sum=0;    for(int i=0;i&lt;n;i++)    {        cin&gt;&gt;a[i];        sum+=a[i];    }    if(sum&lt;s)    {        cout&lt;&lt;"-1"&lt;&lt;endl;        return;    }    int l=0,r=0;    sum=a[0];    int ans=0x3f3f3f3f;    while(l&lt;n&amp;&amp;r&lt;n)    {        if(sum==s){            ans=min(ans,l+n-r-1);            sum+=a[++r];        }else if(sum&gt;s)        {            sum-=a[l++];        }else{            sum+=a[++r];        }    }    cout&lt;&lt;ans&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	// int t=1;	while(t--)	{		solve();	}}
-
-F - 年链接： https://codeforces.com/problemset/problem/1692/F分析：要让三个数相加末尾为 3，这只和数字的个位有关，我们存下数组中每个数的个位出现次数，然后三重循环枚举 0~10 之间的数字之和。就可以得到答案。
-代码实现：
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);int a[15];void solve(){    memset(a,0,sizeof a);    int n;    cin&gt;&gt;n;    for(int i=1;i&lt;=n;i++)    {        int m;        cin&gt;&gt;m;        a[m%10]++;//这里只记录数字个位的出现次数。    }    bool flag=false;    for(int i=0;i&lt;=9;i++){        for(int j=0;j&lt;=9;j++){            for(int k=0;k&lt;=9;k++){                a[i]--;a[j]--;a[k]--;                if((i+j+k)%10==3&amp;&amp;a[i]&gt;=0&amp;&amp;a[j]&gt;=0&amp;&amp;a[k]&gt;=0)                {                    flag=true;                    break;                }                a[i]++;a[j]++;a[k]++;            }            if(flag)break;        }        if(flag)break;    }    if(flag)cout&lt;&lt;"YES"&lt;&lt;endl;      else cout&lt;&lt;"NO"&lt;&lt;endl;        }signed main(){	IOS	int t;	cin&gt;&gt;t;	// int t=1;	while(t--)	{		solve();	}}
-
-G - 快链接： https://codeforces.com/problemset/problem/1692/G分析：有多少段长度为 k 的区间满足题目中所说的性质。根据题目的公式可以发现，其实就是要求 ，所以就是求连续区间满足这个条件且满足区间长度为k+1 的区间个数。从第一个数字开始遍历即可。代码实现：
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=2e5+5;int a[N];void solve(){    int n,k;    cin&gt;&gt;n&gt;&gt;k;    for(int i=1;i&lt;=n;i++)cin&gt;&gt;a[i];    int len=1;    int ans=0;    for(int i=2;i&lt;=n;i++)    {        if(2*a[i]&gt;a[i-1])        {            len++;        }else len=1;        if(len&gt;k) ans++;//这里只要这段区间的长度一直在变大，这类区间的个数就可以一直增加，不进行len--操作也可以。    }    cout&lt;&lt;ans&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	// int t=1;	while(t--)	{		solve();	}}
-
-H - 乐链接： https://atcoder.jp/contests/abc438/tasks/abc438_e分析：用 st[N][35] 来表示第 i 个水桶，传递了  次后这个桶在谁手里把每个桶的初始状态都设为 st[i][0] 表示传递 0 次，桶还在自己手里。这里用二进制来拼凑出总步数。比如 10 的二进制是 用 sum[N][35] 来表示第 i 个水桶，经过  次操作后，会积累多少水。初始时 sum[i][0]=i代码实现：
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=2e5+5;int st[N][35];//用来表示第i个水桶，传递了2的j次后这个桶在谁手里//这里用二进制的思想，把一个数拆分。int sum[N][35];void solve(){    int n,q;    cin&gt;&gt;n&gt;&gt;q;    for(int i=1;i&lt;=n;i++)    {        cin&gt;&gt;st[i][0];        sum[i][0]=i;    }    for(int i=1;i&lt;31;i++)//对于int类型的二进制数最多只有31位    {        //递归计算        for(int j=1;j&lt;=n;j++)//桶编号        {            st[j][i]=st[st[j][i-1]][i-1];            sum[j][i]=sum[j][i-1]+sum[st[j][i-1]][i-1];        }    }    while(q--)    {        int t,b;        cin&gt;&gt;t&gt;&gt;b;        int ans=0;        for(int i=0;i&lt;31;i++)        {            if(t&gt;&gt;i&amp;1){                ans+=sum[b][i];                b=st[b][i];            }        }        cout&lt;&lt;ans&lt;&lt;endl;    }}signed main(){	IOS	int t=1;	while(t--)	{		solve();	}}
-
-欢迎关注我的微信公众号呀微信公众号文章链接
-]]></content>
-      <categories>
-        <category>我的训练</category>
-      </categories>
-      <tags>
-        <tag>题解</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>大一第六次周赛题解</title>
     <url>/2025/12/22/%E5%A4%A7%E4%B8%80%E7%AC%AC%E5%85%AD%E6%AC%A1%E5%91%A8%E8%B5%9B%E9%A2%98%E8%A7%A3/</url>
     <content><![CDATA[A - 冬知识点： 思维题意：找到另一个整点 C，使顶点组成的三角形任意两边之和大于第三边，且所组成的三角形面积是正整数。分析：要使面积是整数那就让底乘高为偶数。可以去构造一个与坐标轴平行的边且长度为偶数作为底边代码实现：
@@ -772,21 +704,85 @@ G - 子知识点： 枚举题意：从数组里面选一些数字使得被选中
       </tags>
   </entry>
   <entry>
-    <title>小苯的最短路</title>
-    <url>/2026/01/28/%E5%B0%8F%E8%8B%AF%E7%9A%84%E6%9C%80%E7%9F%AD%E8%B7%AF/</url>
-    <content><![CDATA[题目链接： https://ac.nowcoder.com/acm/problem/284229思路：结论题，首先需要推导的是怎样走最短，是直接从 1 走到 i 呢还是绕路经过某些点到 i 呢。假设我们通过点 j 到达点 i 吧。那么花费就是 ，由  可得：所以可知直接从 1 走到 i 最短。所以  。所以对于前半部分，如果 n 为偶数则为 0，如果 n 为奇数则为 1；对于后半部分，连续整数从 1 到 n 的异或结果有个规律，令 ，
+    <title>大一第一次周赛题解</title>
+    <url>/2025/12/22/acm%E5%A4%A7%E4%B8%80%E7%AC%AC%E4%B8%80%E6%AC%A1%E5%91%A8%E8%B5%9B%E9%A2%98%E8%A7%A3/</url>
+    <content><![CDATA[A - Sum of Round Numbers链接：Problem - 1352A - Codeforces这个题难度较低，题意就是问一个数字最少可以用几个整十数表示出来，统计一下这个数字里非零的数，然后乘上它对应的十位数的权值输出即可。下面是一个比较麻烦的代码，把数字转成字符串来储存了，然后去挨个统计计算。用 int 类型的 n 直接计算也可以。
+int n;cin&gt;&gt;n;while(n){	在循环内部直接进行n%10的运算。同样是乘权值再保存到数组里}
 
-x=0 时，f (n)=n.
-x=1 时，f (n)=1.
-x=2 时，f (n)=n+1.
-x=3 时，f (n)=0.代码：
+``````cpp#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);void solve(){    string n;    cin&gt;&gt;n;    vector&lt;int&gt; a(n.size()+1);  //开一个大小为字符串长度相同的数组，当然也可以不用，每次push_back()就行。    int ans=0;    for(int i=n.size()-1;i&gt;=0;i--)    {        if(n[i]!='0')        {            a[i]=(n[i]-'0')*pow(10,n.size()-i-1);            ans++;        }            }    cout&lt;&lt;ans&lt;&lt;endl;    for(int i=n.size()-1;i&gt;=0;i--)    {        if(a[i])cout&lt;&lt;a[i]&lt;&lt;" ";    }    cout&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
 
-#include&lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);void solve(){    int n;    cin&gt;&gt;n;    int x=n%2;    if(n%4==0) cout&lt;&lt;(n^x);    else if(n%4==1)cout&lt;&lt;(1^x);    else if(n%4==2)cout&lt;&lt;((n+1)^x);    else if(n%4==3)cout&lt;&lt;(0^x);    cout&lt;&lt;endl;}signed main(){    IOS    int t;    cin&gt;&gt;t;    while(t--)    {        solve();    }}]]></content>
+B - Division?链接： codeforces.com/problemset/problem/1669/A这个题就是简单的 if else 语句
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);void solve(){    int n;    cin&gt;&gt;n;    if(n&lt;=1399)cout&lt;&lt;"Division 4";    else if(n&gt;=1400&amp;&amp;n&lt;=1599)cout&lt;&lt;"Division 3";    else if(n&gt;=1600&amp;&amp;n&lt;=1899)cout&lt;&lt;"Division 2";    else cout&lt;&lt;"Division 1";    cout&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
+
+C - Triple链接： Problem - 1669B - Codeforces这个题也比较简单，统计每个数出现的次数，对于第一个出现三次的直接输出，然后把之后出现的数记录下来就可以了。
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=2e5+5;void solve(){    bool flag=true;    int n;    cin&gt;&gt;n;    int a[N];    memset(a,0,sizeof(a));    for(int i=0;i&lt;n;i++)    {        int m;        cin&gt;&gt;m;        a[m]++;        if(a[m]&gt;=3&amp;&amp;flag){            cout&lt;&lt;m&lt;&lt;endl;            flag=false;        }    }    if(flag)cout&lt;&lt;"-1"&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
+
+D - Odd/Even Increments链接：Problem - 1669C - Codeforces这个题的意思就是要使最终数组结果都为偶数或者奇数，每次操作是给相同奇偶性下标的位置进行加一。如果可以完成操作，那么相同奇偶性下标的数的奇偶性也应该相同。
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=2e5+5;void solve(){    int n;    cin&gt;&gt;n;    int a[N];    bool flag=true;    for(int i=1;i&lt;=n;i++)    {        cin&gt;&gt;a[i];    }    for(int i=1;i&lt;=n-2;i++)    {        if((a[i]%2==1)&amp;&amp;(a[i+2]%2==0)||(a[i]%2==0)&amp;&amp;(a[i+2]%2==1))        {            cout&lt;&lt;"NO"&lt;&lt;endl;            flag=false;            break;        }    }    if(flag)cout&lt;&lt;"YES"&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
+
+E - Colorful Stamp链接：Problem - 1669D - Codeforces当字符串长度为 1 时不可能实现操作直接输出 no 就可以了。对于所有颜色都为 R 或者 B 也不可能实现（每次盖章都会出现两种颜色）。那么我们来推理得到如果结果中存在 W 这个必然是没有被盖到的，那么我们可以以 W 为分界线。处理多段子串。如果这种字串长度为 1 或者所有颜色都一致无解。只要存在一个这样的子串则无解。
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);void solve(){    int n;    cin&gt;&gt;n;    string s;    cin&gt;&gt;s;    bool flag=false;//用flag表示前面是否进行染色。    int r=0,b=0;    for(int i=0;i&lt;s.size();i++)    {        if(s[i]=='W')//遇到白色格子时对前面的情况进行一次判断        {            if((r==0||b==0)&amp;&amp;flag){//纯色并且染色                cout&lt;&lt;"NO"&lt;&lt;endl;                return;            }else{flag=false,r=0,b=0;}        }else{            if(s[i]=='R') r++,flag=true;            if(s[i]=='B') b++,flag=true;        }    }    //从最后一个白色块到结尾也需要进行一次判断    if((r==0||b==0)&amp;&amp;flag)cout&lt;&lt;"NO"&lt;&lt;endl;    else cout&lt;&lt;"YES"&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
+
+F - Eating Candies链接：Problem - 1669F - Codeforces这是一个双指针问题，一个从前往后扫，另一个从后往前扫，所实现的就是前扫的和等于后扫的和。要使所得到的糖果总数最多。这里可以在前=后时记录下此时的糖果总数，然后对它取 max 就可以。
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=2e5+5;void solve(){    int n;    cin&gt;&gt;n;    int w[N];    for(int i=0;i&lt;n;i++)cin&gt;&gt;w[i];    int l=0,r=n-1;    int sum1=0,sum2=0;    int ans=0;    while(l&lt;=r)    {        sum1+=w[l];        while(l&lt;r&amp;&amp;sum1&gt;sum2)sum2+=w[r--];//当前后不等的时后加后面        if(sum1==sum2) ans=max(ans,l+n-r);        l++;    }    cout&lt;&lt;ans&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
+
+G - Same Parity Summands链接：Problem - 1352B - Codeforces要把 n 拆分成 k 个奇偶性相同的数。想一下一个奇数能不能拆分成偶数个？答案是不能。这里指的是拆分成奇偶性相同的数。这可以作为一个判断条件。那一个偶数能不能拆分成奇数个？需要特殊判断一下，要拆分成偶数，最小的偶数是 2，所以 n 必须大于等于 2*k。当 k&gt;n 时也不可能实现，当 k =n 时可以实现 (输出 k 个 1)。这样之后，对于一个奇数，拆分成奇数个，可以拆分成 k-1 个 1 和 n-k+1。（偶数个 1 加上一个奇数）。偶数+奇数=奇数
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);void solve(){    int n,k;    cin&gt;&gt;n&gt;&gt;k;    if(k&gt;n){        cout&lt;&lt;"NO"&lt;&lt;endl;        return;    }    if(n%2&amp;&amp;k%2==0)    {        cout&lt;&lt;"NO"&lt;&lt;endl;        return;    }    if(n==k)    {        cout&lt;&lt;"YES"&lt;&lt;endl;        for(int i=1;i&lt;=k;i++)cout&lt;&lt;"1 ";        cout&lt;&lt;endl;        return;    }    if(n%2)    {        cout&lt;&lt;"YES"&lt;&lt;endl;        for(int i=1;i&lt;=k-1;i++)cout&lt;&lt;"1 ";        cout&lt;&lt;n-k+1&lt;&lt;endl;    }else{        if(k%2&amp;&amp;n&lt;2*k)        {        cout&lt;&lt;"NO"&lt;&lt;endl;        return;        }        cout&lt;&lt;"YES"&lt;&lt;endl;        if(n&lt;2*k)        {            for(int i=1;i&lt;=k-1;i++)cout&lt;&lt;"1 ";            cout&lt;&lt;n-k+1&lt;&lt;endl;        }else{            for(int i=1;i&lt;=k-1;i++)cout&lt;&lt;"2 ";            cout&lt;&lt;n-2*(k-1)&lt;&lt;endl;        }    }}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
+
+H - K-th Not Divisible by n链接：Problem - 1352C - Codeforces
+来分析一下第一个示例3 7不能被三整除的数1 2 4 5 7 8 10 11 13第七个是10再看4 121 2 3 5 6 7 9 10 11 13 14 15 17 18 19我们可以发现被划分成每部分有(4-1)个元素
+所以 （n-1）个数为一组，那么 k 中有几个这样的组呢? k/(n-1) 个，那么剩下的一个组有几个数呢？k%(n-1) 个。所以最终结果就是 k/(n-1)*n+k%(n-1)如果 k 能够整除 n-1 时，此时需要减一。(PS: 怎么思考呢，就是我们在乘 n 操作时是认为前面有 k/(n-1) 个完整的组，然后加上余数，但是如果没有余数此时的这个树是可以被 n 整除的，此时最后一个组其实是不完整的，并没有走到最后一个位置，所以减一)
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);void solve(){    int n,k;    cin&gt;&gt;n&gt;&gt;k;    int a=k/(n-1);    int b=k%(n-1);    if(b)cout&lt;&lt;a*n+b&lt;&lt;endl;    else cout&lt;&lt;a*n+b-1&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
+
+I - Alice, Bob and Candies链接：Problem - 1352D - Codeforcesa从左往右枚举，b从右往左枚举。下一次吃的人要比上一次吃的人多。
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=1e3+5;void solve(){    int n;    cin&gt;&gt;n;    int a[N];    for(int i=1;i&lt;=n;i++)cin&gt;&gt;a[i];    int cnt=0,last=0,x=0,y=0;    int l=0,r=n;    while(l&lt;r){        cnt++;        int sum=0;        if(cnt%2){          while(l&lt;r&amp;&amp;sum&lt;=last)sum+=a[++l];          x+=sum;        }else{          while(l&lt;r&amp;&amp;sum&lt;=last)sum+=a[r--];          y+=sum;        }        last=sum;    }    cout&lt;&lt;cnt&lt;&lt;" "&lt;&lt;x&lt;&lt;" "&lt;&lt;y&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
+
+
+欢迎关注我的微信公众号呀微信公众号文章链接
+]]></content>
       <categories>
-        <category>每日一题</category>
+        <category>我的训练</category>
       </categories>
       <tags>
-        <tag>每日一题</tag>
+        <tag>题解</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>大一第七次周赛题解</title>
+    <url>/2025/12/28/%E5%A4%A7%E4%B8%80%E7%AC%AC%E4%B8%83%E6%AC%A1%E5%91%A8%E8%B5%9B/</url>
+    <content><![CDATA[A - 2链接： https://codeforces.com/problemset/problem/1692/A分析： 输入四个数后比较 a 和 b c d 的大小，如果 a 小了，ans加一，最后输出 ans即可。代码实现：
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);void solve(){    int a,b,c,d;    cin&gt;&gt;a&gt;&gt;b&gt;&gt;c&gt;&gt;d;    int ans=0;    if(b&gt;a)ans++;    if(c&gt;a)ans++;    if(d&gt;a)ans++;    cout&lt;&lt;ans&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	// int t=1;	while(t--)	{		solve();	}}
+B - 0链接： https://codeforces.com/problemset/problem/1692/B分析： 求至多剩多少个数就使这个数组的元素各不相同，我们每次找到两个元素个数大于一的数，把他删除，这样可以使数组长度尽可能大，最后删除次数是上取整的。可以用桶来计数。代码实现：
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=1e4+5;int a[N];void solve(){    int n;    cin&gt;&gt;n;    memset(a,0,sizeof a);    int ans=0;    for(int i=0;i&lt;n;i++)    {        int b;        cin&gt;&gt;b;        if(!a[b])a[b]++;        else ans++;    }    cout&lt;&lt;n-2*ceil(ans*1.0/2)&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	// int t=1;	while(t--)	{		solve();	}}
+C - 2链接： https://codeforces.com/problemset/problem/1692/C分析： 这个题我们可以看出来，在主教那一行、列都只有主教一个人，所以可以扫描行或列，就能找到答案。代码实现：
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);char a[9][9];void solve(){    for(int i=1;i&lt;=8;i++)    {        for(int j=1;j&lt;=8;j++)            cin&gt;&gt;a[i][j];    }    for(int i=2;i&lt;=7;i++)    {        for(int j=2;j&lt;=7;j++)        {            if(a[i-1][j-1]=='#'&amp;&amp;a[i+1][j-1]=='#'&amp;&amp;a[i-1][j+1]=='#'&amp;&amp;a[i+1][j+1]=='#'&amp;&amp;a[i][j]=='#')            {                cout&lt;&lt;i&lt;&lt;" "&lt;&lt;j&lt;&lt;endl;                break;            }        }    }}signed main(){	IOS	int t;	cin&gt;&gt;t;	// int t=1;	while(t--)	{		solve();	}}
+
+D - 6链接： https://codeforces.com/problemset/problem/1692/D分析： 从输入的时间点开始枚举直到这个时间点再次出现。把时间都转换为分钟会好看一些。代码实现：
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);bool check(int minute){    int h=minute/60;    minute=minute%60;    if(h%10==minute/10&amp;&amp;h/10==minute%10) return true;    else return false;}void solve(){    int t1,t2;    char s;    cin&gt;&gt;t1&gt;&gt;s&gt;&gt;t2;    int t,ans=0;    cin&gt;&gt;t;    int minute=t1*60+t2;    do{        if(check(minute))ans++;        minute+=t;        minute%=1440;//防止超过24小时，取余    }while(minute!=t1*60+t2);    cout&lt;&lt;ans&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	// int t=1;	while(t--)	{		solve();	}}
+
+也可以直接标记出回文时间的分钟数，直接进行匹配
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int p[16] = {0,70,140,210,280,350,601,671,741,811,881,951,1202,1272,1342,1412};//提前预处理出所有的回文时间。void solve(){    int t1,t2;    char s;    cin&gt;&gt;t1&gt;&gt;s&gt;&gt;t2;    int t,ans=0;    cin&gt;&gt;t;    int minute=t1*60+t2;    do{        for(int i=0;i&lt;16;i++)        {            if(minute==p[i])            {                ans++;                break;            }        }        minute+=t;        minute%=1440;//防止超过24小时，取余    }while(minute!=t1*60+t2);    cout&lt;&lt;ans&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	// int t=1;	while(t--)	{		solve();	}}
+
+E - 新链接： https://codeforces.com/problemset/problem/1692/E分析：显然，如果数组本身的和就小于 s，那是肯定无解的。然后从第一个数开始，用 l, r 代表左右端，然后进行遍历加入操作，直到达到数组长度，取最少的操作次数输出。代码实现：
+#include &lt;bits/stdc++.h&gt;using namespace std;//#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=2e5+5;int a[N];void solve(){    int n,s;    cin&gt;&gt;n&gt;&gt;s;    int sum=0;    for(int i=0;i&lt;n;i++)    {        cin&gt;&gt;a[i];        sum+=a[i];    }    if(sum&lt;s)    {        cout&lt;&lt;"-1"&lt;&lt;endl;        return;    }    int l=0,r=0;    sum=a[0];    int ans=0x3f3f3f3f;    while(l&lt;n&amp;&amp;r&lt;n)    {        if(sum==s){            ans=min(ans,l+n-r-1);            sum+=a[++r];        }else if(sum&gt;s)        {            sum-=a[l++];        }else{            sum+=a[++r];        }    }    cout&lt;&lt;ans&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	// int t=1;	while(t--)	{		solve();	}}
+
+F - 年链接： https://codeforces.com/problemset/problem/1692/F分析：要让三个数相加末尾为 3，这只和数字的个位有关，我们存下数组中每个数的个位出现次数，然后三重循环枚举 0~10 之间的数字之和。就可以得到答案。
+代码实现：
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);int a[15];void solve(){    memset(a,0,sizeof a);    int n;    cin&gt;&gt;n;    for(int i=1;i&lt;=n;i++)    {        int m;        cin&gt;&gt;m;        a[m%10]++;//这里只记录数字个位的出现次数。    }    bool flag=false;    for(int i=0;i&lt;=9;i++){        for(int j=0;j&lt;=9;j++){            for(int k=0;k&lt;=9;k++){                a[i]--;a[j]--;a[k]--;                if((i+j+k)%10==3&amp;&amp;a[i]&gt;=0&amp;&amp;a[j]&gt;=0&amp;&amp;a[k]&gt;=0)                {                    flag=true;                    break;                }                a[i]++;a[j]++;a[k]++;            }            if(flag)break;        }        if(flag)break;    }    if(flag)cout&lt;&lt;"YES"&lt;&lt;endl;      else cout&lt;&lt;"NO"&lt;&lt;endl;        }signed main(){	IOS	int t;	cin&gt;&gt;t;	// int t=1;	while(t--)	{		solve();	}}
+
+G - 快链接： https://codeforces.com/problemset/problem/1692/G分析：有多少段长度为 k 的区间满足题目中所说的性质。根据题目的公式可以发现，其实就是要求 ，所以就是求连续区间满足这个条件且满足区间长度为k+1 的区间个数。从第一个数字开始遍历即可。代码实现：
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=2e5+5;int a[N];void solve(){    int n,k;    cin&gt;&gt;n&gt;&gt;k;    for(int i=1;i&lt;=n;i++)cin&gt;&gt;a[i];    int len=1;    int ans=0;    for(int i=2;i&lt;=n;i++)    {        if(2*a[i]&gt;a[i-1])        {            len++;        }else len=1;        if(len&gt;k) ans++;//这里只要这段区间的长度一直在变大，这类区间的个数就可以一直增加，不进行len--操作也可以。    }    cout&lt;&lt;ans&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	// int t=1;	while(t--)	{		solve();	}}
+
+H - 乐链接： https://atcoder.jp/contests/abc438/tasks/abc438_e分析：用 st[N][35] 来表示第 i 个水桶，传递了  次后这个桶在谁手里把每个桶的初始状态都设为 st[i][0] 表示传递 0 次，桶还在自己手里。这里用二进制来拼凑出总步数。比如 10 的二进制是 用 sum[N][35] 来表示第 i 个水桶，经过  次操作后，会积累多少水。初始时 sum[i][0]=i代码实现：
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=2e5+5;int st[N][35];//用来表示第i个水桶，传递了2的j次后这个桶在谁手里//这里用二进制的思想，把一个数拆分。int sum[N][35];void solve(){    int n,q;    cin&gt;&gt;n&gt;&gt;q;    for(int i=1;i&lt;=n;i++)    {        cin&gt;&gt;st[i][0];        sum[i][0]=i;    }    for(int i=1;i&lt;31;i++)//对于int类型的二进制数最多只有31位    {        //递归计算        for(int j=1;j&lt;=n;j++)//桶编号        {            st[j][i]=st[st[j][i-1]][i-1];            sum[j][i]=sum[j][i-1]+sum[st[j][i-1]][i-1];        }    }    while(q--)    {        int t,b;        cin&gt;&gt;t&gt;&gt;b;        int ans=0;        for(int i=0;i&lt;31;i++)        {            if(t&gt;&gt;i&amp;1){                ans+=sum[b][i];                b=st[b][i];            }        }        cout&lt;&lt;ans&lt;&lt;endl;    }}signed main(){	IOS	int t=1;	while(t--)	{		solve();	}}
+
+欢迎关注我的微信公众号呀微信公众号文章链接
+]]></content>
+      <categories>
+        <category>我的训练</category>
+      </categories>
+      <tags>
+        <tag>题解</tag>
       </tags>
   </entry>
   <entry>
@@ -809,6 +805,24 @@ Acwing 4547. 伊格内修斯和公主IV看一道模板题吧。链接：[https:/
       <tags>
         <tag>每日一题</tag>
         <tag>CF</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>小苯的最短路</title>
+    <url>/2026/01/28/%E5%B0%8F%E8%8B%AF%E7%9A%84%E6%9C%80%E7%9F%AD%E8%B7%AF/</url>
+    <content><![CDATA[题目链接： https://ac.nowcoder.com/acm/problem/284229思路：结论题，首先需要推导的是怎样走最短，是直接从 1 走到 i 呢还是绕路经过某些点到 i 呢。假设我们通过点 j 到达点 i 吧。那么花费就是 ，由  可得：所以可知直接从 1 走到 i 最短。所以  。所以对于前半部分，如果 n 为偶数则为 0，如果 n 为奇数则为 1；对于后半部分，连续整数从 1 到 n 的异或结果有个规律，令 ，
+
+x=0 时，f (n)=n.
+x=1 时，f (n)=1.
+x=2 时，f (n)=n+1.
+x=3 时，f (n)=0.代码：
+
+#include&lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);void solve(){    int n;    cin&gt;&gt;n;    int x=n%2;    if(n%4==0) cout&lt;&lt;(n^x);    else if(n%4==1)cout&lt;&lt;(1^x);    else if(n%4==2)cout&lt;&lt;((n+1)^x);    else if(n%4==3)cout&lt;&lt;(0^x);    cout&lt;&lt;endl;}signed main(){    IOS    int t;    cin&gt;&gt;t;    while(t--)    {        solve();    }}]]></content>
+      <categories>
+        <category>每日一题</category>
+      </categories>
+      <tags>
+        <tag>每日一题</tag>
       </tags>
   </entry>
 </search>
