@@ -1,71 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>03Java学习day(3)</title>
-    <url>/2026/02/02/03Java%E5%AD%A6%E4%B9%A0day(3)/</url>
-    <content><![CDATA[在条件语句、选择语句和循环语句上，Java 的代码编写等同于 C++。
-if-else 语句当条件成立时，执行某些语句；否则执行另一些语句。不一定非有 else ，也不一定只有一个 else。比如进行年龄的筛选，小于 20 岁输出年轻人，大于 60 岁输出老年人，否则为中年人。
-public class ifdemo {      public static void main(String[] args) {          int age=25;          if(age&lt;20){              System.out.println("年轻人");          }else if(age&gt;60){              System.out.println("老年人");          }else System.out.println("中年人");      }  }
-输入三个整数，输出三个数中最大的那个。
-import java.util.Scanner;    public class ifdemo {      public static void main(String[] args) {          Scanner sc = new Scanner(System.in);          int a = sc.nextInt(),b = sc.nextInt(),c = sc.nextInt();          if(a&gt;b){              if(a&gt;c){System.out.println(a);}              else{System.out.println(c);}          }else {              if(b&gt;c)System.out.println(b);              else{System.out.println(c);}          }    }}
-常用的比较运算符：
-
-
-
-大于
-&gt;
-
-
-
-小于
-&lt;
-
-
-大于等于
-&gt; =
-
-
-小于等于
-&lt;=
-
-
-等于
-==
-
-
-不等于
-!=
-
-
-再来一个闰年的判断：
-
-
-
-import java.util.Scanner;    public class ifdemo {      public static void main(String[] args) {          Scanner sc = new Scanner(System.in);          int year = sc.nextInt();          if(year % 4 == 0 &amp;&amp; year % 100 != 0 || year % 400 == 0) {              System.out.println(year + "是闰年");          }else System.out.println(year + "不是闰年");      }  }
-switch 语句注意： swtich 语句中如果不加 break 语句，则从上到下匹配到第一个 case 后，会顺次执行后面每个 case 中的语句。default：表示所有情况都不匹配的时候，就执行该处内容，和if语句中的else相似
-import java.util.Scanner;public class Main {    public static void main(String[] args){        Scanner sc = new Scanner(System.in);         System.out.print("请输入一个数字（1-7）代表星期几：");        String name;        int day = sc.nextInt();          switch(day){            case 1:{                name="Monday";                break;            }            case 2:{                name="Tuesday";                break;            }            case 3:{                name="Wednesday";                break;            }            case 4:{                name="Thursday";                break;            }            case 5:{                name="Friday";                break;            }case 6:{                name="Saturday";                break;            }case 7:{                name="Sunday";                break;            }            default: name="I don't know!";        }        System.out.println(name);    }}
-
-for 循环for (init-statement; condition; expression) {    statement}
-在循环中需要初始化语句、条件判断语句、条件控制语句。init-statement 可以是声明语句、表达式、空语句，一般用来初始化循环变量；condition 是条件表达式，可以为空，空语句表示 true；expression 一般负责修改循环变量，可以为空。
-在一行中输出斐波那契数列的前 N 项，数字之间用空格隔开。
-import java.util.Scanner;public class Main{    public static void main(String[] args)    {        Scanner sc = new Scanner(System.in);        int n=sc.nextInt();        int a=0,b=1;        for(int i=0;i&lt;n;i++)        {            System.out.printf("%d ",a);            int c=a+b;            a=b;            b=c;        }    }}
-在循环中可能会使用 break 和 continue 语句。比如在判断质数中：
-import java.util.Scanner;public class Main{    public static void main(String[] args)    {        Scanner sc=new Scanner(System.in);        int n=sc.nextInt();        boolean isPrime = true;        for(int i=2;i&lt;=n/i;i++)        {            if(n%i==0){                isPrime=false;                break;            }        }        if(isPrime)System.out.println("YES");        else System.out.println("NO");    }}
-在求 1~100 的所有偶数之和：
-import java.util.Scanner;public class Main{    public static void main(String[] args)    {        int sum=0;        for(int i=1;i&lt;=100;i++)        {            if(i%2==1)continue;            sum+=i;        }        System.out.printf("从1到100的偶数和为：%d",sum);    }}
-while 循环这东西其实和 for 循环差不了多少。只不过是括号里只剩了一个条件判断语句。求 1~100 中所有数的立方和：
-public class Main{    public static void main(String[] args)    {        int i=1,sum=0;        while(i&lt;=100)        {            sum+=i*i*i;            i++;        }        System.out.println(sum);    }}
-do-while 循环do while 语句与 while 语句非常相似。唯一的区别是，do while 语句限制性循环体后检查条件。不管条件的值如何，都要至少执行一次循环。
-在写循环的时候一定要注意不要写出死循环 
-]]></content>
-      <categories>
-        <category>Java学习</category>
-      </categories>
-      <tags>
-        <tag>Java学习</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>01Java学习day(1)</title>
     <url>/2026/01/30/01Java%E5%AD%A6%E4%B9%A0day(1)/</url>
     <content><![CDATA[经典 Hello World开始学一门语言的第一步当然是输出 Hello World。
@@ -217,6 +152,71 @@ public class demo1 {      public static void main(String[] args) {         Strin
 字符串的输入输出sc.next () 在遇到空格、回车等空白字符时停止输入。sc.nextLine () 在遇到空格时不会停止输入。遇到回车才会停止。
 StringBuilder、StringBufferString拼接字符串后原字符串还存在于内存中，浪费内存。String 不能被修改，如果打算修改字符串，可以使用 StringBuilder 和 StringBuffer。StringBuffer 线程安全，速度较慢；StringBuilder 线程不安全，速度较快。
 public class demo1 {      public static void main(String[] args) {         StringBuilder sb=new StringBuilder("Hello");         sb.append("World");// 拼接字符串         System.out.println(sb);         //StringBuilder转String         String s=sb.toString();         System.out.println(s);         sb.reverse();//字符串翻转         System.out.println(sb);      }  }
+]]></content>
+      <categories>
+        <category>Java学习</category>
+      </categories>
+      <tags>
+        <tag>Java学习</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>03Java学习day(3)</title>
+    <url>/2026/02/02/03Java%E5%AD%A6%E4%B9%A0day(3)/</url>
+    <content><![CDATA[在条件语句、选择语句和循环语句上，Java 的代码编写等同于 C++。
+if-else 语句当条件成立时，执行某些语句；否则执行另一些语句。不一定非有 else ，也不一定只有一个 else。比如进行年龄的筛选，小于 20 岁输出年轻人，大于 60 岁输出老年人，否则为中年人。
+public class ifdemo {      public static void main(String[] args) {          int age=25;          if(age&lt;20){              System.out.println("年轻人");          }else if(age&gt;60){              System.out.println("老年人");          }else System.out.println("中年人");      }  }
+输入三个整数，输出三个数中最大的那个。
+import java.util.Scanner;    public class ifdemo {      public static void main(String[] args) {          Scanner sc = new Scanner(System.in);          int a = sc.nextInt(),b = sc.nextInt(),c = sc.nextInt();          if(a&gt;b){              if(a&gt;c){System.out.println(a);}              else{System.out.println(c);}          }else {              if(b&gt;c)System.out.println(b);              else{System.out.println(c);}          }    }}
+常用的比较运算符：
+
+
+
+大于
+&gt;
+
+
+
+小于
+&lt;
+
+
+大于等于
+&gt; =
+
+
+小于等于
+&lt;=
+
+
+等于
+==
+
+
+不等于
+!=
+
+
+再来一个闰年的判断：
+
+
+
+import java.util.Scanner;    public class ifdemo {      public static void main(String[] args) {          Scanner sc = new Scanner(System.in);          int year = sc.nextInt();          if(year % 4 == 0 &amp;&amp; year % 100 != 0 || year % 400 == 0) {              System.out.println(year + "是闰年");          }else System.out.println(year + "不是闰年");      }  }
+switch 语句注意： swtich 语句中如果不加 break 语句，则从上到下匹配到第一个 case 后，会顺次执行后面每个 case 中的语句。default：表示所有情况都不匹配的时候，就执行该处内容，和if语句中的else相似
+import java.util.Scanner;public class Main {    public static void main(String[] args){        Scanner sc = new Scanner(System.in);         System.out.print("请输入一个数字（1-7）代表星期几：");        String name;        int day = sc.nextInt();          switch(day){            case 1:{                name="Monday";                break;            }            case 2:{                name="Tuesday";                break;            }            case 3:{                name="Wednesday";                break;            }            case 4:{                name="Thursday";                break;            }            case 5:{                name="Friday";                break;            }case 6:{                name="Saturday";                break;            }case 7:{                name="Sunday";                break;            }            default: name="I don't know!";        }        System.out.println(name);    }}
+
+for 循环for (init-statement; condition; expression) {    statement}
+在循环中需要初始化语句、条件判断语句、条件控制语句。init-statement 可以是声明语句、表达式、空语句，一般用来初始化循环变量；condition 是条件表达式，可以为空，空语句表示 true；expression 一般负责修改循环变量，可以为空。
+在一行中输出斐波那契数列的前 N 项，数字之间用空格隔开。
+import java.util.Scanner;public class Main{    public static void main(String[] args)    {        Scanner sc = new Scanner(System.in);        int n=sc.nextInt();        int a=0,b=1;        for(int i=0;i&lt;n;i++)        {            System.out.printf("%d ",a);            int c=a+b;            a=b;            b=c;        }    }}
+在循环中可能会使用 break 和 continue 语句。比如在判断质数中：
+import java.util.Scanner;public class Main{    public static void main(String[] args)    {        Scanner sc=new Scanner(System.in);        int n=sc.nextInt();        boolean isPrime = true;        for(int i=2;i&lt;=n/i;i++)        {            if(n%i==0){                isPrime=false;                break;            }        }        if(isPrime)System.out.println("YES");        else System.out.println("NO");    }}
+在求 1~100 的所有偶数之和：
+import java.util.Scanner;public class Main{    public static void main(String[] args)    {        int sum=0;        for(int i=1;i&lt;=100;i++)        {            if(i%2==1)continue;            sum+=i;        }        System.out.printf("从1到100的偶数和为：%d",sum);    }}
+while 循环这东西其实和 for 循环差不了多少。只不过是括号里只剩了一个条件判断语句。求 1~100 中所有数的立方和：
+public class Main{    public static void main(String[] args)    {        int i=1,sum=0;        while(i&lt;=100)        {            sum+=i*i*i;            i++;        }        System.out.println(sum);    }}
+do-while 循环do while 语句与 while 语句非常相似。唯一的区别是，do while 语句限制性循环体后检查条件。不管条件的值如何，都要至少执行一次循环。
+在写循环的时候一定要注意不要写出死循环 
 ]]></content>
       <categories>
         <category>Java学习</category>
@@ -459,6 +459,32 @@ L Need Zero思路：签到题，要让 n 在一次乘积运算后个位为 0，�
       </tags>
   </entry>
   <entry>
+    <title>2026牛客寒假算法基础集训营5(B D G J F )</title>
+    <url>/2026/02/13/2026%E7%89%9B%E5%AE%A2%E5%AF%92%E5%81%87%E7%AE%97%E6%B3%95%E5%9F%BA%E7%A1%80%E9%9B%86%E8%AE%AD%E8%90%A55(B%20D%20G%20J%20F%20)/</url>
+    <content><![CDATA[B 智乃的瓷砖思路：按行数和列数进行划分。代码： 
+void solve(){    int n,m;    cin&gt;&gt;n&gt;&gt;m;    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=m;j++)        {            if(i%2==1&amp;&amp;j%2==1)cout&lt;&lt;"/";            else if(i%2&amp;&amp;j%2!=1)cout&lt;&lt;"\\";            else if(i%2!=1&amp;&amp;j%2)cout&lt;&lt;"\\";            else if(i%2!=1&amp;&amp;j%2!=1)cout&lt;&lt;"/";        }        cout&lt;&lt;endl;    }}
+D 智乃的果子思路：和合并石子类似，用小根堆来存，从小往大合并。每次取最轻的处理，两两合并，如果只有一个，那就取下个组的一个合并。代码： 
+void solve(){    int n;    cin&gt;&gt;n;    int ans=0;    int cnt=0;    priority_queue&lt;PII,vector&lt;PII&gt;,greater&lt;PII&gt;&gt; p;    for(int i=0;i&lt;n;i++)    {        int c,w;        cin&gt;&gt;c&gt;&gt;w;        p.push({w,c});        cnt+=c;    }    while(cnt&gt;1){        auto [w,c]=p.top();        p.pop();        if(c&gt;1){            int k=c/2;            int r=c%2;            int ww=w*2;            ans=(ans+(k%MOD)*(ww%MOD)%MOD)%MOD;            p.push({ww,k});            if(r)p.push({w,r});            cnt-=k;        }else{            auto [ww,cc]=p.top();            p.pop();            int www=ww+w;            ans=(ans+www%MOD)%MOD;            if(cc&gt;1)p.push({ww,cc-1});            p.push({www,1});            cnt-=1;        }    }    cout&lt;&lt;ans%MOD&lt;&lt;endl;}
+G 智乃的箭头魔术思路：模拟吧，把每种情况的操作用数组写一下就能过。代码中用 ax[i] 数组来记录此时状态为 i 执行第 x 种操作后的状态。最终结果为
+3132333010010310230010130130330130312312210210010321300120122322322101123223211001003013030031210332
+代码： 
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);int a0[4]={3,2,1,0};int a1[4]={0,3,2,1};int a2[4]={1,0,3,2};int a3[4]={2,1,0,3};int a4[4]={1,2,3,0};int a5[4]={3,0,1,2};void solve(){    string s;    cin&gt;&gt;s;    int state=0;    for(int i=0;i&lt;s.size();i++)    {        if(s[i]=='0')        {            cout&lt;&lt;a0[state];            state=a0[state];            continue;        }        if(s[i]=='1')        {            cout&lt;&lt;a1[state];            state=a1[state];            continue;        }        if(s[i]=='2')        {            cout&lt;&lt;a2[state];            state=a2[state];            continue;        }        if(s[i]=='3')        {            cout&lt;&lt;a3[state];            state=a3[state];            continue;        }        if(s[i]=='4')        {            cout&lt;&lt;a4[state];            state=a4[state];            continue;        }        if(s[i]=='5')        {            cout&lt;&lt;a5[state];            state=a5[state];            continue;        }    }}signed main(){	IOS	int t=1;	while(t--)	{		solve();	}}
+G 智乃的幻方思路：也是模拟吧，暴力检查。代码： 
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);#define endl '\n'int a[5][5];int b[10];void solve(){    bool flag=false;    int c1=0,c2=0,c3=0;    int h1=0,h2=0,h3=0;    for(int i=1;i&lt;=3;i++)    {        for(int j=1;j&lt;=3;j++)        {            cin&gt;&gt;a[i][j];            if(!b[a[i][j]])b[a[i][j]]++;            else break;        }    }    for(int i=1;i&lt;=3;i++){        c1+=a[1][i];        c2+=a[2][i];        c3+=a[3][i];        h1+=a[i][1];        h2+=a[i][2];        h3+=a[i][3];    }    int d1=a[1][1]+a[2][2]+a[3][3];    int d2=a[1][3]+a[2][2]+a[3][1];    if(c1==c2&amp;&amp;c2==c3&amp;&amp;c3==h1&amp;&amp;h1==h2&amp;&amp;h2==h3&amp;&amp;h3==d1&amp;&amp;d1==d2)flag=true;    if(flag)cout&lt;&lt;"Yes";    else cout&lt;&lt;"No";}signed main(){	IOS	int t=1;	while(t--)	{		solve();	}}
+F 智乃的算法竞赛群友思路：假设我们使用 x 个 qcjjkkt，y 个 td。重叠的越多越节省长度，最多重叠 min(x,y) 个。那么就有：最小长度我们要使  最大，固定 x，我们去找 y，可能取 0、、 。代码： 
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);#define endl '\n'int n,a,b;int check(int x){    if(x&lt;0)return 0;    if(7*x&gt;n)return 0;    int y=min(x,n-7*x),z=max((n-7*x-y)/2,0LL);    return a*x+b*(y+z);}void solve(){    cin&gt;&gt;n&gt;&gt;a&gt;&gt;b;    int ans=0;    ans=max(ans,check(0));    ans=max(ans,check(n/8+1));    ans=max(ans,check(n/8-1));    ans=max(ans,check(n/8));    ans=max(ans,check(n/7));    cout&lt;&lt;ans&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
+
+状态不好结束补题。😭
+]]></content>
+      <categories>
+        <category>我的训练</category>
+      </categories>
+      <tags>
+        <tag>题解</tag>
+        <tag>牛客</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>2026牛客寒假算法基础集训营4（A B C I H F G）</title>
     <url>/2026/02/09/2026%E7%89%9B%E5%AE%A2%E5%AF%92%E5%81%87%E7%AE%97%E6%B3%95%E5%9F%BA%E7%A1%80%E9%9B%86%E8%AE%AD%E8%90%A54%EF%BC%88A%20B%20C%20I%20H%20F%20G%EF%BC%89/</url>
     <content><![CDATA[依旧开场叠罚时😭😭
@@ -569,18 +595,6 @@ A 小L的三角尺思路：考察数学的，首先明确三角形的斜边长�
       </tags>
   </entry>
   <entry>
-    <title>CF1366C Palindromic Paths</title>
-    <url>/2026/02/01/CF1366C%20Palindromic%20Paths/</url>
-    <content><![CDATA[题目链接： Problem - 1366C - Codeforces题意：给你一个  的矩阵，里面每一位只有0和1，起点从  到  只能向下或向右走，思路：从  到  不管怎么走都要走  步，所以每条回文路径的长度为 。走到 a[i][j] 时一定走了 i+j-2 步，如果这是一条回文路径，那么第 K 步经过的格子值=第 (L-K) 步经过的格子值。但路径不唯一，不同路径在同一步可能选择不同格子。所以为了能够使所有路径都回文，我们要让所有第 K 步的格子都等于第 (L-K) 步的格子。每一步的可达格子集合是固定的。这样对于每一步就有两种选择，都改为 1 或者都改为 0，我们要选择修改次数最少的。所以可以统计每一步的 0/1 的数量。代码： 
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=35;int cnt[100][2];//这里需要注意的是cnt[step][0]表示step步可达的格子中0的数量，step=n+m-2，数组开够大void solve(){    int n,m;    cin&gt;&gt;n&gt;&gt;m;    memset(cnt,0,sizeof(cnt));    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=m;j++)        {            int t;            cin&gt;&gt;t;            int step=i+j-2;            cnt[step][t]++;        }    }    int l=n+m-2;    int ans=0;    for(int i=0,j=l;j&gt;i;j--,i++)    {        ans+=min(cnt[i][0]+cnt[j][0],cnt[i][1]+cnt[j][1]);    }    cout&lt;&lt;ans&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}]]></content>
-      <categories>
-        <category>每日一题</category>
-      </categories>
-      <tags>
-        <tag>每日一题</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>CF10518M.Too Easy</title>
     <url>/2026/02/02/CF10518M.Too%20Easy/</url>
     <content><![CDATA[题目链接： Problem - M - Codeforces题意：有一个无限大的二维网格，你从坐标  出发，要到达坐标 （也可能是同一个点）。每一步你可以向左、右、上、下走一格。你的任务是找出到达目标坐标所需的最少步数。你不能连续朝同一个方向走超过  步。思路：先不看题目的限制，从一个坐标到另一个坐标需要走的步数为 ，这里 s 和 t 值的大小是不确定的所以取绝对值，高级一点就叫曼哈顿距离。现在题目增加了一个不能在同一个方向连续走超过  步，其实就是我连续走 k 步然后换个方向走一步，然后再回来再走 k 步，这样循环下去。我们可以把方向分成主方向（步数多）和次方向。这样在主方向最多可以走 次方向步数 步，这时候是没走多余步数的。现在就可以分成两种情况：
@@ -598,12 +612,10 @@ A 小L的三角尺思路：考察数学的，首先明确三角形的斜边长�
       </tags>
   </entry>
   <entry>
-    <title>CF1610B. Kalindrome Array</title>
-    <url>/2026/02/01/CF1610B.%20Kalindrome%20Array/</url>
-    <content><![CDATA[题目链接： Problem - 1610B - Codeforces题意：判断一个数组是否是kalindrome（卡林德数组）。如果删去 k 个数组中等于 x 的元素能使其变为回文数组则为卡林德数组。k 可以等于 0。思路：如果一个数组刚开始就是回文数组，那么直接输出 YES。如果不是的话就开始从左右两边向里推进找到对称位置不相同的元素。可以发现，若存在一种不完全的删数方法，那么所有的数全都删掉也一定是可以的，这样就可以简化判断了。而且只会删两端第一次不匹配的两种数（否则一定不合法）。代码： 
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=2e5+5;int a[N];int b[N];int c[N];bool is_hw(int a[],int cnt){    for(int i=1;i&lt;=cnt/2;i++)    {        if(a[i]!=a[cnt-i+1])return false;    }    return true;}void solve(){    int n;    cin&gt;&gt;n;    for(int i=1;i&lt;=n;i++)cin&gt;&gt;a[i];    if(is_hw(a,n)){        cout&lt;&lt;"YES"&lt;&lt;endl;        return;    }    int x,y;    for(int i=1;i&lt;=n;i++)    {        if(a[i]!=a[n-i+1])        {            x=a[i];            y=a[n-i+1];            break;        }    }    int cnt1=0,cnt2=0;    //下面构造一下删去两种元素后的数组    for(int i=1;i&lt;=n;i++)    {        if(a[i]!=x)b[++cnt1]=a[i];        if(a[i]!=y)c[++cnt2]=a[i];    }    if(is_hw(b,cnt1)||is_hw(c,cnt2))cout&lt;&lt;"YES"&lt;&lt;endl;    else cout&lt;&lt;"NO"&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
-认为这种简单又粗糙的方式很顺手☺️☺️
-]]></content>
+    <title>CF1366C Palindromic Paths</title>
+    <url>/2026/02/01/CF1366C%20Palindromic%20Paths/</url>
+    <content><![CDATA[题目链接： Problem - 1366C - Codeforces题意：给你一个  的矩阵，里面每一位只有0和1，起点从  到  只能向下或向右走，思路：从  到  不管怎么走都要走  步，所以每条回文路径的长度为 。走到 a[i][j] 时一定走了 i+j-2 步，如果这是一条回文路径，那么第 K 步经过的格子值=第 (L-K) 步经过的格子值。但路径不唯一，不同路径在同一步可能选择不同格子。所以为了能够使所有路径都回文，我们要让所有第 K 步的格子都等于第 (L-K) 步的格子。每一步的可达格子集合是固定的。这样对于每一步就有两种选择，都改为 1 或者都改为 0，我们要选择修改次数最少的。所以可以统计每一步的 0/1 的数量。代码： 
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=35;int cnt[100][2];//这里需要注意的是cnt[step][0]表示step步可达的格子中0的数量，step=n+m-2，数组开够大void solve(){    int n,m;    cin&gt;&gt;n&gt;&gt;m;    memset(cnt,0,sizeof(cnt));    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=m;j++)        {            int t;            cin&gt;&gt;t;            int step=i+j-2;            cnt[step][t]++;        }    }    int l=n+m-2;    int ans=0;    for(int i=0,j=l;j&gt;i;j--,i++)    {        ans+=min(cnt[i][0]+cnt[j][0],cnt[i][1]+cnt[j][1]);    }    cout&lt;&lt;ans&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}]]></content>
       <categories>
         <category>每日一题</category>
       </categories>
@@ -624,36 +636,12 @@ A 小L的三角尺思路：考察数学的，首先明确三角形的斜边长�
       </tags>
   </entry>
   <entry>
-    <title>2026牛客寒假算法基础集训营5(B D G J F )</title>
-    <url>/2026/02/13/2026%E7%89%9B%E5%AE%A2%E5%AF%92%E5%81%87%E7%AE%97%E6%B3%95%E5%9F%BA%E7%A1%80%E9%9B%86%E8%AE%AD%E8%90%A55(B%20D%20G%20J%20F%20)/</url>
-    <content><![CDATA[B 智乃的瓷砖思路：按行数和列数进行划分。代码： 
-void solve(){    int n,m;    cin&gt;&gt;n&gt;&gt;m;    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=m;j++)        {            if(i%2==1&amp;&amp;j%2==1)cout&lt;&lt;"/";            else if(i%2&amp;&amp;j%2!=1)cout&lt;&lt;"\\";            else if(i%2!=1&amp;&amp;j%2)cout&lt;&lt;"\\";            else if(i%2!=1&amp;&amp;j%2!=1)cout&lt;&lt;"/";        }        cout&lt;&lt;endl;    }}
-D 智乃的果子思路：和合并石子类似，用小根堆来存，从小往大合并。每次取最轻的处理，两两合并，如果只有一个，那就取下个组的一个合并。代码： 
-void solve(){    int n;    cin&gt;&gt;n;    int ans=0;    int cnt=0;    priority_queue&lt;PII,vector&lt;PII&gt;,greater&lt;PII&gt;&gt; p;    for(int i=0;i&lt;n;i++)    {        int c,w;        cin&gt;&gt;c&gt;&gt;w;        p.push({w,c});        cnt+=c;    }    while(cnt&gt;1){        auto [w,c]=p.top();        p.pop();        if(c&gt;1){            int k=c/2;            int r=c%2;            int ww=w*2;            ans=(ans+(k%MOD)*(ww%MOD)%MOD)%MOD;            p.push({ww,k});            if(r)p.push({w,r});            cnt-=k;        }else{            auto [ww,cc]=p.top();            p.pop();            int www=ww+w;            ans=(ans+www%MOD)%MOD;            if(cc&gt;1)p.push({ww,cc-1});            p.push({www,1});            cnt-=1;        }    }    cout&lt;&lt;ans%MOD&lt;&lt;endl;}
-G 智乃的箭头魔术思路：模拟吧，把每种情况的操作用数组写一下就能过。代码中用 ax[i] 数组来记录此时状态为 i 执行第 x 种操作后的状态。最终结果为
-3132333010010310230010130130330130312312210210010321300120122322322101123223211001003013030031210332
-代码： 
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);int a0[4]={3,2,1,0};int a1[4]={0,3,2,1};int a2[4]={1,0,3,2};int a3[4]={2,1,0,3};int a4[4]={1,2,3,0};int a5[4]={3,0,1,2};void solve(){    string s;    cin&gt;&gt;s;    int state=0;    for(int i=0;i&lt;s.size();i++)    {        if(s[i]=='0')        {            cout&lt;&lt;a0[state];            state=a0[state];            continue;        }        if(s[i]=='1')        {            cout&lt;&lt;a1[state];            state=a1[state];            continue;        }        if(s[i]=='2')        {            cout&lt;&lt;a2[state];            state=a2[state];            continue;        }        if(s[i]=='3')        {            cout&lt;&lt;a3[state];            state=a3[state];            continue;        }        if(s[i]=='4')        {            cout&lt;&lt;a4[state];            state=a4[state];            continue;        }        if(s[i]=='5')        {            cout&lt;&lt;a5[state];            state=a5[state];            continue;        }    }}signed main(){	IOS	int t=1;	while(t--)	{		solve();	}}
-G 智乃的幻方思路：也是模拟吧，暴力检查。代码： 
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);#define endl '\n'int a[5][5];int b[10];void solve(){    bool flag=false;    int c1=0,c2=0,c3=0;    int h1=0,h2=0,h3=0;    for(int i=1;i&lt;=3;i++)    {        for(int j=1;j&lt;=3;j++)        {            cin&gt;&gt;a[i][j];            if(!b[a[i][j]])b[a[i][j]]++;            else break;        }    }    for(int i=1;i&lt;=3;i++){        c1+=a[1][i];        c2+=a[2][i];        c3+=a[3][i];        h1+=a[i][1];        h2+=a[i][2];        h3+=a[i][3];    }    int d1=a[1][1]+a[2][2]+a[3][3];    int d2=a[1][3]+a[2][2]+a[3][1];    if(c1==c2&amp;&amp;c2==c3&amp;&amp;c3==h1&amp;&amp;h1==h2&amp;&amp;h2==h3&amp;&amp;h3==d1&amp;&amp;d1==d2)flag=true;    if(flag)cout&lt;&lt;"Yes";    else cout&lt;&lt;"No";}signed main(){	IOS	int t=1;	while(t--)	{		solve();	}}
-F 智乃的算法竞赛群友思路：假设我们使用 x 个 qcjjkkt，y 个 td。重叠的越多越节省长度，最多重叠 min(x,y) 个。那么就有：最小长度我们要使  最大，固定 x，我们去找 y，可能取 0、、 。代码： 
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);#define endl '\n'int n,a,b;int check(int x){    if(x&lt;0)return 0;    if(7*x&gt;n)return 0;    int y=min(x,n-7*x),z=max((n-7*x-y)/2,0LL);    return a*x+b*(y+z);}void solve(){    cin&gt;&gt;n&gt;&gt;a&gt;&gt;b;    int ans=0;    ans=max(ans,check(0));    ans=max(ans,check(n/8+1));    ans=max(ans,check(n/8-1));    ans=max(ans,check(n/8));    ans=max(ans,check(n/7));    cout&lt;&lt;ans&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
-
-状态不好结束补题。😭
+    <title>CF1610B. Kalindrome Array</title>
+    <url>/2026/02/01/CF1610B.%20Kalindrome%20Array/</url>
+    <content><![CDATA[题目链接： Problem - 1610B - Codeforces题意：判断一个数组是否是kalindrome（卡林德数组）。如果删去 k 个数组中等于 x 的元素能使其变为回文数组则为卡林德数组。k 可以等于 0。思路：如果一个数组刚开始就是回文数组，那么直接输出 YES。如果不是的话就开始从左右两边向里推进找到对称位置不相同的元素。可以发现，若存在一种不完全的删数方法，那么所有的数全都删掉也一定是可以的，这样就可以简化判断了。而且只会删两端第一次不匹配的两种数（否则一定不合法）。代码： 
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=2e5+5;int a[N];int b[N];int c[N];bool is_hw(int a[],int cnt){    for(int i=1;i&lt;=cnt/2;i++)    {        if(a[i]!=a[cnt-i+1])return false;    }    return true;}void solve(){    int n;    cin&gt;&gt;n;    for(int i=1;i&lt;=n;i++)cin&gt;&gt;a[i];    if(is_hw(a,n)){        cout&lt;&lt;"YES"&lt;&lt;endl;        return;    }    int x,y;    for(int i=1;i&lt;=n;i++)    {        if(a[i]!=a[n-i+1])        {            x=a[i];            y=a[n-i+1];            break;        }    }    int cnt1=0,cnt2=0;    //下面构造一下删去两种元素后的数组    for(int i=1;i&lt;=n;i++)    {        if(a[i]!=x)b[++cnt1]=a[i];        if(a[i]!=y)c[++cnt2]=a[i];    }    if(is_hw(b,cnt1)||is_hw(c,cnt2))cout&lt;&lt;"YES"&lt;&lt;endl;    else cout&lt;&lt;"NO"&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
+认为这种简单又粗糙的方式很顺手☺️☺️
 ]]></content>
-      <categories>
-        <category>我的训练</category>
-      </categories>
-      <tags>
-        <tag>题解</tag>
-        <tag>牛客</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>CF907C. Shockers</title>
-    <url>/2026/01/31/CF907C.%20Shockers/</url>
-    <content><![CDATA[题目链接： https://codeforces.com/problemset/problem/907/C题意：给定 n 种字符串，三种不同的形式，! 表示受罚，. 表示不受罚，? 表示猜测。保证最后一次才猜对。问能少被惩罚多少次。思路：纯模拟，对于! 串取交集，对. ?串取差集。建立一个待定字符集。每次按照题目要求进行待定集的修改，当待定字母数成为 1 之后的操作都是多余的。代码： 
-#include&lt;bits/stdc++.h&gt;using namespace std;#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=50;int a[N];void solve(){    int n;    cin&gt;&gt;n;    for(int i=0;i&lt;26;i++)a[i]=1;//这里将待定集合都置为1.    int num=26;//最初需要猜测26次    int ans=0;    for(int i=1;i&lt;=n;i++)    {        char op;        cin&gt;&gt;op;        string str;        cin&gt;&gt;str;        if(op=='.'){            for(int j=0;j&lt;str.size();j++)            {                if(a[str[j]-'a'])                {                    a[str[j]-'a']=0;//排除这个字母。                    num--;                }            }        }        else if(op=='!')        {            //这时需要将待定集中非字符串内容去除            if(num==1)ans++;//这时候要是能猜对了你还猜也挨电。            int temp[26]={0};            for(int j=0;j&lt;str.size();j++)            {                temp[str[j]-'a']=1;            }            for(int j=0;j&lt;26;j++)            {                if(a[j]&amp;&amp;temp[j]==0)                {                    a[j]=0;                    num--;                }            }        }else {            if(i!=n){                if(num==1)ans++;//表示此时只需要一次就能猜对了，但是多猜了一次                if(a[str[0]-'a'])num--;                a[str[0]-'a']=0;            }        }    }    cout&lt;&lt;ans;}signed main(){    IOS    int t=1;    //cin&gt;&gt;t;    while(t--)    {        solve();    }}]]></content>
       <categories>
         <category>每日一题</category>
       </categories>
@@ -1081,6 +1069,69 @@ Leetcode 3211. 生成不含相邻零的二进制字符串//偷个懒先空着吧
       </tags>
   </entry>
   <entry>
+    <title>CF907C. Shockers</title>
+    <url>/2026/01/31/CF907C.%20Shockers/</url>
+    <content><![CDATA[题目链接： https://codeforces.com/problemset/problem/907/C题意：给定 n 种字符串，三种不同的形式，! 表示受罚，. 表示不受罚，? 表示猜测。保证最后一次才猜对。问能少被惩罚多少次。思路：纯模拟，对于! 串取交集，对. ?串取差集。建立一个待定字符集。每次按照题目要求进行待定集的修改，当待定字母数成为 1 之后的操作都是多余的。代码： 
+#include&lt;bits/stdc++.h&gt;using namespace std;#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=50;int a[N];void solve(){    int n;    cin&gt;&gt;n;    for(int i=0;i&lt;26;i++)a[i]=1;//这里将待定集合都置为1.    int num=26;//最初需要猜测26次    int ans=0;    for(int i=1;i&lt;=n;i++)    {        char op;        cin&gt;&gt;op;        string str;        cin&gt;&gt;str;        if(op=='.'){            for(int j=0;j&lt;str.size();j++)            {                if(a[str[j]-'a'])                {                    a[str[j]-'a']=0;//排除这个字母。                    num--;                }            }        }        else if(op=='!')        {            //这时需要将待定集中非字符串内容去除            if(num==1)ans++;//这时候要是能猜对了你还猜也挨电。            int temp[26]={0};            for(int j=0;j&lt;str.size();j++)            {                temp[str[j]-'a']=1;            }            for(int j=0;j&lt;26;j++)            {                if(a[j]&amp;&amp;temp[j]==0)                {                    a[j]=0;                    num--;                }            }        }else {            if(i!=n){                if(num==1)ans++;//表示此时只需要一次就能猜对了，但是多猜了一次                if(a[str[0]-'a'])num--;                a[str[0]-'a']=0;            }        }    }    cout&lt;&lt;ans;}signed main(){    IOS    int t=1;    //cin&gt;&gt;t;    while(t--)    {        solve();    }}]]></content>
+      <categories>
+        <category>每日一题</category>
+      </categories>
+      <tags>
+        <tag>每日一题</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>动态规划01</title>
+    <url>/2026/02/23/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%9201/</url>
+    <content><![CDATA[线性 dp–数字三角形模型数字三角形 Number Triangles题目链接：P1216 [IOI 1994 / USACO1.5] 数字三角形 Number Triangles - 洛谷思路：把这个三角抽象为二维数组。动态规划，我们设  表示从  到  的所有方案的集合的最大值。这个点可以由  或者  走过来。所以状态转移方程为 。答案就是最下面一层的最大值。代码：
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);#define endl '\n'const int N=1050;int a[N][N];int dp[N][N];void solve(){    int n;    cin&gt;&gt;n;    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=i;j++)        {            cin&gt;&gt;a[i][j];        }    }    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=i;j++)        {            dp[i][j]=max(dp[i-1][j],dp[i-1][j-1])+a[i][j];        }    }    int ans=-1e18;    for(int i=1;i&lt;=n;i++)ans=max(ans,dp[n][i]);    cout&lt;&lt;ans&lt;&lt;endl;}signed main(){	IOS	int t=1;	while(t--)	{		solve();	}}
+U280643 摘花生题目链接：U280643 摘花生 - 洛谷思路：数字三角形模型，我们可以开一个二维数组 dp[i][j] 来表示从  走到  的所有路线所能采摘到花生数量的最大值，最后答案为 。推导状态转移方程，由于题目限制， 点只能从  或  到达，所以最终方程为 。还可以进行优化，由于第 i 层只依赖于第 i 层和第 i-1 层，所以可以优化为一维数组。在当前层可以由上一层的该列到达或者由当前层的前列到达。代码：
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);#define endl '\n'const int N=150;int w[N][N];int dp[N][N];void solve(){    int n,m;    cin&gt;&gt;n&gt;&gt;m;    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=m;j++)        {            cin&gt;&gt;w[i][j];        }    }    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=m;j++)        {            dp[i][j]=max(dp[i-1][j],dp[i][j-1])+w[i][j];        }    }    cout&lt;&lt;dp[n][m]&lt;&lt;endl;}/*一维数组优化空间//用dp[m]来表示当前计算行第m列的最大值，当计算结束后直接输出dp[m]即可//记得及时清理数组void solve(){    int n,m;    cin&gt;&gt;n&gt;&gt;m;    int w;    memset(dp,0,sizeof dp);    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=m;j++)        {            cin&gt;&gt;w;            dp[j]=max(dp[j-1],dp[j])+w;        }    }    cout&lt;&lt;dp[m]&lt;&lt;endl;}*/signed main(){	IOS	int t;	cin&gt;&gt;t;	while(t--)	{		solve();	}}
+最低通行费题目链接：T118735 [ybt1287]最低通行费 - 洛谷思路：题目限制了不能超过  这其实就是不能往回走。所以我们的状态表示  仍然是从  走到  的所有方案的集合的最小值。 点只能从  或  到达，所以最终方程为 。求最小值，那么初始化为最大值。代码：
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);#define endl '\n'const int N=1050;int w[N][N];int dp[N][N];void solve(){    int n;    cin&gt;&gt;n;    memset(dp,0x3f,sizeof dp);    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=n;j++)        {            cin&gt;&gt;w[i][j];        }    }    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=n;j++)        {            if(i==1&amp;&amp;j==1)dp[1][1]=w[1][1];            else dp[i][j]=min(dp[i-1][j],dp[i][j-1])+w[i][j];        }    }    cout&lt;&lt;dp[n][n];}signed main(){	IOS	int t=1;	while(t--)	{		solve();	}}
+方格取数题目链接：P1004 [NOIP 2000 提高组] 方格取数 - 洛谷思路：如果只走一次使用  来表示从  走到 （） 所有路径集合的最大值。状态转移公式为 。不同的是这个题目要求走两次，那么以  来表示分别走到  、 的路径最大值。四维不太好做，可以发现只有当  时才可能踩到重复的格子。这样我们就可以用三维数组  来表示分别走到  、 的路径最大值。代码：
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);#define endl '\n'const int N=15;int w[N][N];int dp[2*N][N][N];void solve(){    int n;    cin&gt;&gt;n;    int a,b,c;    while(cin&gt;&gt;a&gt;&gt;b&gt;&gt;c){        w[a][b]=c;    }    for(int k=2;k&lt;=n*2;k++){        for(int i1=1;i1&lt;=n;i1++)        {            for(int i2=1;i2&lt;=n;i2++)            {                int j1=k-i1,j2=k-i2;                if(j1&gt;0&amp;&amp;j2&gt;0&amp;&amp;j1&lt;=n&amp;&amp;j2&lt;=n){                    int m=w[i1][j1];                    if(i1!=i2)m+=w[i2][j2];                    int &amp;x=dp[k][i1][i2];                    x=max(x,dp[k-1][i1-1][i2-1]+m);                    x=max(x,dp[k-1][i1-1][i2]+m);                    x=max(x,dp[k-1][i1][i2-1]+m);                    x=max(x,dp[k-1][i1][i2]+m);                }            }        }    }    cout&lt;&lt;dp[2*n][n][n];}signed main(){	IOS	int t=1;	while(t--)	{		solve();	}}
+传纸条题目链接：P1006 [NOIP 2008 提高组] 传纸条 - 洛谷思路：这个题目同上面方格取数的思路，这里的好感度可以看作是格子里的数字，每个数字只能用一次。代码：
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);#define endl '\n'const int N=55;int w[N][N];int dp[2*N][N][N];void solve(){    int n,m;    cin&gt;&gt;n&gt;&gt;m;    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=m;j++)        {            cin&gt;&gt;w[i][j];        }    }    for(int k=2;k&lt;=n+m;k++){        for(int i1=1;i1&lt;=n;i1++)        {            for(int i2=1;i2&lt;=n;i2++)            {                int j1=k-i1,j2=k-i2;                if(j1&gt;0&amp;&amp;j2&gt;0&amp;&amp;j1&lt;=m&amp;&amp;j2&lt;=m){                    int t=w[i1][j1];                    if(i1!=i2)t+=w[i2][j2];                    int &amp;x=dp[k][i1][i2];                    x=max(x,dp[k-1][i1-1][i2-1]+t);                    x=max(x,dp[k-1][i1-1][i2]+t);                    x=max(x,dp[k-1][i1][i2-1]+t);                    x=max(x,dp[k-1][i1][i2]+t);                }            }        }    }    cout&lt;&lt;dp[m+n][n][n];}signed main(){	IOS	int t=1;	while(t--)	{		solve();	}}
+线性 dp–最长上升子序列模型最长上升子序列题目链接：B3637 最长上升子序列 - 洛谷思路：用 f[i] 表示所有以 a[i] 结尾的严格单调上升子序列长度，初始时 f[i]=1 ，枚举序列的倒数第二个数，用 j(0&lt;j&lt;i) 来表示，若 a[j]&lt;a[i] 则 f[i]=max(f[i],f[j]+1)。代码：
+const int N=5500;int a[N];int f[N];void solve(){    int n;    cin&gt;&gt;n;    for(int i=1;i&lt;=n;i++)    {        cin&gt;&gt;a[i];        f[i]=1;    }    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;i;j++)        {            if(a[i]&gt;a[j])            f[i]=max(f[i],f[j]+1);        }    }    int ans=0;    for(int i=1;i&lt;=n;i++)ans=max(ans,f[i]);    cout&lt;&lt;ans;}
+使用二分查找可以减少时间复杂度，对于新进来的元素 a[i]，如果 a[i] 大于 f[cnt]，则 f 数组长度加一，将 a[i] 添加进去。反之用 a[i] 替换掉 f 数组中第一个大于或者等于 a[i] 的元素。这样虽然 f 数组中存的不是最长上升子序列，但是长度是相等的。
+const int N=1e5+5;int a[N];int f[N];int cnt;int find(int x){    int l=1,r=cnt;    while(l&lt;r){        int mid=(l+r)&gt;&gt;1;        if(f[mid]&gt;=x){            r=mid;        }else l=mid+1;    }    return l;}void solve(){    int n;    cin&gt;&gt;n;    for(int i=1;i&lt;=n;i++)    {        cin&gt;&gt;a[i];    }    f[++cnt]=a[1];    for(int i=2;i&lt;=n;i++)    {        if(f[cnt]&lt;a[i])f[++cnt]=a[i];        else{            int idx=find(a[i]);            f[idx]=a[i];        }    }    cout&lt;&lt;cnt;}
+
+怪盗基德的滑翔翼题目链接：U234151 怪盗基德的滑翔翼 - 洛谷思路：这个题其实就是求一个最长下降子序列，可以选任意楼为起点，假如选择 a[i] 为起点，那么最长距离为以 a[i] 为结尾的最长上升子序列。所以可以正向做一次反向再求一次得到答案最大值。代码：
+const int N=1e5+5;int a[N];int f[N];int b[N];void solve(){    int n;    cin&gt;&gt;n;    memset(b,0,sizeof b);    memset(f,0,sizeof f);    for(int i=1;i&lt;=n;i++)    {        cin&gt;&gt;a[i];        f[i]=1;        b[i]=1;//这里用了两个数组可能不好看    }    for(int i=n;i&gt;0;i--)    {        for(int j=n;j&gt;i;j--){            if(a[j]&lt;a[i])            f[i]=max(f[i],f[j]+1);        }    }    int ans=0;    // for(int i=1;i&lt;=n;i++)    // {    //     ans=max(ans,f[i]);    // }    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;i;j++)        {            if(a[j]&lt;a[i])b[i]=max(b[i],b[j]+1);        }    }    for(int i=1;i&lt;=n;i++)    {        ans=max(ans,max(f[i],b[i]));    }    cout&lt;&lt;ans&lt;&lt;endl;}
+登山题目链接：U247946 登山 - 洛谷思路：这里的要求一旦开始下降就不能再上升，相邻两个景点的海拔不能相同。按照编号递增顺序来浏览，那么就是先单调上升再单调下降。这样我们就要在中间选一个点，分别向两边走，取最大值。这样的话就先从左向右做一遍最长上升子序列再从右向左做一遍最长上升子序列，再进行枚举答案取最大值即可。代码：
+const int N=1e5+5;int a[N];int f[N],b[N];void solve(){    int n;    cin&gt;&gt;n;    memset(f,0,sizeof f);    for(int i=1;i&lt;=n;i++)    {        cin&gt;&gt;a[i];    }    int ans=0;    for(int i=1;i&lt;=n;i++)    {        f[i]=1;        for(int j=1;j&lt;i;j++)        {            if(a[j]&lt;a[i])f[i]=max(f[i],f[j]+1);        }    }    for(int i=n;i&gt;0;i--){        b[i]=1;        for(int j=n;j&gt;i;j--){            if(a[j]&lt;a[i])b[i]=max(b[i],b[j]+1);        }    }    for(int i=1;i&lt;=n;i++)    {        ans=max(ans,f[i]+b[i]-1);    }    cout&lt;&lt;ans&lt;&lt;endl;}
+合唱队形题目链接：P1091 [NOIP 2004 提高组] 合唱队形 - 洛谷思路：这个题目要求最少的出队人数，那么其实和上一题是相似的，我们找到满足这个类型队伍的最大值，用 n 减去即可。代码：代码只需要将输出修改为 cout&lt;&lt;n-ans&lt;&lt;endl。
+友好城市题目链接：P2782 友好城市 - 洛谷思路：先把一边排序，另一边的最长上升子序列的长度就是最多的的数量，一边已经确定好顺序了，只要保证另一边也是升序，就一定不会交叉。只用 dp 会超时，用二分优化。同样的用一个数组 f 来存，如果 a[i] 大于 f 最后一个数那么就可以放进去，长度加一。反之则找 f 数组中第一个大于 a[i] 的数替换。代码：
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);#define endl '\n'#define PII pair&lt;int,int&gt;#define x first#define y secondconst int N=2e5+5;PII a[N];int f[N],b[N];void solve(){    int n;    cin&gt;&gt;n;    for(int i=1;i&lt;=n;i++)    {        cin&gt;&gt;a[i].x;        cin&gt;&gt;a[i].y;    }    sort(a+1,a+1+n);    int cnt=0;    f[++cnt]=a[1].y;    for(int i=2;i&lt;=n;i++)    {        if(a[i].y&gt;f[cnt])f[++cnt]=a[i].y;        else{            int idx=upper_bound(f+1,f+cnt+1,a[i].y)-f;            f[idx]=a[i].y;        }            }    cout&lt;&lt;cnt;}signed main(){	IOS	int t=1;	while(t--)	{		solve();	}}
+最大上升子序列和题目链接：T285024 最大上升子序列和 - 洛谷思路：这个题目使用 f[i] 表示所有以 a[i] 结尾的上升子序列和的最大值。代码：
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);#define endl '\n'#define PII pair&lt;int,int&gt;#define x first#define y secondconst int N=2e5+5;int a[N];void solve(){    int n;    cin&gt;&gt;n;    vector&lt;int&gt; f(n+5);    for(int i=1;i&lt;=n;i++)    {        cin&gt;&gt;a[i];        f[i]=a[i];    }    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;i;j++)        {            if(a[j]&lt;a[i])f[i]=max(f[i],f[j]+a[i]);        }    }    int ans=*max_element(f.begin(),f.end());    cout&lt;&lt;ans;}signed main(){	IOS	int t=1;	while(t--)	{		solve();	}}
+导弹拦截题目链接：P1020 [NOIP 1999 提高组] 导弹拦截 - 洛谷思路：第一问求最长不上升子序列。第二问考虑贪心：对于每个数，如果现有的子序列的结尾都小于当前数字，那么开一个新的子序列。否则将它放到结尾大于等于它的最小子序列的后面。不会证明 🥱代码：
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);#define endl '\n'#define PII pair&lt;int,int&gt;#define x first#define y secondconst int N=2e5+5;int q[N];int a[N];int f[N];int cnt=0;void solve(){    int n=0,x;    while(cin&gt;&gt;x){        a[++n]=x;    }    f[++cnt]=a[1];    for(int i=2;i&lt;=n;i++)    {        if(f[cnt]&gt;=a[i])f[++cnt]=a[i];        else{            int idx=upper_bound(f+1,f+1+cnt,a[i],greater&lt;int&gt;())-f;            f[idx]=a[i];        }    }    cout&lt;&lt;cnt&lt;&lt;endl;    memset(q,0x3f,sizeof q);    cnt=1;    for(int i=1;i&lt;=n;i++)    {        if(q[cnt]&gt;=a[i]){            int idx=lower_bound(q+1,q+1+cnt,a[i])-q;            q[idx]=a[i];        }else{            q[++cnt]=a[i];        }    }    cout&lt;&lt;cnt;}signed main(){	IOS	int t=1;	while(t--)	{		solve();	}}
+最长公共子序列题目链接：897. 最长公共子序列 - AcWing题库思路：用 f[i][j] 表示 a 的前 i  个字母，和 b 的前 j 个字母的最长公共子序列长度。以 a[i] 、b[j] 是否在子序列中划分为四类：
+
+a[i] 不在，b[j] 不在 此时 max = f[i-1][j-1]。
+a[i] 在，b[j] 不在 此时 max=f[i−1][j]。
+a[i] 不在，b[j] 在 此时 max=f[i][j-1]。
+a[i] 在，b[j] 在 此时 max = f[i-1][j-1]+1 。1）情况是包含在 2）3）中的。代码：
+
+#include &lt;bits/stdc++.h&gt;using namespace std;#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);#define int long long#define endl '\n'const int N=1010;char a[N],b[N];int n,m;int f[N][N];void solve(){    cin&gt;&gt;n&gt;&gt;m;    cin&gt;&gt;a+1&gt;&gt;b+1;    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=m;j++)        {            f[i][j]=max(f[i-1][j],f[i][j-1]);            if(a[i]==b[j])f[i][j]=max(f[i][j],f[i-1][j-1]+1);        }    }    cout&lt;&lt;f[n][m];}signed main(){    IOS    int t=1;    while(t--){        solve();    }}
+两个排列的最长公共子序列题目链接：P1439 两个排列的最长公共子序列 - 洛谷思路：这个题目用上面的方法会超时。我们可以把第一个序列中第 i 个数映射为 i，在第二个序列中也进行修改。比如原序列为 A={1,2,5,4,3} B={5,3,4,2,1} 映射后为 A={1,2,3,4,5} B={3,5,4,2,1} 这样将求最长公共子序列问题转为求 B 序列的最长上升子序列。这样就可以用二分优化。代码：
+#include &lt;bits/stdc++.h&gt;using namespace std;#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);#define int long long#define endl '\n'const int N=1e5+5;int a[N],b[N];int n;int f[N];void solve(){    cin&gt;&gt;n;    for(int i=1;i&lt;=n;i++)    {        int x;        cin&gt;&gt;x;        a[x]=i;//这样使用A数组存储映射关系，方便B数组查询。    }    for(int i=1;i&lt;=n;i++)    {        int x;        cin&gt;&gt;x;        b[i]=a[x];    }    int cnt=0;    f[++cnt]=b[1];    for(int i=2;i&lt;=n;i++){        if(b[i]&gt;f[cnt])f[++cnt]=b[i];        else{            int idx=lower_bound(f+1,f+1+cnt,b[i])-f;            f[idx]=b[i];        }    }    cout&lt;&lt;cnt;}signed main(){    IOS    int t=1;    while(t--){        solve();    }}
+Missile Defence System题目链接：P10490 Missile Defence System - 洛谷思路：一个导弹有四种选择：1）用一个已经建立好的递增拦截装置拦截；2）用一个已经建立好的递减拦截装置拦截；3）新建一个递增拦截装置；4）新建一个递减拦截装置。考虑深搜 DFS，我们要进行搜索这颗导弹属于上升子序列还是下降子序列，搜索这颗导弹属于哪一个上升/下降子序列。代码：
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);#define endl '\n'#define PII pair&lt;int,int&gt;#define x first#define y secondconst int N=55;int up[N],down[N];int a[N];int ans;int n;//前u个导弹\上升系统个数su\和下降系统个数sdvoid dfs(int idx,int su,int sd){    if(su+sd&gt;=ans)return;    //最优性剪枝：当目前答案已经大于已知最优答案时，直接回溯    if(idx==n){        ans=su+sd;        return;    }    /*    使用上升系统拦截。    如果当前已有的上升拦截系统的高度都大于第u个导弹高度，则重新开一套系统    否则，就找到当前低于第u个导弹最高拦截系统来负责拦截    */    int k=0;    while(k&lt;su&amp;&amp;up[k]&gt;=a[idx])k++;    int t=up[k];    up[k]=a[idx];    if(k&gt;=su)dfs(idx+1,su+1,sd);    else dfs(idx+1,su,sd);    up[k]=t;//恢复现场    /*    用下降拦截系统来拦截    如果当前已有的下降拦截系统的高度都小于第u个导弹高度，则重新开一套系统    否则，则由当前大于第u个导弹最低拦截系统来负责拦截    */    k=0;    while(k&lt;sd&amp;&amp;down[k]&lt;=a[idx])k++;    t=down[k];    down[k]=a[idx];    if(k&gt;=sd)dfs(idx+1,su,sd+1);    else dfs(idx+1,su,sd);    down[k]=t;}void solve(){    while(cin&gt;&gt;n){        if(n==0)break;        for(int i=0;i&lt;n;i++)cin&gt;&gt;a[i];        ans=n;        dfs(0,0,0);        cout&lt;&lt;ans&lt;&lt;endl;    }}signed main(){	IOS	int t=1;	while(t--)	{		solve();	}}
+
+LCIS题目链接：P10954 LCIS - 洛谷思路：设 f[i][j] 表示 a 的前 i 个数和 b 的前 j 个数并以 b[j] 结尾的最大长度。当 a[i]=b[j] 时，只需要在前面找到一个可以把 b[j] 接上去的最长公共上升子序列，答案为 max(f[i-1][k])+1。当 a[i]≠b[j] 时，f[i][j]=f[i-1][j]代码：
+/*三重循环做法*/const int N=3100;int a[N],b[N];int n;int f[N][N];void solve(){    cin&gt;&gt;n;    for(int i=1;i&lt;=n;i++)cin&gt;&gt;a[i];    for(int i=1;i&lt;=n;i++)cin&gt;&gt;b[i];    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=n;j++)        {            f[i][j]=f[i-1][j];            if(a[i]==b[j]){                int mx=0;                for(int k=1;k&lt;j;k++){                    if(b[k]&lt;b[j])                        mx=max(mx,f[i-1][k]);                }                f[i][j]=mx+1;            }        }    }    int ans=0;    for(int i=1;i&lt;=n;i++)    {        ans=max(ans,f[n][i]);    }    cout&lt;&lt;ans;}/*	可以发现每次循环所得到的mx值满足a[i]&gt;b[k]的f[i-1][k]+1的前缀最大值，所以我们直接将这步提出来。*/const int N=3100;int a[N],b[N];int n;int f[N][N];void solve(){    cin&gt;&gt;n;    for(int i=1;i&lt;=n;i++)cin&gt;&gt;a[i];    for(int i=1;i&lt;=n;i++)cin&gt;&gt;b[i];    for(int i=1;i&lt;=n;i++)    {        int mx=0;        for(int j=1;j&lt;=n;j++)        {            if(a[i]!=b[j])f[i][j]=f[i-1][j];            if(a[i]==b[j])f[i][j]=max(mx,f[i][j])+1;            if(a[i]&gt;b[j])mx=max(mx,f[i-1][j]);        }    }    int ans=0;    for(int i=1;i&lt;=n;i++)    {        ans=max(ans,f[n][i]);    }    cout&lt;&lt;ans;}]]></content>
+      <categories>
+        <category>动态规划</category>
+      </categories>
+      <tags>
+        <tag>知识点</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>图上问题(并查集&amp;dfs)与单源最短路</title>
     <url>/2026/01/27/%E5%9B%BE%E4%B8%8A%E9%97%AE%E9%A2%98(%E5%B9%B6%E6%9F%A5%E9%9B%86&amp;dfs)%E4%B8%8E%E5%8D%95%E6%BA%90%E6%9C%80%E7%9F%AD%E8%B7%AF/</url>
     <content><![CDATA[回家胃疼了一周慢慢养病中……
@@ -1114,24 +1165,6 @@ P1462 通往奥格瑞玛的道路题目链接： https://www.luogu.com.cn/proble
       </categories>
       <tags>
         <tag>题解</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>小苯的最短路</title>
-    <url>/2026/01/28/%E5%B0%8F%E8%8B%AF%E7%9A%84%E6%9C%80%E7%9F%AD%E8%B7%AF/</url>
-    <content><![CDATA[题目链接： https://ac.nowcoder.com/acm/problem/284229思路：结论题，首先需要推导的是怎样走最短，是直接从 1 走到 i 呢还是绕路经过某些点到 i 呢。假设我们通过点 j 到达点 i 吧。那么花费就是 ，由  可得：所以可知直接从 1 走到 i 最短。所以  。所以对于前半部分，如果 n 为偶数则为 0，如果 n 为奇数则为 1；对于后半部分，连续整数从 1 到 n 的异或结果有个规律，令 ，
-
-x=0 时，f (n)=n.
-x=1 时，f (n)=1.
-x=2 时，f (n)=n+1.
-x=3 时，f (n)=0.代码：
-
-#include&lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);void solve(){    int n;    cin&gt;&gt;n;    int x=n%2;    if(n%4==0) cout&lt;&lt;(n^x);    else if(n%4==1)cout&lt;&lt;(1^x);    else if(n%4==2)cout&lt;&lt;((n+1)^x);    else if(n%4==3)cout&lt;&lt;(0^x);    cout&lt;&lt;endl;}signed main(){    IOS    int t;    cin&gt;&gt;t;    while(t--)    {        solve();    }}]]></content>
-      <categories>
-        <category>每日一题</category>
-      </categories>
-      <tags>
-        <tag>每日一题</tag>
       </tags>
   </entry>
   <entry>
@@ -1212,27 +1245,43 @@ G - 子知识点： 枚举题意：从数组里面选一些数字使得被选中
       </tags>
   </entry>
   <entry>
-    <title>牛客周赛Round 131</title>
-    <url>/2026/02/23/%E7%89%9B%E5%AE%A2%E5%91%A8%E8%B5%9BRound%20131/</url>
-    <content><![CDATA[A ICPC Balloons思路：简单的 if-else 或者是 swich-case。果然我只有碰到这种简单题才能想到多解。代码：
-void solve(){    char c;    cin&gt;&gt;c;    if(c=='A')cout&lt;&lt;"red";    else if(c=='B')cout&lt;&lt;"orange";    else if(c=='C')cout&lt;&lt;"blue";    else if(c=='D')cout&lt;&lt;"green";}
-B String Covering思路：可以发现，单个 1 是染不出来的。代码：
-void solve(){    int n;    cin&gt;&gt;n;    string s;    cin&gt;&gt;s;    bool flag=true;    int i=0;    while(i&lt;n){        if(s[i]=='1'){            int j=i;            while(j&lt;n&amp;&amp;s[j]=='1')j++;            if(j-i==1){                flag=false;                break;            }            i=j;        }else i++;    }    if(flag)cout&lt;&lt;"YES"&lt;&lt;endl;    else cout&lt;&lt;"NO"&lt;&lt;endl;}
-C Get The Sequence思路：遍历 a[i] 如果 a[i]&gt;=b[pos] 那么 pos++ 否则就找下一个 a 来匹配。不匹配的 a 可以直接删除。代码：
-void solve(){    int n,m;    cin&gt;&gt;n&gt;&gt;m;    vector&lt;int&gt;a(n);    vector&lt;int&gt;b(m);    for(int i=0;i&lt;n;i++)    {        cin&gt;&gt;a[i];    }    for(int i=0;i&lt;m;i++)    {        cin&gt;&gt;b[i];    }    int j=0;    for(int i=0;i&lt;n&amp;&amp;j&lt;m;i++)    {        if(a[i]&gt;=b[j]){            j++;        }    }    if(j==m)cout&lt;&lt;"YES"&lt;&lt;endl;    else cout&lt;&lt;"NO"&lt;&lt;endl;}
-D Longest Subsequence思路：要求最长子序列，我们可以用 dp[x] 来记录以 x 结尾的最长子序列的长度，它只能从 dp[x-1] 或 dp[x+1] 上演变过来。所以 dp[x]=max(dp[x],max(dp[x-1],dp[x+1])+1)。代码：
-void solve(){    int n;    cin&gt;&gt;n;    vector&lt;int&gt; a(n);    for(int i=0;i&lt;n;i++)    {        cin&gt;&gt;a[i];    }    vector&lt;int&gt; dp(n+5,0);    int ans=0;    for(int i=0;i&lt;n;i++)    {        int m=max(dp[a[i]+1],dp[a[i]-1])+1;        dp[a[i]]=max(m,dp[a[i]]);        ans=max(ans,dp[a[i]]);    }    cout&lt;&lt;ans&lt;&lt;endl;}
-E Eat The Candy思路：对每一个盒子都计算它所能达到的最大值，最后取所有盒子的最大值。对于每个位置计算：从左边能搬多少糖到 i、从右边能搬多少糖到 i。代码：
-void solve(){    int n;    cin&gt;&gt;n;    vector&lt;int&gt; a(n);    for(int i=0;i&lt;n;i++)    {        cin&gt;&gt;a[i];    }    vector&lt;int&gt; b(n),c(n);    int now=a[0];    for(int i=0;i&lt;n-1;i++)    {        b[i+1]=b[i]+min(a[i+1],now);        now=a[i+1]-min(a[i+1],now);    }    now=a[n-1];    for(int i=n-1;i&gt;=1;i--)    {        c[i-1]=c[i]+min(now,a[i-1]);        now=a[i-1]-min(a[i-1],now);    }    int ans=0;    for(int i=0;i&lt;n;i++)    {        int m=a[i];        if(i)m+=b[i-1];        if(i!=n-1)m+=c[i+1];        ans=max(ans,m);    }    cout&lt;&lt;ans&lt;&lt;endl;}
-F Bracket Coloring思路：括号匹配想到用栈。每一对括号考虑其前后是否相同。代码：
-const int MOD=998244353;void solve(){    int n;    cin&gt;&gt;n;    string s;    cin&gt;&gt;s;    int ans=1;    vector&lt;int&gt; st;    for(int i=0;i&lt;s.size();i++)    {        if(s[i]=='('){            if(i==0||s[i-1]==')')//如果是新的括号组的开始                st.push_back(1);            else st.push_back(0);//连续左括号中的一个        }else{            if(st.size()==1){//栈大小为1当前匹配的是最外层括号                ans=ans*2%MOD;            }else if(st.back()==1){//栈顶为1，这对括号独立                //序列中两个相邻位置的括号字符相同（同为 ‘(’或同为‘)’），则它们的颜色不能相同。                if(i==s.size()-1||s[i+1]=='(')                    ans=ans*2%MOD;            }            st.pop_back();        }    }    cout&lt;&lt;ans&lt;&lt;endl;}
-]]></content>
+    <title>小苯的最短路</title>
+    <url>/2026/01/28/%E5%B0%8F%E8%8B%AF%E7%9A%84%E6%9C%80%E7%9F%AD%E8%B7%AF/</url>
+    <content><![CDATA[题目链接： https://ac.nowcoder.com/acm/problem/284229思路：结论题，首先需要推导的是怎样走最短，是直接从 1 走到 i 呢还是绕路经过某些点到 i 呢。假设我们通过点 j 到达点 i 吧。那么花费就是 ，由  可得：所以可知直接从 1 走到 i 最短。所以  。所以对于前半部分，如果 n 为偶数则为 0，如果 n 为奇数则为 1；对于后半部分，连续整数从 1 到 n 的异或结果有个规律，令 ，
+
+x=0 时，f (n)=n.
+x=1 时，f (n)=1.
+x=2 时，f (n)=n+1.
+x=3 时，f (n)=0.代码：
+
+#include&lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);void solve(){    int n;    cin&gt;&gt;n;    int x=n%2;    if(n%4==0) cout&lt;&lt;(n^x);    else if(n%4==1)cout&lt;&lt;(1^x);    else if(n%4==2)cout&lt;&lt;((n+1)^x);    else if(n%4==3)cout&lt;&lt;(0^x);    cout&lt;&lt;endl;}signed main(){    IOS    int t;    cin&gt;&gt;t;    while(t--)    {        solve();    }}]]></content>
       <categories>
-        <category>我的训练</category>
+        <category>每日一题</category>
       </categories>
       <tags>
-        <tag>题解</tag>
-        <tag>牛客</tag>
+        <tag>每日一题</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Codeforces Round 867 (Div3) E + 摩尔投票算法</title>
+    <url>/2025/12/27/%E6%91%A9%E5%B0%94%E6%8A%95%E7%A5%A8%E7%AE%97%E6%B3%95/</url>
+    <content><![CDATA[题目链接： https://codeforces.com/problemset/problem/1822/E题目大意：求变成“反回文串”的最小次数。思路：我们先来看看它的要求， , 比如我有 5 个字符，要求第 3 个和第 5-3+1 个字符不同，很显然这是不可能的。所以对于奇数长度的字符串，这个要求不能满足。再观察一下还有什么情况不满足要求，对于 cccccc 这样的字符串无论怎么交换都不能满足要求，这可以是一种情况，再来观察一下，cccccb 呢？也不可以，我们来找找可以满足要求的最多的 c 的数量，cccbbb ,所以当一个字符出现的次数大于 n/2 时也是无解的。好了，那对于一个偶数长度的字符串我们如何去交换，使得其操作次数最小又能满足要求呢？我们应该去交换两个不满足要求的字符，这样实现两两交换，去尽可能减少操作次数。我们先用map根据字符来当下标，把所有回文对的下标存起来，来求得最多的字符数。然后遍历数组（这里只需要遍历一半），去求得需要修改得字符数。和代码：
+#include &lt;bits/stdc++.h&gt;using namespace std;#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);#define x first#define y secondvoid solve(){    int n;    cin&gt;&gt;n;    string s;    cin&gt;&gt;s;    map&lt;char,int&gt;mp;    if(s.size()%2){        cout&lt;&lt;"-1"&lt;&lt;endl;        return;    }    int ans=0;    for(int i=0;i&lt;n;i++)    {        mp[s[i]]++;        ans=max(ans,mp[s[i]]);//记录字符出现的最大次数    }    if(ans*2&gt;n){        cout&lt;&lt;"-1"&lt;&lt;endl;        return;    }    mp.clear();    int res=0;    ans=0;    for(int i=0;i&lt;n/2;i++)    {        if(s[i]==s[n-i-1])//这里数组下标是从0开始的所以把加一换成减一        {            res++;            ans=max(ans,++mp[s[i]]);//找出对称位置上相同字符中出现次数最多的那个字符的出现次数        }    }    cout&lt;&lt;max(ceil(res*1.00/2),ans*1.0)&lt;&lt;endl;}signed main(){	IOS	int t;    cin&gt;&gt;t;	while(t--)	{		solve();	}}
+
+注意一下：max 在使用时两个数据类型要相同，不可以是 (double, int)。
+知识点补充以上代码中用到了 ceil 函数，作用是对浮点数进行向上取整。所以有乘 1.0  的操作。
+摩尔投票算法其核心思想是：如果一个元素出现的次数在数组中超过一半，那么该元素的出现次数一定大于其他元素的出现次数之和。这个算法的核心是“计数抵消”，让不同元素相互抵消，最终筛选出候选元素，再通过验证确认是否为目标。分为两个阶段：候选阶段（投票）：先选数组第一个元素为候选元素，count = 1。之后遍历数组元素，1）若当前元素与候选元素相同：count++；2）若当前元素与候选元素不同：count–；当计数 count 减为 0 时，更换候选元素为当前元素，并将 count 重置为1。验证阶段（验票）：遍历结束后，候选元素是 “可能的多数元素”，但需要再次遍历数组，统计其实际出现次数。若实际次数超过总元素数的一半，则确认为主元素；否则说明不存在主元素（这里说明，如果题目已经标注明确存在多数元素的情况下可以省略）这个统计多数可以通过桶来计数。
+Acwing 4547. 伊格内修斯和公主IV看一道模板题吧。链接：[https://www.acwing.com/problem/content/description/4550/思路：摩尔投票算法，和上方思路一致
+#include &lt;bits/stdc++.h&gt;using namespace std;#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=1e6+5;void solve(){    int n;    while(cin&gt;&gt;n)    {        int cnt=0,ans=0,a,lst=0;        while(n--)        {            cin&gt;&gt;a;            if(a==lst)cnt++;            else{                if(!cnt)lst=a,cnt=1;//数组开头第一个数，或者是计数cnt减到0时更换主元素。                else cnt--;//不一致时cnt--            }        }        cout&lt;&lt;lst&lt;&lt;endl;    }}signed main(){	IOS	int t=1;	while(t--)	{		solve();	}}
+
+欢迎关注我的微信公众号呀微信公众号文章链接
+]]></content>
+      <categories>
+        <category>每日一题</category>
+      </categories>
+      <tags>
+        <tag>每日一题</tag>
+        <tag>CF</tag>
       </tags>
   </entry>
   <entry>
@@ -1263,79 +1312,6 @@ F 先放放😫😫
       </tags>
   </entry>
   <entry>
-    <title>动态规划01</title>
-    <url>/2026/02/23/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%9201/</url>
-    <content><![CDATA[线性 dp–数字三角形模型数字三角形 Number Triangles题目链接：P1216 [IOI 1994 / USACO1.5] 数字三角形 Number Triangles - 洛谷思路：把这个三角抽象为二维数组。动态规划，我们设  表示从  到  的所有方案的集合的最大值。这个点可以由  或者  走过来。所以状态转移方程为 。答案就是最下面一层的最大值。代码：
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);#define endl '\n'const int N=1050;int a[N][N];int dp[N][N];void solve(){    int n;    cin&gt;&gt;n;    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=i;j++)        {            cin&gt;&gt;a[i][j];        }    }    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=i;j++)        {            dp[i][j]=max(dp[i-1][j],dp[i-1][j-1])+a[i][j];        }    }    int ans=-1e18;    for(int i=1;i&lt;=n;i++)ans=max(ans,dp[n][i]);    cout&lt;&lt;ans&lt;&lt;endl;}signed main(){	IOS	int t=1;	while(t--)	{		solve();	}}
-U280643 摘花生题目链接：U280643 摘花生 - 洛谷思路：数字三角形模型，我们可以开一个二维数组 dp[i][j] 来表示从  走到  的所有路线所能采摘到花生数量的最大值，最后答案为 。推导状态转移方程，由于题目限制， 点只能从  或  到达，所以最终方程为 。还可以进行优化，由于第 i 层只依赖于第 i 层和第 i-1 层，所以可以优化为一维数组。在当前层可以由上一层的该列到达或者由当前层的前列到达。代码：
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);#define endl '\n'const int N=150;int w[N][N];int dp[N][N];void solve(){    int n,m;    cin&gt;&gt;n&gt;&gt;m;    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=m;j++)        {            cin&gt;&gt;w[i][j];        }    }    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=m;j++)        {            dp[i][j]=max(dp[i-1][j],dp[i][j-1])+w[i][j];        }    }    cout&lt;&lt;dp[n][m]&lt;&lt;endl;}/*一维数组优化空间//用dp[m]来表示当前计算行第m列的最大值，当计算结束后直接输出dp[m]即可//记得及时清理数组void solve(){    int n,m;    cin&gt;&gt;n&gt;&gt;m;    int w;    memset(dp,0,sizeof dp);    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=m;j++)        {            cin&gt;&gt;w;            dp[j]=max(dp[j-1],dp[j])+w;        }    }    cout&lt;&lt;dp[m]&lt;&lt;endl;}*/signed main(){	IOS	int t;	cin&gt;&gt;t;	while(t--)	{		solve();	}}
-最低通行费题目链接：T118735 [ybt1287]最低通行费 - 洛谷思路：题目限制了不能超过  这其实就是不能往回走。所以我们的状态表示  仍然是从  走到  的所有方案的集合的最小值。 点只能从  或  到达，所以最终方程为 。求最小值，那么初始化为最大值。代码：
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);#define endl '\n'const int N=1050;int w[N][N];int dp[N][N];void solve(){    int n;    cin&gt;&gt;n;    memset(dp,0x3f,sizeof dp);    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=n;j++)        {            cin&gt;&gt;w[i][j];        }    }    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=n;j++)        {            if(i==1&amp;&amp;j==1)dp[1][1]=w[1][1];            else dp[i][j]=min(dp[i-1][j],dp[i][j-1])+w[i][j];        }    }    cout&lt;&lt;dp[n][n];}signed main(){	IOS	int t=1;	while(t--)	{		solve();	}}
-方格取数题目链接：P1004 [NOIP 2000 提高组] 方格取数 - 洛谷思路：如果只走一次使用  来表示从  走到 （） 所有路径集合的最大值。状态转移公式为 。不同的是这个题目要求走两次，那么以  来表示分别走到  、 的路径最大值。四维不太好做，可以发现只有当  时才可能踩到重复的格子。这样我们就可以用三维数组  来表示分别走到  、 的路径最大值。代码：
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);#define endl '\n'const int N=15;int w[N][N];int dp[2*N][N][N];void solve(){    int n;    cin&gt;&gt;n;    int a,b,c;    while(cin&gt;&gt;a&gt;&gt;b&gt;&gt;c){        w[a][b]=c;    }    for(int k=2;k&lt;=n*2;k++){        for(int i1=1;i1&lt;=n;i1++)        {            for(int i2=1;i2&lt;=n;i2++)            {                int j1=k-i1,j2=k-i2;                if(j1&gt;0&amp;&amp;j2&gt;0&amp;&amp;j1&lt;=n&amp;&amp;j2&lt;=n){                    int m=w[i1][j1];                    if(i1!=i2)m+=w[i2][j2];                    int &amp;x=dp[k][i1][i2];                    x=max(x,dp[k-1][i1-1][i2-1]+m);                    x=max(x,dp[k-1][i1-1][i2]+m);                    x=max(x,dp[k-1][i1][i2-1]+m);                    x=max(x,dp[k-1][i1][i2]+m);                }            }        }    }    cout&lt;&lt;dp[2*n][n][n];}signed main(){	IOS	int t=1;	while(t--)	{		solve();	}}
-传纸条题目链接：P1006 [NOIP 2008 提高组] 传纸条 - 洛谷思路：这个题目同上面方格取数的思路，这里的好感度可以看作是格子里的数字，每个数字只能用一次。代码：
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);#define endl '\n'const int N=55;int w[N][N];int dp[2*N][N][N];void solve(){    int n,m;    cin&gt;&gt;n&gt;&gt;m;    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=m;j++)        {            cin&gt;&gt;w[i][j];        }    }    for(int k=2;k&lt;=n+m;k++){        for(int i1=1;i1&lt;=n;i1++)        {            for(int i2=1;i2&lt;=n;i2++)            {                int j1=k-i1,j2=k-i2;                if(j1&gt;0&amp;&amp;j2&gt;0&amp;&amp;j1&lt;=m&amp;&amp;j2&lt;=m){                    int t=w[i1][j1];                    if(i1!=i2)t+=w[i2][j2];                    int &amp;x=dp[k][i1][i2];                    x=max(x,dp[k-1][i1-1][i2-1]+t);                    x=max(x,dp[k-1][i1-1][i2]+t);                    x=max(x,dp[k-1][i1][i2-1]+t);                    x=max(x,dp[k-1][i1][i2]+t);                }            }        }    }    cout&lt;&lt;dp[m+n][n][n];}signed main(){	IOS	int t=1;	while(t--)	{		solve();	}}
-线性 dp–最长上升子序列模型最长上升子序列题目链接：B3637 最长上升子序列 - 洛谷思路：用 f[i] 表示所有以 a[i] 结尾的严格单调上升子序列长度，初始时 f[i]=1 ，枚举序列的倒数第二个数，用 j(0&lt;j&lt;i) 来表示，若 a[j]&lt;a[i] 则 f[i]=max(f[i],f[j]+1)。代码：
-const int N=5500;int a[N];int f[N];void solve(){    int n;    cin&gt;&gt;n;    for(int i=1;i&lt;=n;i++)    {        cin&gt;&gt;a[i];        f[i]=1;    }    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;i;j++)        {            if(a[i]&gt;a[j])            f[i]=max(f[i],f[j]+1);        }    }    int ans=0;    for(int i=1;i&lt;=n;i++)ans=max(ans,f[i]);    cout&lt;&lt;ans;}
-使用二分查找可以减少时间复杂度，对于新进来的元素 a[i]，如果 a[i] 大于 f[cnt]，则 f 数组长度加一，将 a[i] 添加进去。反之用 a[i] 替换掉 f 数组中第一个大于或者等于 a[i] 的元素。这样虽然 f 数组中存的不是最长上升子序列，但是长度是相等的。
-const int N=1e5+5;int a[N];int f[N];int cnt;int find(int x){    int l=1,r=cnt;    while(l&lt;r){        int mid=(l+r)&gt;&gt;1;        if(f[mid]&gt;=x){            r=mid;        }else l=mid+1;    }    return l;}void solve(){    int n;    cin&gt;&gt;n;    for(int i=1;i&lt;=n;i++)    {        cin&gt;&gt;a[i];    }    f[++cnt]=a[1];    for(int i=2;i&lt;=n;i++)    {        if(f[cnt]&lt;a[i])f[++cnt]=a[i];        else{            int idx=find(a[i]);            f[idx]=a[i];        }    }    cout&lt;&lt;cnt;}
-
-怪盗基德的滑翔翼题目链接：U234151 怪盗基德的滑翔翼 - 洛谷思路：这个题其实就是求一个最长下降子序列，可以选任意楼为起点，假如选择 a[i] 为起点，那么最长距离为以 a[i] 为结尾的最长上升子序列。所以可以正向做一次反向再求一次得到答案最大值。代码：
-const int N=1e5+5;int a[N];int f[N];int b[N];void solve(){    int n;    cin&gt;&gt;n;    memset(b,0,sizeof b);    memset(f,0,sizeof f);    for(int i=1;i&lt;=n;i++)    {        cin&gt;&gt;a[i];        f[i]=1;        b[i]=1;//这里用了两个数组可能不好看    }    for(int i=n;i&gt;0;i--)    {        for(int j=n;j&gt;i;j--){            if(a[j]&lt;a[i])            f[i]=max(f[i],f[j]+1);        }    }    int ans=0;    // for(int i=1;i&lt;=n;i++)    // {    //     ans=max(ans,f[i]);    // }    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;i;j++)        {            if(a[j]&lt;a[i])b[i]=max(b[i],b[j]+1);        }    }    for(int i=1;i&lt;=n;i++)    {        ans=max(ans,max(f[i],b[i]));    }    cout&lt;&lt;ans&lt;&lt;endl;}
-登山题目链接：U247946 登山 - 洛谷思路：这里的要求一旦开始下降就不能再上升，相邻两个景点的海拔不能相同。按照编号递增顺序来浏览，那么就是先单调上升再单调下降。这样我们就要在中间选一个点，分别向两边走，取最大值。这样的话就先从左向右做一遍最长上升子序列再从右向左做一遍最长上升子序列，再进行枚举答案取最大值即可。代码：
-const int N=1e5+5;int a[N];int f[N],b[N];void solve(){    int n;    cin&gt;&gt;n;    memset(f,0,sizeof f);    for(int i=1;i&lt;=n;i++)    {        cin&gt;&gt;a[i];    }    int ans=0;    for(int i=1;i&lt;=n;i++)    {        f[i]=1;        for(int j=1;j&lt;i;j++)        {            if(a[j]&lt;a[i])f[i]=max(f[i],f[j]+1);        }    }    for(int i=n;i&gt;0;i--){        b[i]=1;        for(int j=n;j&gt;i;j--){            if(a[j]&lt;a[i])b[i]=max(b[i],b[j]+1);        }    }    for(int i=1;i&lt;=n;i++)    {        ans=max(ans,f[i]+b[i]-1);    }    cout&lt;&lt;ans&lt;&lt;endl;}
-合唱队形题目链接：P1091 [NOIP 2004 提高组] 合唱队形 - 洛谷思路：这个题目要求最少的出队人数，那么其实和上一题是相似的，我们找到满足这个类型队伍的最大值，用 n 减去即可。代码：代码只需要将输出修改为 cout&lt;&lt;n-ans&lt;&lt;endl。
-友好城市题目链接：P2782 友好城市 - 洛谷思路：先把一边排序，另一边的最长上升子序列的长度就是最多的的数量，一边已经确定好顺序了，只要保证另一边也是升序，就一定不会交叉。只用 dp 会超时，用二分优化。同样的用一个数组 f 来存，如果 a[i] 大于 f 最后一个数那么就可以放进去，长度加一。反之则找 f 数组中第一个大于 a[i] 的数替换。代码：
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);#define endl '\n'#define PII pair&lt;int,int&gt;#define x first#define y secondconst int N=2e5+5;PII a[N];int f[N],b[N];void solve(){    int n;    cin&gt;&gt;n;    for(int i=1;i&lt;=n;i++)    {        cin&gt;&gt;a[i].x;        cin&gt;&gt;a[i].y;    }    sort(a+1,a+1+n);    int cnt=0;    f[++cnt]=a[1].y;    for(int i=2;i&lt;=n;i++)    {        if(a[i].y&gt;f[cnt])f[++cnt]=a[i].y;        else{            int idx=upper_bound(f+1,f+cnt+1,a[i].y)-f;            f[idx]=a[i].y;        }            }    cout&lt;&lt;cnt;}signed main(){	IOS	int t=1;	while(t--)	{		solve();	}}
-最大上升子序列和题目链接：T285024 最大上升子序列和 - 洛谷思路：这个题目使用 f[i] 表示所有以 a[i] 结尾的上升子序列和的最大值。代码：
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);#define endl '\n'#define PII pair&lt;int,int&gt;#define x first#define y secondconst int N=2e5+5;int a[N];void solve(){    int n;    cin&gt;&gt;n;    vector&lt;int&gt; f(n+5);    for(int i=1;i&lt;=n;i++)    {        cin&gt;&gt;a[i];        f[i]=a[i];    }    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;i;j++)        {            if(a[j]&lt;a[i])f[i]=max(f[i],f[j]+a[i]);        }    }    int ans=*max_element(f.begin(),f.end());    cout&lt;&lt;ans;}signed main(){	IOS	int t=1;	while(t--)	{		solve();	}}
-导弹拦截题目链接：P1020 [NOIP 1999 提高组] 导弹拦截 - 洛谷思路：第一问求最长不上升子序列。第二问考虑贪心：对于每个数，如果现有的子序列的结尾都小于当前数字，那么开一个新的子序列。否则将它放到结尾大于等于它的最小子序列的后面。不会证明 🥱代码：
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);#define endl '\n'#define PII pair&lt;int,int&gt;#define x first#define y secondconst int N=2e5+5;int q[N];int a[N];int f[N];int cnt=0;void solve(){    int n=0,x;    while(cin&gt;&gt;x){        a[++n]=x;    }    f[++cnt]=a[1];    for(int i=2;i&lt;=n;i++)    {        if(f[cnt]&gt;=a[i])f[++cnt]=a[i];        else{            int idx=upper_bound(f+1,f+1+cnt,a[i],greater&lt;int&gt;())-f;            f[idx]=a[i];        }    }    cout&lt;&lt;cnt&lt;&lt;endl;    memset(q,0x3f,sizeof q);    cnt=1;    for(int i=1;i&lt;=n;i++)    {        if(q[cnt]&gt;=a[i]){            int idx=lower_bound(q+1,q+1+cnt,a[i])-q;            q[idx]=a[i];        }else{            q[++cnt]=a[i];        }    }    cout&lt;&lt;cnt;}signed main(){	IOS	int t=1;	while(t--)	{		solve();	}}
-最长公共子序列题目链接：897. 最长公共子序列 - AcWing题库思路：用 f[i][j] 表示 a 的前 i  个字母，和 b 的前 j 个字母的最长公共子序列长度。以 a[i] 、b[j] 是否在子序列中划分为四类：
-
-a[i] 不在，b[j] 不在 此时 max = f[i-1][j-1]。
-a[i] 在，b[j] 不在 此时 max=f[i−1][j]。
-a[i] 不在，b[j] 在 此时 max=f[i][j-1]。
-a[i] 在，b[j] 在 此时 max = f[i-1][j-1]+1 。1）情况是包含在 2）3）中的。代码：
-
-#include &lt;bits/stdc++.h&gt;using namespace std;#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);#define int long long#define endl '\n'const int N=1010;char a[N],b[N];int n,m;int f[N][N];void solve(){    cin&gt;&gt;n&gt;&gt;m;    cin&gt;&gt;a+1&gt;&gt;b+1;    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=m;j++)        {            f[i][j]=max(f[i-1][j],f[i][j-1]);            if(a[i]==b[j])f[i][j]=max(f[i][j],f[i-1][j-1]+1);        }    }    cout&lt;&lt;f[n][m];}signed main(){    IOS    int t=1;    while(t--){        solve();    }}
-两个排列的最长公共子序列题目链接：P1439 两个排列的最长公共子序列 - 洛谷思路：这个题目用上面的方法会超时。我们可以把第一个序列中第 i 个数映射为 i，在第二个序列中也进行修改。比如原序列为 A={1,2,5,4,3} B={5,3,4,2,1} 映射后为 A={1,2,3,4,5} B={3,5,4,2,1} 这样将求最长公共子序列问题转为求 B 序列的最长上升子序列。这样就可以用二分优化。代码：
-#include &lt;bits/stdc++.h&gt;using namespace std;#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);#define int long long#define endl '\n'const int N=1e5+5;int a[N],b[N];int n;int f[N];void solve(){    cin&gt;&gt;n;    for(int i=1;i&lt;=n;i++)    {        int x;        cin&gt;&gt;x;        a[x]=i;//这样使用A数组存储映射关系，方便B数组查询。    }    for(int i=1;i&lt;=n;i++)    {        int x;        cin&gt;&gt;x;        b[i]=a[x];    }    int cnt=0;    f[++cnt]=b[1];    for(int i=2;i&lt;=n;i++){        if(b[i]&gt;f[cnt])f[++cnt]=b[i];        else{            int idx=lower_bound(f+1,f+1+cnt,b[i])-f;            f[idx]=b[i];        }    }    cout&lt;&lt;cnt;}signed main(){    IOS    int t=1;    while(t--){        solve();    }}
-Missile Defence System题目链接：P10490 Missile Defence System - 洛谷思路：一个导弹有四种选择：1）用一个已经建立好的递增拦截装置拦截；2）用一个已经建立好的递减拦截装置拦截；3）新建一个递增拦截装置；4）新建一个递减拦截装置。考虑深搜 DFS，我们要进行搜索这颗导弹属于上升子序列还是下降子序列，搜索这颗导弹属于哪一个上升/下降子序列。代码：
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);#define endl '\n'#define PII pair&lt;int,int&gt;#define x first#define y secondconst int N=55;int up[N],down[N];int a[N];int ans;int n;//前u个导弹\上升系统个数su\和下降系统个数sdvoid dfs(int idx,int su,int sd){    if(su+sd&gt;=ans)return;    //最优性剪枝：当目前答案已经大于已知最优答案时，直接回溯    if(idx==n){        ans=su+sd;        return;    }    /*    使用上升系统拦截。    如果当前已有的上升拦截系统的高度都大于第u个导弹高度，则重新开一套系统    否则，就找到当前低于第u个导弹最高拦截系统来负责拦截    */    int k=0;    while(k&lt;su&amp;&amp;up[k]&gt;=a[idx])k++;    int t=up[k];    up[k]=a[idx];    if(k&gt;=su)dfs(idx+1,su+1,sd);    else dfs(idx+1,su,sd);    up[k]=t;//恢复现场    /*    用下降拦截系统来拦截    如果当前已有的下降拦截系统的高度都小于第u个导弹高度，则重新开一套系统    否则，则由当前大于第u个导弹最低拦截系统来负责拦截    */    k=0;    while(k&lt;sd&amp;&amp;down[k]&lt;=a[idx])k++;    t=down[k];    down[k]=a[idx];    if(k&gt;=sd)dfs(idx+1,su,sd+1);    else dfs(idx+1,su,sd);    down[k]=t;}void solve(){    while(cin&gt;&gt;n){        if(n==0)break;        for(int i=0;i&lt;n;i++)cin&gt;&gt;a[i];        ans=n;        dfs(0,0,0);        cout&lt;&lt;ans&lt;&lt;endl;    }}signed main(){	IOS	int t=1;	while(t--)	{		solve();	}}
-
-LCIS题目链接：P10954 LCIS - 洛谷思路：设 f[i][j] 表示 a 的前 i 个数和 b 的前 j 个数并以 b[j] 结尾的最大长度。当 a[i]=b[j] 时，只需要在前面找到一个可以把 b[j] 接上去的最长公共上升子序列，答案为 max(f[i-1][k])+1。当 a[i]≠b[j] 时，f[i][j]=f[i-1][j]代码：
-/*三重循环做法*/const int N=3100;int a[N],b[N];int n;int f[N][N];void solve(){    cin&gt;&gt;n;    for(int i=1;i&lt;=n;i++)cin&gt;&gt;a[i];    for(int i=1;i&lt;=n;i++)cin&gt;&gt;b[i];    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=n;j++)        {            f[i][j]=f[i-1][j];            if(a[i]==b[j]){                int mx=0;                for(int k=1;k&lt;j;k++){                    if(b[k]&lt;b[j])                        mx=max(mx,f[i-1][k]);                }                f[i][j]=mx+1;            }        }    }    int ans=0;    for(int i=1;i&lt;=n;i++)    {        ans=max(ans,f[n][i]);    }    cout&lt;&lt;ans;}/*	可以发现每次循环所得到的mx值满足a[i]&gt;b[k]的f[i-1][k]+1的前缀最大值，所以我们直接将这步提出来。*/const int N=3100;int a[N],b[N];int n;int f[N][N];void solve(){    cin&gt;&gt;n;    for(int i=1;i&lt;=n;i++)cin&gt;&gt;a[i];    for(int i=1;i&lt;=n;i++)cin&gt;&gt;b[i];    for(int i=1;i&lt;=n;i++)    {        int mx=0;        for(int j=1;j&lt;=n;j++)        {            if(a[i]!=b[j])f[i][j]=f[i-1][j];            if(a[i]==b[j])f[i][j]=max(mx,f[i][j])+1;            if(a[i]&gt;b[j])mx=max(mx,f[i-1][j]);        }    }    int ans=0;    for(int i=1;i&lt;=n;i++)    {        ans=max(ans,f[n][i]);    }    cout&lt;&lt;ans;}]]></content>
-      <categories>
-        <category>动态规划</category>
-      </categories>
-      <tags>
-        <tag>知识点</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Codeforces Round 867 (Div3) E + 摩尔投票算法</title>
-    <url>/2025/12/27/%E6%91%A9%E5%B0%94%E6%8A%95%E7%A5%A8%E7%AE%97%E6%B3%95/</url>
-    <content><![CDATA[题目链接： https://codeforces.com/problemset/problem/1822/E题目大意：求变成“反回文串”的最小次数。思路：我们先来看看它的要求， , 比如我有 5 个字符，要求第 3 个和第 5-3+1 个字符不同，很显然这是不可能的。所以对于奇数长度的字符串，这个要求不能满足。再观察一下还有什么情况不满足要求，对于 cccccc 这样的字符串无论怎么交换都不能满足要求，这可以是一种情况，再来观察一下，cccccb 呢？也不可以，我们来找找可以满足要求的最多的 c 的数量，cccbbb ,所以当一个字符出现的次数大于 n/2 时也是无解的。好了，那对于一个偶数长度的字符串我们如何去交换，使得其操作次数最小又能满足要求呢？我们应该去交换两个不满足要求的字符，这样实现两两交换，去尽可能减少操作次数。我们先用map根据字符来当下标，把所有回文对的下标存起来，来求得最多的字符数。然后遍历数组（这里只需要遍历一半），去求得需要修改得字符数。和代码：
-#include &lt;bits/stdc++.h&gt;using namespace std;#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);#define x first#define y secondvoid solve(){    int n;    cin&gt;&gt;n;    string s;    cin&gt;&gt;s;    map&lt;char,int&gt;mp;    if(s.size()%2){        cout&lt;&lt;"-1"&lt;&lt;endl;        return;    }    int ans=0;    for(int i=0;i&lt;n;i++)    {        mp[s[i]]++;        ans=max(ans,mp[s[i]]);//记录字符出现的最大次数    }    if(ans*2&gt;n){        cout&lt;&lt;"-1"&lt;&lt;endl;        return;    }    mp.clear();    int res=0;    ans=0;    for(int i=0;i&lt;n/2;i++)    {        if(s[i]==s[n-i-1])//这里数组下标是从0开始的所以把加一换成减一        {            res++;            ans=max(ans,++mp[s[i]]);//找出对称位置上相同字符中出现次数最多的那个字符的出现次数        }    }    cout&lt;&lt;max(ceil(res*1.00/2),ans*1.0)&lt;&lt;endl;}signed main(){	IOS	int t;    cin&gt;&gt;t;	while(t--)	{		solve();	}}
-
-注意一下：max 在使用时两个数据类型要相同，不可以是 (double, int)。
-知识点补充以上代码中用到了 ceil 函数，作用是对浮点数进行向上取整。所以有乘 1.0  的操作。
-摩尔投票算法其核心思想是：如果一个元素出现的次数在数组中超过一半，那么该元素的出现次数一定大于其他元素的出现次数之和。这个算法的核心是“计数抵消”，让不同元素相互抵消，最终筛选出候选元素，再通过验证确认是否为目标。分为两个阶段：候选阶段（投票）：先选数组第一个元素为候选元素，count = 1。之后遍历数组元素，1）若当前元素与候选元素相同：count++；2）若当前元素与候选元素不同：count–；当计数 count 减为 0 时，更换候选元素为当前元素，并将 count 重置为1。验证阶段（验票）：遍历结束后，候选元素是 “可能的多数元素”，但需要再次遍历数组，统计其实际出现次数。若实际次数超过总元素数的一半，则确认为主元素；否则说明不存在主元素（这里说明，如果题目已经标注明确存在多数元素的情况下可以省略）这个统计多数可以通过桶来计数。
-Acwing 4547. 伊格内修斯和公主IV看一道模板题吧。链接：[https://www.acwing.com/problem/content/description/4550/思路：摩尔投票算法，和上方思路一致
-#include &lt;bits/stdc++.h&gt;using namespace std;#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=1e6+5;void solve(){    int n;    while(cin&gt;&gt;n)    {        int cnt=0,ans=0,a,lst=0;        while(n--)        {            cin&gt;&gt;a;            if(a==lst)cnt++;            else{                if(!cnt)lst=a,cnt=1;//数组开头第一个数，或者是计数cnt减到0时更换主元素。                else cnt--;//不一致时cnt--            }        }        cout&lt;&lt;lst&lt;&lt;endl;    }}signed main(){	IOS	int t=1;	while(t--)	{		solve();	}}
-
-欢迎关注我的微信公众号呀微信公众号文章链接
-]]></content>
-      <categories>
-        <category>每日一题</category>
-      </categories>
-      <tags>
-        <tag>每日一题</tag>
-        <tag>CF</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>牛客周赛Round 130</title>
     <url>/2026/02/09/%E7%89%9B%E5%AE%A2%E5%91%A8%E8%B5%9BRound%20130/</url>
     <content><![CDATA[比赛链接：牛客竞赛_ACM/NOI/CSP/CCPC/ICPC算法编程高难度练习赛_牛客竞赛OJ
@@ -1352,6 +1328,30 @@ E 爱丽丝的人偶圆舞曲思路：动态规划，枚举步长，用 dp[i][j]
 F 红魔馆的微瑕序位思路：先来了解一下置换环：置换环是用来求解数组排序元素间所需最小交换次数这类问题。置换环将每个元素指向其排序后应在的位置，最终首位相连形成一个环（若数字在最终位置，则其自身成环）。所以每个环的最小交换次数为 环上元素数量。把所有环的交换次数加起来，得到 最小交换次数置换环数环上元素数数组元素个数环数。要让最终的混乱度为 2，这意味着必然是相差为 1​ 的两个元素交换位置。所以如果有两个相邻的数且在同一个置换环里则说明减少一次操作直接得到符合题意的数组；否则还要在进行一次操作才能得到符合题意的数组。代码： 
 #include&lt;bits/stdc++.h&gt;using namespace std;#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);#define int long long#define endl '\n'const int N=2e5+5;int a[N];void solve(){    int n;    cin&gt;&gt;n;    for(int i=1;i&lt;=n;i++)    {        cin&gt;&gt;a[i];    }    int cnt=0;    vector&lt;int&gt; id(n+1);    for(int i=1;i&lt;=n;i++)    {        if(!id[i]){            cnt++;            int cur=i;            while(!id[cur])            {                id[cur]=cnt;                cur=a[cur];            }        }    }    int ans=-1;    for(int i=1;i&lt;n;i++)    {        if(id[i]==id[i+1])        {            ans=1;            break;        }    }    cout&lt;&lt;n-cnt-ans&lt;&lt;endl;}signed main(){    int t;    cin&gt;&gt;t;    while(t--)    {        solve();    }}
 有空可以找两道题练练。
+]]></content>
+      <categories>
+        <category>我的训练</category>
+      </categories>
+      <tags>
+        <tag>题解</tag>
+        <tag>牛客</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>牛客周赛Round 131</title>
+    <url>/2026/02/23/%E7%89%9B%E5%AE%A2%E5%91%A8%E8%B5%9BRound%20131/</url>
+    <content><![CDATA[A ICPC Balloons思路：简单的 if-else 或者是 swich-case。果然我只有碰到这种简单题才能想到多解。代码：
+void solve(){    char c;    cin&gt;&gt;c;    if(c=='A')cout&lt;&lt;"red";    else if(c=='B')cout&lt;&lt;"orange";    else if(c=='C')cout&lt;&lt;"blue";    else if(c=='D')cout&lt;&lt;"green";}
+B String Covering思路：可以发现，单个 1 是染不出来的。代码：
+void solve(){    int n;    cin&gt;&gt;n;    string s;    cin&gt;&gt;s;    bool flag=true;    int i=0;    while(i&lt;n){        if(s[i]=='1'){            int j=i;            while(j&lt;n&amp;&amp;s[j]=='1')j++;            if(j-i==1){                flag=false;                break;            }            i=j;        }else i++;    }    if(flag)cout&lt;&lt;"YES"&lt;&lt;endl;    else cout&lt;&lt;"NO"&lt;&lt;endl;}
+C Get The Sequence思路：遍历 a[i] 如果 a[i]&gt;=b[pos] 那么 pos++ 否则就找下一个 a 来匹配。不匹配的 a 可以直接删除。代码：
+void solve(){    int n,m;    cin&gt;&gt;n&gt;&gt;m;    vector&lt;int&gt;a(n);    vector&lt;int&gt;b(m);    for(int i=0;i&lt;n;i++)    {        cin&gt;&gt;a[i];    }    for(int i=0;i&lt;m;i++)    {        cin&gt;&gt;b[i];    }    int j=0;    for(int i=0;i&lt;n&amp;&amp;j&lt;m;i++)    {        if(a[i]&gt;=b[j]){            j++;        }    }    if(j==m)cout&lt;&lt;"YES"&lt;&lt;endl;    else cout&lt;&lt;"NO"&lt;&lt;endl;}
+D Longest Subsequence思路：要求最长子序列，我们可以用 dp[x] 来记录以 x 结尾的最长子序列的长度，它只能从 dp[x-1] 或 dp[x+1] 上演变过来。所以 dp[x]=max(dp[x],max(dp[x-1],dp[x+1])+1)。代码：
+void solve(){    int n;    cin&gt;&gt;n;    vector&lt;int&gt; a(n);    for(int i=0;i&lt;n;i++)    {        cin&gt;&gt;a[i];    }    vector&lt;int&gt; dp(n+5,0);    int ans=0;    for(int i=0;i&lt;n;i++)    {        int m=max(dp[a[i]+1],dp[a[i]-1])+1;        dp[a[i]]=max(m,dp[a[i]]);        ans=max(ans,dp[a[i]]);    }    cout&lt;&lt;ans&lt;&lt;endl;}
+E Eat The Candy思路：对每一个盒子都计算它所能达到的最大值，最后取所有盒子的最大值。对于每个位置计算：从左边能搬多少糖到 i、从右边能搬多少糖到 i。代码：
+void solve(){    int n;    cin&gt;&gt;n;    vector&lt;int&gt; a(n);    for(int i=0;i&lt;n;i++)    {        cin&gt;&gt;a[i];    }    vector&lt;int&gt; b(n),c(n);    int now=a[0];    for(int i=0;i&lt;n-1;i++)    {        b[i+1]=b[i]+min(a[i+1],now);        now=a[i+1]-min(a[i+1],now);    }    now=a[n-1];    for(int i=n-1;i&gt;=1;i--)    {        c[i-1]=c[i]+min(now,a[i-1]);        now=a[i-1]-min(a[i-1],now);    }    int ans=0;    for(int i=0;i&lt;n;i++)    {        int m=a[i];        if(i)m+=b[i-1];        if(i!=n-1)m+=c[i+1];        ans=max(ans,m);    }    cout&lt;&lt;ans&lt;&lt;endl;}
+F Bracket Coloring思路：括号匹配想到用栈。每一对括号考虑其前后是否相同。代码：
+const int MOD=998244353;void solve(){    int n;    cin&gt;&gt;n;    string s;    cin&gt;&gt;s;    int ans=1;    vector&lt;int&gt; st;    for(int i=0;i&lt;s.size();i++)    {        if(s[i]=='('){            if(i==0||s[i-1]==')')//如果是新的括号组的开始                st.push_back(1);            else st.push_back(0);//连续左括号中的一个        }else{            if(st.size()==1){//栈大小为1当前匹配的是最外层括号                ans=ans*2%MOD;            }else if(st.back()==1){//栈顶为1，这对括号独立                //序列中两个相邻位置的括号字符相同（同为 ‘(’或同为‘)’），则它们的颜色不能相同。                if(i==s.size()-1||s[i+1]=='(')                    ans=ans*2%MOD;            }            st.pop_back();        }    }    cout&lt;&lt;ans&lt;&lt;endl;}
 ]]></content>
       <categories>
         <category>我的训练</category>
