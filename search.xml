@@ -1,30 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>02Java学习day(2)</title>
-    <url>/2026/01/31/02Java%E5%AD%A6%E4%B9%A0day(2)/</url>
-    <content><![CDATA[字符运算字符和整数之间的联系可通过查阅 ASCII 码表。两者之间是可以相互转化的。’A'~'Z' 是 65~90，'a' - 'z' 是 97 - 122，0 - 9 是 48 - 57。
-public class demo1 {      public static void main(String[] args) {          int a='A';          System.out.println((int)a);          int b=68;          System.out.println((char)b);      }  }
-
-字符串运算在 Java 中字符串可以通过 + 进行拼接。
-package string;    public class demo1 {      public static void main(String[] args) {          String s1="123456";          String s2="7894556";          String s3=s1+s2;          System.out.println("s1:"+s1);          System.out.println("s2:"+s2);          System.out.println("s3:"+s3);          int sec=15006;          int hour=sec/3600;          int min=sec%3600/60;          sec=sec%3600%60;          System.out.println(hour+"小时"+min+"分钟"+sec+"秒");      }  }
-
-常用的字符串操作在 Java 中提供一些常用的字符串操作函数。length ()：返回长度split (String regex)：分割字符串indexOf (char c)、indexOf (String str)、lastIndexOf (char c)、lastIndexOf (String str)：查找，找不到返回-1equals ()：判断两个字符串是否相等，注意不能直接用==compareTo ()：判断两个字符串的字典序大小，负数表示小于，0 表示相等，正数表示大于startsWith ()：判断是否以某个前缀开头endsWith ()：判断是否以某个后缀结尾trim ()：去掉首尾的空白字符toLowerCase ()：全部用小写字符toUpperCase ()：全部用大写字符replace (char oldChar, char newChar)：替换字符replace (String oldRegex, String newRegex)：替换字符串substring (int beginIndex, int endIndex)：返回[beginIndex, endIndex) 中的子串toCharArray ()：将字符串转化成字符数组
-public class demo1 {      public static void main(String[] args) {         String str1="Hello World";         System.out.println("字符串"+str1+"的长度是："+str1.length());         System.out.println();         String csv = "apple,banana,orange,grape";         String[] fruits = csv.split(",");         for (String fruit : fruits) {             System.out.println(fruit);         }         System.out.println();         System.out.println("'o' 第一次出现位置: " + str1.indexOf('o'));         System.out.println("'o' 最后一次出现位置: " + str1.lastIndexOf('o'));         System.out.println("\"World\" 位置: " + str1.indexOf("World"));         System.out.println("\"Java\" 位置: " + str1.indexOf("Java")); // 返回 -1       System.out.println();         String str2 = "Hello World";         String str3 = new String("Hello World");         System.out.println("str1 == str2: " + (str1 == str2)); // true (字符串常量池)         System.out.println("str1 == str3: " + (str1 == str3)); // false (不同对象)         System.out.println("str1.equals(str3): " + str1.equals(str3)); // true (内容相同)         System.out.println();         String a = "apple";         String b = "banana";         String c = "apple";         System.out.println("apple和banana比较："+a.compareTo(b));         System.out.println("banana和apple比较："+b.compareTo(a));         System.out.println("apple和apple比较："+a.compareTo(c));         System.out.println();         String filename = "document.pdf";         System.out.println("这个文件开头是doc吗？"+filename.startsWith("doc"));         System.out.println("这个文件是pdf格式吗？"+filename.endsWith(".pdf"));         System.out.println();         String str4="     HELLO WORLD     ";         System.out.println("去除首尾空格前："+str4);         System.out.println("去除空格后："+str4.trim());         System.out.println();         String str5="HELLO World";         System.out.println(str5+"全部转为大写为："+str5.toUpperCase());         System.out.println(str5+"全部转为小写为："+str5.toLowerCase());         System.out.println();         String text = "I love cats. Cats are cute.";         System.out.println("原文本"+text);         System.out.println("替换字符"+text.replace('I','i'));         System.out.println("替换字符串"+text.replace("cats","dogs"));         System.out.println("替换全部(不区分大小写): " + text.replaceAll("(?i)cats", "dogs"));         System.out.println();         System.out.println("substring(6): " + text.substring(6));         System.out.println("substring(6, 10): " + text.substring(6, 10));         char[] charArray = text.toCharArray();         for (char ch : charArray) {             System.out.print(ch + " ");         }         System.out.println();      }  }
-运行结果：
-字符串Hello World的长度是：11applebananaorangegrape'o' 第一次出现位置: 4'o' 最后一次出现位置: 7"World" 位置: 6"Java" 位置: -1str1 == str2: truestr1 == str3: falsestr1.equals(str3): trueapple和banana比较：-1banana和apple比较：1apple和apple比较：0这个文件开头是doc吗？true这个文件是pdf格式吗？true去除首尾空格前：     HELLO WORLD     去除空格后：HELLO WORLDHELLO World全部转为大写为：HELLO WORLDHELLO World全部转为小写为：hello world原文本I love cats. Cats are cute.替换字符i love cats. Cats are cute.替换字符串I love dogs. Cats are cute.替换全部(不区分大小写): I love dogs. dogs are cute.substring(6):  cats. Cats are cute.substring(6, 10):  catI   l o v e   c a t s .   C a t s   a r e   c u t e . 
-字符串的输入输出sc.next () 在遇到空格、回车等空白字符时停止输入。sc.nextLine () 在遇到空格时不会停止输入。遇到回车才会停止。
-StringBuilder、StringBufferString拼接字符串后原字符串还存在于内存中，浪费内存。String 不能被修改，如果打算修改字符串，可以使用 StringBuilder 和 StringBuffer。StringBuffer 线程安全，速度较慢；StringBuilder 线程不安全，速度较快。
-public class demo1 {      public static void main(String[] args) {         StringBuilder sb=new StringBuilder("Hello");         sb.append("World");// 拼接字符串         System.out.println(sb);         //StringBuilder转String         String s=sb.toString();         System.out.println(s);         sb.reverse();//字符串翻转         System.out.println(sb);      }  }
-]]></content>
-      <categories>
-        <category>Java学习</category>
-      </categories>
-      <tags>
-        <tag>Java学习</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>03Java学习day(3)</title>
     <url>/2026/02/02/03Java%E5%AD%A6%E4%B9%A0day(3)/</url>
     <content><![CDATA[在条件语句、选择语句和循环语句上，Java 的代码编写等同于 C++。
@@ -226,54 +202,27 @@ int a=100;byte b=(byte)a;
       </tags>
   </entry>
   <entry>
-    <title>04Java学习day(4)</title>
-    <url>/2026/02/02/04Java%E5%AD%A6%E4%B9%A0day(4)/</url>
-    <content><![CDATA[数组的定义数组的定义和变量的定义类似。
-public class Main{    public static void main(String[] args)    {        int a[] = new int[10];        float[] f = new float[33];        double[] d = new double[123];        char[] c = new char[21];        //这里的方括号也可以像c++ int a[]    }}
-数组的初始化数组初始化其实就是在定义的时候直接给数组赋值。比如：
-int[] a = {0, 1, 2};// 含有3个元素的数组，元素分别是0, 1, 2int[] b = new int[3];// 含有3个元素的数组，元素的值均为0char[] d = {'a', 'b', 'c'}; // 字符数组的初始化
+    <title>02Java学习day(2)</title>
+    <url>/2026/01/31/02Java%E5%AD%A6%E4%B9%A0day(2)/</url>
+    <content><![CDATA[字符运算字符和整数之间的联系可通过查阅 ASCII 码表。两者之间是可以相互转化的。’A'~'Z' 是 65~90，'a' - 'z' 是 97 - 122，0 - 9 是 48 - 57。
+public class demo1 {      public static void main(String[] args) {          int a='A';          System.out.println((int)a);          int b=68;          System.out.println((char)b);      }  }
 
-数组元素访问在数组元素访问时通过索引（下标）访问，数组下标从 0 开始。比如：
-public class Main{    public static void main(String[] args)    {        int a[]={1,2,3};        System.out.printf("%d %d %d",a[0],a[1],a[2]);    }}
-数组的遍历也可以像 c++一样通过 for 循环去遍历访问数组。
-for (int[] row: a) {    for (int x: row)        System.out.printf("%d ", x);        System.out.println();}
-多维数组多维数组和 C++中也一样。
-public class Main {    public static void main(String[] args) {        int[][] a = new int[3][4]; // 大小为3的数组，每个元素是含有4个整数的数组。        int[][][] b = new int[10][20][30]; // 将所有元素的初值为0        // 大小为10的数组，它的每个元素是含有20个数组的数组        // 这些数组的元素是含有30个整数的数组    }}
-方法数组本身的方法很少。常用的如下：属性 length：返回数组长度，注意不加小括号Arrays.sort ()：数组排序Arrays.fill (int[] a, int val)：填充数组Arrays.toString ()：将数组转化为字符串Arrays.deepToString ()：将多维数组转化为字符串数组不可变长使用 Arrays 需要  import java. util. Arrays。
-蛇形矩阵最后写一个蛇形矩阵的题的代码。
-import java.util.Scanner;public class Main{    public static void main(String[] args)    {        int n,m;        Scanner sc=new Scanner(System.in);        n=sc.nextInt();m=sc.nextInt();        int[][] a=new int[n][m];        int[] dx={0,1,0,-1},dy={1,0,-1,0};//对应右下左上        for(int i=1,x=0,y=0,d=0;i&lt;=n*m;i++)        {            a[x][y]=i;            int xx=x+dx[d],yy=y+dy[d];            if(xx&lt;0||yy&lt;0||xx&gt;=n||yy&gt;=m||a[xx][yy]!=0)            {                d=(d+1)%4;                xx=x+dx[d];yy=y+dy[d];            }            x=xx;y=yy;        }        for(int i=0;i&lt;n;i++)        {            for(int j=0;j&lt;m;j++) System.out.print(a[i][j]+" ");            System.out.println("");        }    }}]]></content>
+字符串运算在 Java 中字符串可以通过 + 进行拼接。
+package string;    public class demo1 {      public static void main(String[] args) {          String s1="123456";          String s2="7894556";          String s3=s1+s2;          System.out.println("s1:"+s1);          System.out.println("s2:"+s2);          System.out.println("s3:"+s3);          int sec=15006;          int hour=sec/3600;          int min=sec%3600/60;          sec=sec%3600%60;          System.out.println(hour+"小时"+min+"分钟"+sec+"秒");      }  }
+
+常用的字符串操作在 Java 中提供一些常用的字符串操作函数。length ()：返回长度split (String regex)：分割字符串indexOf (char c)、indexOf (String str)、lastIndexOf (char c)、lastIndexOf (String str)：查找，找不到返回-1equals ()：判断两个字符串是否相等，注意不能直接用==compareTo ()：判断两个字符串的字典序大小，负数表示小于，0 表示相等，正数表示大于startsWith ()：判断是否以某个前缀开头endsWith ()：判断是否以某个后缀结尾trim ()：去掉首尾的空白字符toLowerCase ()：全部用小写字符toUpperCase ()：全部用大写字符replace (char oldChar, char newChar)：替换字符replace (String oldRegex, String newRegex)：替换字符串substring (int beginIndex, int endIndex)：返回[beginIndex, endIndex) 中的子串toCharArray ()：将字符串转化成字符数组
+public class demo1 {      public static void main(String[] args) {         String str1="Hello World";         System.out.println("字符串"+str1+"的长度是："+str1.length());         System.out.println();         String csv = "apple,banana,orange,grape";         String[] fruits = csv.split(",");         for (String fruit : fruits) {             System.out.println(fruit);         }         System.out.println();         System.out.println("'o' 第一次出现位置: " + str1.indexOf('o'));         System.out.println("'o' 最后一次出现位置: " + str1.lastIndexOf('o'));         System.out.println("\"World\" 位置: " + str1.indexOf("World"));         System.out.println("\"Java\" 位置: " + str1.indexOf("Java")); // 返回 -1       System.out.println();         String str2 = "Hello World";         String str3 = new String("Hello World");         System.out.println("str1 == str2: " + (str1 == str2)); // true (字符串常量池)         System.out.println("str1 == str3: " + (str1 == str3)); // false (不同对象)         System.out.println("str1.equals(str3): " + str1.equals(str3)); // true (内容相同)         System.out.println();         String a = "apple";         String b = "banana";         String c = "apple";         System.out.println("apple和banana比较："+a.compareTo(b));         System.out.println("banana和apple比较："+b.compareTo(a));         System.out.println("apple和apple比较："+a.compareTo(c));         System.out.println();         String filename = "document.pdf";         System.out.println("这个文件开头是doc吗？"+filename.startsWith("doc"));         System.out.println("这个文件是pdf格式吗？"+filename.endsWith(".pdf"));         System.out.println();         String str4="     HELLO WORLD     ";         System.out.println("去除首尾空格前："+str4);         System.out.println("去除空格后："+str4.trim());         System.out.println();         String str5="HELLO World";         System.out.println(str5+"全部转为大写为："+str5.toUpperCase());         System.out.println(str5+"全部转为小写为："+str5.toLowerCase());         System.out.println();         String text = "I love cats. Cats are cute.";         System.out.println("原文本"+text);         System.out.println("替换字符"+text.replace('I','i'));         System.out.println("替换字符串"+text.replace("cats","dogs"));         System.out.println("替换全部(不区分大小写): " + text.replaceAll("(?i)cats", "dogs"));         System.out.println();         System.out.println("substring(6): " + text.substring(6));         System.out.println("substring(6, 10): " + text.substring(6, 10));         char[] charArray = text.toCharArray();         for (char ch : charArray) {             System.out.print(ch + " ");         }         System.out.println();      }  }
+运行结果：
+字符串Hello World的长度是：11applebananaorangegrape'o' 第一次出现位置: 4'o' 最后一次出现位置: 7"World" 位置: 6"Java" 位置: -1str1 == str2: truestr1 == str3: falsestr1.equals(str3): trueapple和banana比较：-1banana和apple比较：1apple和apple比较：0这个文件开头是doc吗？true这个文件是pdf格式吗？true去除首尾空格前：     HELLO WORLD     去除空格后：HELLO WORLDHELLO World全部转为大写为：HELLO WORLDHELLO World全部转为小写为：hello world原文本I love cats. Cats are cute.替换字符i love cats. Cats are cute.替换字符串I love dogs. Cats are cute.替换全部(不区分大小写): I love dogs. dogs are cute.substring(6):  cats. Cats are cute.substring(6, 10):  catI   l o v e   c a t s .   C a t s   a r e   c u t e . 
+字符串的输入输出sc.next () 在遇到空格、回车等空白字符时停止输入。sc.nextLine () 在遇到空格时不会停止输入。遇到回车才会停止。
+StringBuilder、StringBufferString拼接字符串后原字符串还存在于内存中，浪费内存。String 不能被修改，如果打算修改字符串，可以使用 StringBuilder 和 StringBuffer。StringBuffer 线程安全，速度较慢；StringBuilder 线程不安全，速度较快。
+public class demo1 {      public static void main(String[] args) {         StringBuilder sb=new StringBuilder("Hello");         sb.append("World");// 拼接字符串         System.out.println(sb);         //StringBuilder转String         String s=sb.toString();         System.out.println(s);         sb.reverse();//字符串翻转         System.out.println(sb);      }  }
+]]></content>
       <categories>
         <category>Java学习</category>
       </categories>
       <tags>
         <tag>Java学习</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>2026牛客寒假算法基础集训营1(B C E G K L)</title>
-    <url>/2026/02/04/2026%E7%89%9B%E5%AE%A2%E5%AF%92%E5%81%87%E7%AE%97%E6%B3%95%E5%9F%BA%E7%A1%80%E9%9B%86%E8%AE%AD%E8%90%A51(B%20C%20E%20G%20K%20L)/</url>
-    <content><![CDATA[比赛链接：牛客竞赛_ACM/NOI/CSP/CCPC/ICPC算法编程高难度练习赛_牛客竞赛OJ今天先写做出来的题解，明天再写其他的。（PS：个人思路，以官方题解为准）严肃补题👹👹
-B Card Game思路：B 题虽说简单吧，比赛时没做出来。最大分数就是比小红最小值大的数字个数，然后把这部分排列一下  种然后剩下的又是  种，最后取乘积再取模。代码： 
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=2e5+5;const int MOD=998244353;int a[N];int f[N];void init(){    f[0]=1;    for(int i=1;i&lt;N;i++)    {        f[i]=f[i-1]*i%MOD;    }}void solve(){    int n;    cin&gt;&gt;n;    for(int i=1;i&lt;=n;i++)    {        cin&gt;&gt;a[i];    }    int m=1e9;    int x;    for(int i=1;i&lt;=n;i++)    {        cin&gt;&gt;x;        m=min(x,m);    }    int cnt=0;    for(int i=1;i&lt;=n;i++)    {        if(a[i]&gt;m)cnt++;    }    cout&lt;&lt;f[cnt]*f[n-cnt]%MOD&lt;&lt;endl;}signed main(){	IOS    init();	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
-C Array Covering思路：可以发现总有办法把数组中最大的数覆盖到除数组两端的位置。所以找到最大值然后进行计算。代码： 
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=5e5+5;int a[N];void solve(){    int n;    cin&gt;&gt;n;    int maxx=-1;    for(int i=1;i&lt;=n;i++)    {        cin&gt;&gt;a[i];        maxx=max(a[i],maxx);    }    cout&lt;&lt;maxx*(n-2)+a[1]+a[n]&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
-
-E Block Game思路：可以把第一个万能方块放进数组中，然后当作一个环去看，开始就是第一个位置和最后一个位置的和之后继续枚举。枚举间距为 n+1 的数之和找到最大的值。这里需要注意的是，值可能是负值。代码： 
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=2e5+5;int a[N];void solve(){    int n,k;    cin&gt;&gt;n&gt;&gt;k;    for(int i=1;i&lt;=n;i++)    {        cin&gt;&gt;a[i];    }    a[0]=k;    int ans=-2e7;    for(int i=0;i&lt;=n;i++)    {        int last=(i+n)%(n+1);        int sum=a[i]+a[last];        ans=max(sum,ans);    }    cout&lt;&lt;ans&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
-
-G Digital Folding思路：数字折叠，先写一下数字翻转的写法，不建议用 string 的 reverse ()。拿个循环写就可以，每次取出最后一位，每次乘十也可以去除前导零。然后就是考虑怎么找到最大的数字：可以先把右边的 r 翻转一下，然后考虑把 r 的最右侧位置都一一换成 9，要保证这个数字比 l 大。刚开始的 r 肯定得比 10 大，不然翻不翻转没啥意义。代码： 
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);int revers(int x){    int res=0;    while(x&gt;0)    {        res=res*10+x%10;        x/=10;    }    return res;}void solve(){    int l,r;    cin&gt;&gt;l&gt;&gt;r;    int ans=revers(r);    int m=10;    while(r&gt;=10)    {        int a=(r/m)*m-1;        if(a&gt;=l)ans=max(ans,revers(a));        if(r/10&lt;m)break;        m*=10;    }    cout&lt;&lt;ans&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
-K Constructive思路：签到题，观察模拟一下可以发现只有 1 和 3 存在其他都是 NO。代码： 
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);void solve(){    int n;    cin&gt;&gt;n;    if(n==1)cout&lt;&lt;"YES"&lt;&lt;endl&lt;&lt;"1"&lt;&lt;endl;    else if(n==3)cout&lt;&lt;"YES"&lt;&lt;endl&lt;&lt;"1 2 3"&lt;&lt;endl;    else cout&lt;&lt;"NO"&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
-L Need Zero思路：签到题，要让 n 在一次乘积运算后个位为 0，只需要考虑个位数。所以取出个位数，然后给写个数组就可以了。个位本来就是 0 的乘 1 就可以了，其他的背一下乘法表就可以出。代码： 
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);int a[]={1,10,5,10,5,2,5,10,5,10};void solve(){    int n;    cin&gt;&gt;n;    int t=n%10;    cout&lt;&lt;a[t];}signed main(){	IOS	//int t;	//cin&gt;&gt;t;	int t=1;	while(t--)	{		solve();	}}
-]]></content>
-      <categories>
-        <category>我的训练</category>
-      </categories>
-      <tags>
-        <tag>题解</tag>
-        <tag>牛客</tag>
       </tags>
   </entry>
   <entry>
@@ -302,33 +251,27 @@ import java.util.Scanner;public class Main{    public static int fib(int n)    {
       </tags>
   </entry>
   <entry>
-    <title>2026牛客寒假算法基础集训营4（A B C I H F G）</title>
-    <url>/2026/02/09/2026%E7%89%9B%E5%AE%A2%E5%AF%92%E5%81%87%E7%AE%97%E6%B3%95%E5%9F%BA%E7%A1%80%E9%9B%86%E8%AE%AD%E8%90%A54%EF%BC%88A%20B%20C%20I%20H%20F%20G%EF%BC%89/</url>
-    <content><![CDATA[依旧开场叠罚时😭😭
-A 本场比赛灵感来源于树状数组出题组思路：首先计算以下  个数的  是多少，然后从第一个数到最后一个数遍历，然后再遍历一个循环。代码： 
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=2e3+5;int a[N];void solve(){    int n;    cin&gt;&gt;n;    int ans=0;    int ttt=(4*(n-1)+4)/5;    for(int i=1;i&lt;=n;i++)    {        cin&gt;&gt;a[i];    }    for(int i=0;i&lt;n;i++)    {        int cnt=0;        for(int j=0;j&lt;n;j++)        {            if(a[j]&lt;=a[i])cnt++;        }        if((cnt-1)&gt;=ttt)ans+=a[i];    }    cout&lt;&lt;ans;}signed main(){	IOS	int t=1;	while(t--)	{		solve();	}}
-B 构造部落思路：记录一下每个首领登基的年份。代码： 
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=2e5+5;int a[N];int year[N];void solve(){    int n,q,s;    cin&gt;&gt;n&gt;&gt;q&gt;&gt;s;    year[1]=s;    for(int i=1;i&lt;=n;i++)    {        cin&gt;&gt;a[i];        year[i+1]=year[i]+a[i];    }    while(q--)    {        int x,y;        cin&gt;&gt;x&gt;&gt;y;        cout&lt;&lt;year[x]+y-1&lt;&lt;endl;    }}signed main(){	IOS	int t=1;	while(t--)	{		solve();	}}
+    <title>04Java学习day(4)</title>
+    <url>/2026/02/02/04Java%E5%AD%A6%E4%B9%A0day(4)/</url>
+    <content><![CDATA[数组的定义数组的定义和变量的定义类似。
+public class Main{    public static void main(String[] args)    {        int a[] = new int[10];        float[] f = new float[33];        double[] d = new double[123];        char[] c = new char[21];        //这里的方括号也可以像c++ int a[]    }}
+数组的初始化数组初始化其实就是在定义的时候直接给数组赋值。比如：
+int[] a = {0, 1, 2};// 含有3个元素的数组，元素分别是0, 1, 2int[] b = new int[3];// 含有3个元素的数组，元素的值均为0char[] d = {'a', 'b', 'c'}; // 字符数组的初始化
 
-C 墨提斯的排列思路：要让相邻两项异或值最小，就需要二进制表示只有一位二进制数不同，这种任意两个相邻的代码只有一位二进制数不同的编码称为格雷码。代码： 
-void solve(){    int n;    cin&gt;&gt;n;    for(int i=0;i&lt;(1&lt;&lt;n);i++)    {        cout&lt;&lt;(i^(i&gt;&gt;1))&lt;&lt;" ";    }}
-I 初华的扭蛋机思路：谨记不要赌博，所以我一个都不押。代码： 
-void solve(){    cout&lt;&lt;"######";}
-H 时不时使使用玉米加农炮掩饰害羞的邻座艾莉同学思路：这个的话我刚开始感觉是二维前缀和，不过这个图形是个菱形。手画一下，定义一下偏移量数组，用 sc 数组表示该点的得分。记录最大值和对应坐标。每次添加时只遍历地图中的  范围，满足曼哈顿距离的加分，然后不断更新最大值。还是注意开 longlong。
-○ ○ ● ○ ○ ○ ● ● ● ○ ● ● ● ● ● ○ ● ● ● ○ ○ ○ ● ○ ○ 
-代码： 
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=550;int a[N][N];int sc[505][505];int dx[13]={-2,-1,-1,-1,0,0,0,0,0,1,1,1,2};int dy[13]={0,-1,0,1,-2,-1,0,1,2,-1,0,1,0};void solve(){    int n,m,q;    cin&gt;&gt;n&gt;&gt;m&gt;&gt;q;    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=m;j++)        {            cin&gt;&gt;a[i][j];        }    }    int ansx,ansy,ma=0;    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=m;j++)        {            int cnt=0;            for(int d=0;d&lt;13;d++)            {                int xx=i+dx[d];                int yy=j+dy[d];                if(xx&gt;0&amp;&amp;yy&gt;0&amp;&amp;xx&lt;=n&amp;&amp;yy&lt;=m)                {                    cnt+=a[xx][yy];                }            }            sc[i][j]=cnt;            if(sc[i][j]&gt;ma){                ma=sc[i][j];                ansx=i;                ansy=j;            }        }    }    while(q--)    {        int x,y,z;        cin&gt;&gt;x&gt;&gt;y&gt;&gt;z;        a[x][y]+=z;        for(int i=max(1LL,x-2);i&lt;=min(n,x+2);i++)        {            for(int j=max(1LL,y-2);j&lt;=min(m,y+2);j++)            {                if(abs(i-x)+abs(j-y)&lt;=2)                {                    sc[i][j]+=z;                    if(sc[i][j]&gt;ma)                    {                        ansx=i;                        ansy=j;                        ma=sc[i][j];                    }                }            }        }        cout&lt;&lt;ansx&lt;&lt;" "&lt;&lt;ansy&lt;&lt;endl;    }}signed main(){	IOS	int t=1;	while(t--)	{		solve();	}}
-F 爱音的01串构造思路：赛时就想着交替分布了，没想到均匀分布。：将数量较少的字符作为分隔符，数量较多的字符分成尽可能均匀的段。代码： 
-#include&lt;bits/stdc++.h&gt;using namespace std;#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);#define int long long#define endl '\n'void solve(){    int a,b;    cin&gt;&gt;a&gt;&gt;b;    int n=a+b;    string s;    if(a==0){        cout&lt;&lt;string(b,'1')&lt;&lt;endl;        return;    }    if(b==0){        cout&lt;&lt;string(a,'0')&lt;&lt;endl;        return;    }    if(a&gt;=b){        string tt(n,'0');        s=tt;        int d=a/(b+1);//每组至少有d个0        int res=a%(b+1);//前res组每组多一个0        for(int i=d;i&lt;n;i+=d+1)//在字符串中每隔(d+1)个位置放一个1        {            if(res&gt;0)//多放一个0            {                res--;                i++;            }            s[i]='1';        }    }else{        int d=b/(a+1);        int res=b%(a+1);        string tt(n,'1');        s=tt;        for(int i=d;i&lt;n;i+=d+1)        {            if(res&gt;0)            {                res--;                i++;            }            s[i]='0';        }    }    cout&lt;&lt;s&lt;&lt;endl;}signed main(){    int t;    cin&gt;&gt;t;    while(t--)    {        solve();    }}
-
-G 真白的幻觉思路：表示拒绝补这个题，还真有人用 bfs 做出来了。代码： 
-void solve(){    cout&lt;&lt;"277777788888899 27777789999999999";}]]></content>
+数组元素访问在数组元素访问时通过索引（下标）访问，数组下标从 0 开始。比如：
+public class Main{    public static void main(String[] args)    {        int a[]={1,2,3};        System.out.printf("%d %d %d",a[0],a[1],a[2]);    }}
+数组的遍历也可以像 c++一样通过 for 循环去遍历访问数组。
+for (int[] row: a) {    for (int x: row)        System.out.printf("%d ", x);        System.out.println();}
+多维数组多维数组和 C++中也一样。
+public class Main {    public static void main(String[] args) {        int[][] a = new int[3][4]; // 大小为3的数组，每个元素是含有4个整数的数组。        int[][][] b = new int[10][20][30]; // 将所有元素的初值为0        // 大小为10的数组，它的每个元素是含有20个数组的数组        // 这些数组的元素是含有30个整数的数组    }}
+方法数组本身的方法很少。常用的如下：属性 length：返回数组长度，注意不加小括号Arrays.sort ()：数组排序Arrays.fill (int[] a, int val)：填充数组Arrays.toString ()：将数组转化为字符串Arrays.deepToString ()：将多维数组转化为字符串数组不可变长使用 Arrays 需要  import java. util. Arrays。
+蛇形矩阵最后写一个蛇形矩阵的题的代码。
+import java.util.Scanner;public class Main{    public static void main(String[] args)    {        int n,m;        Scanner sc=new Scanner(System.in);        n=sc.nextInt();m=sc.nextInt();        int[][] a=new int[n][m];        int[] dx={0,1,0,-1},dy={1,0,-1,0};//对应右下左上        for(int i=1,x=0,y=0,d=0;i&lt;=n*m;i++)        {            a[x][y]=i;            int xx=x+dx[d],yy=y+dy[d];            if(xx&lt;0||yy&lt;0||xx&gt;=n||yy&gt;=m||a[xx][yy]!=0)            {                d=(d+1)%4;                xx=x+dx[d];yy=y+dy[d];            }            x=xx;y=yy;        }        for(int i=0;i&lt;n;i++)        {            for(int j=0;j&lt;m;j++) System.out.print(a[i][j]+" ");            System.out.println("");        }    }}]]></content>
       <categories>
-        <category>我的训练</category>
+        <category>Java学习</category>
       </categories>
       <tags>
-        <tag>题解</tag>
-        <tag>牛客</tag>
+        <tag>Java学习</tag>
       </tags>
   </entry>
   <entry>
@@ -489,6 +432,63 @@ g(l, i) 表示从 l 到 i 这段区间中不同元素的个数。
       </tags>
   </entry>
   <entry>
+    <title>2026牛客寒假算法基础集训营1(B C E G K L)</title>
+    <url>/2026/02/04/2026%E7%89%9B%E5%AE%A2%E5%AF%92%E5%81%87%E7%AE%97%E6%B3%95%E5%9F%BA%E7%A1%80%E9%9B%86%E8%AE%AD%E8%90%A51(B%20C%20E%20G%20K%20L)/</url>
+    <content><![CDATA[比赛链接：牛客竞赛_ACM/NOI/CSP/CCPC/ICPC算法编程高难度练习赛_牛客竞赛OJ今天先写做出来的题解，明天再写其他的。（PS：个人思路，以官方题解为准）严肃补题👹👹
+B Card Game思路：B 题虽说简单吧，比赛时没做出来。最大分数就是比小红最小值大的数字个数，然后把这部分排列一下  种然后剩下的又是  种，最后取乘积再取模。代码： 
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=2e5+5;const int MOD=998244353;int a[N];int f[N];void init(){    f[0]=1;    for(int i=1;i&lt;N;i++)    {        f[i]=f[i-1]*i%MOD;    }}void solve(){    int n;    cin&gt;&gt;n;    for(int i=1;i&lt;=n;i++)    {        cin&gt;&gt;a[i];    }    int m=1e9;    int x;    for(int i=1;i&lt;=n;i++)    {        cin&gt;&gt;x;        m=min(x,m);    }    int cnt=0;    for(int i=1;i&lt;=n;i++)    {        if(a[i]&gt;m)cnt++;    }    cout&lt;&lt;f[cnt]*f[n-cnt]%MOD&lt;&lt;endl;}signed main(){	IOS    init();	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
+C Array Covering思路：可以发现总有办法把数组中最大的数覆盖到除数组两端的位置。所以找到最大值然后进行计算。代码： 
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=5e5+5;int a[N];void solve(){    int n;    cin&gt;&gt;n;    int maxx=-1;    for(int i=1;i&lt;=n;i++)    {        cin&gt;&gt;a[i];        maxx=max(a[i],maxx);    }    cout&lt;&lt;maxx*(n-2)+a[1]+a[n]&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
+
+E Block Game思路：可以把第一个万能方块放进数组中，然后当作一个环去看，开始就是第一个位置和最后一个位置的和之后继续枚举。枚举间距为 n+1 的数之和找到最大的值。这里需要注意的是，值可能是负值。代码： 
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=2e5+5;int a[N];void solve(){    int n,k;    cin&gt;&gt;n&gt;&gt;k;    for(int i=1;i&lt;=n;i++)    {        cin&gt;&gt;a[i];    }    a[0]=k;    int ans=-2e7;    for(int i=0;i&lt;=n;i++)    {        int last=(i+n)%(n+1);        int sum=a[i]+a[last];        ans=max(sum,ans);    }    cout&lt;&lt;ans&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
+
+G Digital Folding思路：数字折叠，先写一下数字翻转的写法，不建议用 string 的 reverse ()。拿个循环写就可以，每次取出最后一位，每次乘十也可以去除前导零。然后就是考虑怎么找到最大的数字：可以先把右边的 r 翻转一下，然后考虑把 r 的最右侧位置都一一换成 9，要保证这个数字比 l 大。刚开始的 r 肯定得比 10 大，不然翻不翻转没啥意义。代码： 
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);int revers(int x){    int res=0;    while(x&gt;0)    {        res=res*10+x%10;        x/=10;    }    return res;}void solve(){    int l,r;    cin&gt;&gt;l&gt;&gt;r;    int ans=revers(r);    int m=10;    while(r&gt;=10)    {        int a=(r/m)*m-1;        if(a&gt;=l)ans=max(ans,revers(a));        if(r/10&lt;m)break;        m*=10;    }    cout&lt;&lt;ans&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
+K Constructive思路：签到题，观察模拟一下可以发现只有 1 和 3 存在其他都是 NO。代码： 
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);void solve(){    int n;    cin&gt;&gt;n;    if(n==1)cout&lt;&lt;"YES"&lt;&lt;endl&lt;&lt;"1"&lt;&lt;endl;    else if(n==3)cout&lt;&lt;"YES"&lt;&lt;endl&lt;&lt;"1 2 3"&lt;&lt;endl;    else cout&lt;&lt;"NO"&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
+L Need Zero思路：签到题，要让 n 在一次乘积运算后个位为 0，只需要考虑个位数。所以取出个位数，然后给写个数组就可以了。个位本来就是 0 的乘 1 就可以了，其他的背一下乘法表就可以出。代码： 
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);int a[]={1,10,5,10,5,2,5,10,5,10};void solve(){    int n;    cin&gt;&gt;n;    int t=n%10;    cout&lt;&lt;a[t];}signed main(){	IOS	//int t;	//cin&gt;&gt;t;	int t=1;	while(t--)	{		solve();	}}
+]]></content>
+      <categories>
+        <category>我的训练</category>
+      </categories>
+      <tags>
+        <tag>题解</tag>
+        <tag>牛客</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>2026牛客寒假算法基础集训营4（A B C I H F G）</title>
+    <url>/2026/02/09/2026%E7%89%9B%E5%AE%A2%E5%AF%92%E5%81%87%E7%AE%97%E6%B3%95%E5%9F%BA%E7%A1%80%E9%9B%86%E8%AE%AD%E8%90%A54%EF%BC%88A%20B%20C%20I%20H%20F%20G%EF%BC%89/</url>
+    <content><![CDATA[依旧开场叠罚时😭😭
+A 本场比赛灵感来源于树状数组出题组思路：首先计算以下  个数的  是多少，然后从第一个数到最后一个数遍历，然后再遍历一个循环。代码： 
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=2e3+5;int a[N];void solve(){    int n;    cin&gt;&gt;n;    int ans=0;    int ttt=(4*(n-1)+4)/5;    for(int i=1;i&lt;=n;i++)    {        cin&gt;&gt;a[i];    }    for(int i=0;i&lt;n;i++)    {        int cnt=0;        for(int j=0;j&lt;n;j++)        {            if(a[j]&lt;=a[i])cnt++;        }        if((cnt-1)&gt;=ttt)ans+=a[i];    }    cout&lt;&lt;ans;}signed main(){	IOS	int t=1;	while(t--)	{		solve();	}}
+B 构造部落思路：记录一下每个首领登基的年份。代码： 
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=2e5+5;int a[N];int year[N];void solve(){    int n,q,s;    cin&gt;&gt;n&gt;&gt;q&gt;&gt;s;    year[1]=s;    for(int i=1;i&lt;=n;i++)    {        cin&gt;&gt;a[i];        year[i+1]=year[i]+a[i];    }    while(q--)    {        int x,y;        cin&gt;&gt;x&gt;&gt;y;        cout&lt;&lt;year[x]+y-1&lt;&lt;endl;    }}signed main(){	IOS	int t=1;	while(t--)	{		solve();	}}
+
+C 墨提斯的排列思路：要让相邻两项异或值最小，就需要二进制表示只有一位二进制数不同，这种任意两个相邻的代码只有一位二进制数不同的编码称为格雷码。代码： 
+void solve(){    int n;    cin&gt;&gt;n;    for(int i=0;i&lt;(1&lt;&lt;n);i++)    {        cout&lt;&lt;(i^(i&gt;&gt;1))&lt;&lt;" ";    }}
+I 初华的扭蛋机思路：谨记不要赌博，所以我一个都不押。代码： 
+void solve(){    cout&lt;&lt;"######";}
+H 时不时使使用玉米加农炮掩饰害羞的邻座艾莉同学思路：这个的话我刚开始感觉是二维前缀和，不过这个图形是个菱形。手画一下，定义一下偏移量数组，用 sc 数组表示该点的得分。记录最大值和对应坐标。每次添加时只遍历地图中的  范围，满足曼哈顿距离的加分，然后不断更新最大值。还是注意开 longlong。
+○ ○ ● ○ ○ ○ ● ● ● ○ ● ● ● ● ● ○ ● ● ● ○ ○ ○ ● ○ ○ 
+代码： 
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=550;int a[N][N];int sc[505][505];int dx[13]={-2,-1,-1,-1,0,0,0,0,0,1,1,1,2};int dy[13]={0,-1,0,1,-2,-1,0,1,2,-1,0,1,0};void solve(){    int n,m,q;    cin&gt;&gt;n&gt;&gt;m&gt;&gt;q;    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=m;j++)        {            cin&gt;&gt;a[i][j];        }    }    int ansx,ansy,ma=0;    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=m;j++)        {            int cnt=0;            for(int d=0;d&lt;13;d++)            {                int xx=i+dx[d];                int yy=j+dy[d];                if(xx&gt;0&amp;&amp;yy&gt;0&amp;&amp;xx&lt;=n&amp;&amp;yy&lt;=m)                {                    cnt+=a[xx][yy];                }            }            sc[i][j]=cnt;            if(sc[i][j]&gt;ma){                ma=sc[i][j];                ansx=i;                ansy=j;            }        }    }    while(q--)    {        int x,y,z;        cin&gt;&gt;x&gt;&gt;y&gt;&gt;z;        a[x][y]+=z;        for(int i=max(1LL,x-2);i&lt;=min(n,x+2);i++)        {            for(int j=max(1LL,y-2);j&lt;=min(m,y+2);j++)            {                if(abs(i-x)+abs(j-y)&lt;=2)                {                    sc[i][j]+=z;                    if(sc[i][j]&gt;ma)                    {                        ansx=i;                        ansy=j;                        ma=sc[i][j];                    }                }            }        }        cout&lt;&lt;ansx&lt;&lt;" "&lt;&lt;ansy&lt;&lt;endl;    }}signed main(){	IOS	int t=1;	while(t--)	{		solve();	}}
+F 爱音的01串构造思路：赛时就想着交替分布了，没想到均匀分布。：将数量较少的字符作为分隔符，数量较多的字符分成尽可能均匀的段。代码： 
+#include&lt;bits/stdc++.h&gt;using namespace std;#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);#define int long long#define endl '\n'void solve(){    int a,b;    cin&gt;&gt;a&gt;&gt;b;    int n=a+b;    string s;    if(a==0){        cout&lt;&lt;string(b,'1')&lt;&lt;endl;        return;    }    if(b==0){        cout&lt;&lt;string(a,'0')&lt;&lt;endl;        return;    }    if(a&gt;=b){        string tt(n,'0');        s=tt;        int d=a/(b+1);//每组至少有d个0        int res=a%(b+1);//前res组每组多一个0        for(int i=d;i&lt;n;i+=d+1)//在字符串中每隔(d+1)个位置放一个1        {            if(res&gt;0)//多放一个0            {                res--;                i++;            }            s[i]='1';        }    }else{        int d=b/(a+1);        int res=b%(a+1);        string tt(n,'1');        s=tt;        for(int i=d;i&lt;n;i+=d+1)        {            if(res&gt;0)            {                res--;                i++;            }            s[i]='0';        }    }    cout&lt;&lt;s&lt;&lt;endl;}signed main(){    int t;    cin&gt;&gt;t;    while(t--)    {        solve();    }}
+
+G 真白的幻觉思路：表示拒绝补这个题，还真有人用 bfs 做出来了。代码： 
+void solve(){    cout&lt;&lt;"277777788888899 27777789999999999";}]]></content>
+      <categories>
+        <category>我的训练</category>
+      </categories>
+      <tags>
+        <tag>题解</tag>
+        <tag>牛客</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>2026牛客寒假算法基础集训营6(K H G B A)</title>
     <url>/2026/02/13/2026%E7%89%9B%E5%AE%A2%E5%AF%92%E5%81%87%E7%AE%97%E6%B3%95%E5%9F%BA%E7%A1%80%E9%9B%86%E8%AE%AD%E8%90%A56(K%20H%20G%20B%20A)/</url>
     <content><![CDATA[K 小L的游戏1思路：问最后一次操作是谁进行的，先计算一下最多能进行多少次两人操作，然后再看是增加 m 超过 z 还是增加 m+n 超过 z。代码：
@@ -569,6 +569,61 @@ A 小L的三角尺思路：考察数学的，首先明确三角形的斜边长�
       </tags>
   </entry>
   <entry>
+    <title>CF1366C Palindromic Paths</title>
+    <url>/2026/02/01/CF1366C%20Palindromic%20Paths/</url>
+    <content><![CDATA[题目链接： Problem - 1366C - Codeforces题意：给你一个  的矩阵，里面每一位只有0和1，起点从  到  只能向下或向右走，思路：从  到  不管怎么走都要走  步，所以每条回文路径的长度为 。走到 a[i][j] 时一定走了 i+j-2 步，如果这是一条回文路径，那么第 K 步经过的格子值=第 (L-K) 步经过的格子值。但路径不唯一，不同路径在同一步可能选择不同格子。所以为了能够使所有路径都回文，我们要让所有第 K 步的格子都等于第 (L-K) 步的格子。每一步的可达格子集合是固定的。这样对于每一步就有两种选择，都改为 1 或者都改为 0，我们要选择修改次数最少的。所以可以统计每一步的 0/1 的数量。代码： 
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=35;int cnt[100][2];//这里需要注意的是cnt[step][0]表示step步可达的格子中0的数量，step=n+m-2，数组开够大void solve(){    int n,m;    cin&gt;&gt;n&gt;&gt;m;    memset(cnt,0,sizeof(cnt));    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=m;j++)        {            int t;            cin&gt;&gt;t;            int step=i+j-2;            cnt[step][t]++;        }    }    int l=n+m-2;    int ans=0;    for(int i=0,j=l;j&gt;i;j--,i++)    {        ans+=min(cnt[i][0]+cnt[j][0],cnt[i][1]+cnt[j][1]);    }    cout&lt;&lt;ans&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}]]></content>
+      <categories>
+        <category>每日一题</category>
+      </categories>
+      <tags>
+        <tag>每日一题</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>CF10518M.Too Easy</title>
+    <url>/2026/02/02/CF10518M.Too%20Easy/</url>
+    <content><![CDATA[题目链接： Problem - M - Codeforces题意：有一个无限大的二维网格，你从坐标  出发，要到达坐标 （也可能是同一个点）。每一步你可以向左、右、上、下走一格。你的任务是找出到达目标坐标所需的最少步数。你不能连续朝同一个方向走超过  步。思路：先不看题目的限制，从一个坐标到另一个坐标需要走的步数为 ，这里 s 和 t 值的大小是不确定的所以取绝对值，高级一点就叫曼哈顿距离。现在题目增加了一个不能在同一个方向连续走超过  步，其实就是我连续走 k 步然后换个方向走一步，然后再回来再走 k 步，这样循环下去。我们可以把方向分成主方向（步数多）和次方向。这样在主方向最多可以走 次方向步数 步，这时候是没走多余步数的。现在就可以分成两种情况：
+
+主方向次方向 这种情况说明主方向可以被次方向合理分割，这样就直接输出曼哈顿距离即可。
+主方向次方向 这时候次方向已经不够了，所以需要走额外的步数来调整。超出的步数 主方向次方向，所以此时需要向无关方向走 1 步，朝主方向走 k 步，再向无关方向反方向走一步 (回到原位)，再朝主方向走 k 步。这样是一个循环，所以需要  个循环，每个循环额外花费 2 步。所以额外步数的计算可以用 ceil 向上取整去计算也可以使用 主方向次方向 计算。
+
+代码： 
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);void solve(){    int x1,x2,y1,y2,k;    cin&gt;&gt;x1&gt;&gt;y1&gt;&gt;x2&gt;&gt;y2&gt;&gt;k;    int x=abs(x1-x2),y=abs(y1-y2);    if(x&lt;y)swap(x,y);    if(x&lt;=(y+1)*k)cout&lt;&lt;x+y&lt;&lt;endl;    else{        int step=(x-(y+1)*k+2*k-1)/(2*k);        cout&lt;&lt;x+y+step*2&lt;&lt;endl;    }}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}]]></content>
+      <categories>
+        <category>每日一题</category>
+      </categories>
+      <tags>
+        <tag>每日一题</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>CF1610B. Kalindrome Array</title>
+    <url>/2026/02/01/CF1610B.%20Kalindrome%20Array/</url>
+    <content><![CDATA[题目链接： Problem - 1610B - Codeforces题意：判断一个数组是否是kalindrome（卡林德数组）。如果删去 k 个数组中等于 x 的元素能使其变为回文数组则为卡林德数组。k 可以等于 0。思路：如果一个数组刚开始就是回文数组，那么直接输出 YES。如果不是的话就开始从左右两边向里推进找到对称位置不相同的元素。可以发现，若存在一种不完全的删数方法，那么所有的数全都删掉也一定是可以的，这样就可以简化判断了。而且只会删两端第一次不匹配的两种数（否则一定不合法）。代码： 
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=2e5+5;int a[N];int b[N];int c[N];bool is_hw(int a[],int cnt){    for(int i=1;i&lt;=cnt/2;i++)    {        if(a[i]!=a[cnt-i+1])return false;    }    return true;}void solve(){    int n;    cin&gt;&gt;n;    for(int i=1;i&lt;=n;i++)cin&gt;&gt;a[i];    if(is_hw(a,n)){        cout&lt;&lt;"YES"&lt;&lt;endl;        return;    }    int x,y;    for(int i=1;i&lt;=n;i++)    {        if(a[i]!=a[n-i+1])        {            x=a[i];            y=a[n-i+1];            break;        }    }    int cnt1=0,cnt2=0;    //下面构造一下删去两种元素后的数组    for(int i=1;i&lt;=n;i++)    {        if(a[i]!=x)b[++cnt1]=a[i];        if(a[i]!=y)c[++cnt2]=a[i];    }    if(is_hw(b,cnt1)||is_hw(c,cnt2))cout&lt;&lt;"YES"&lt;&lt;endl;    else cout&lt;&lt;"NO"&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
+认为这种简单又粗糙的方式很顺手☺️☺️
+]]></content>
+      <categories>
+        <category>每日一题</category>
+      </categories>
+      <tags>
+        <tag>每日一题</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>CF2113C Smilo and Minecraft</title>
+    <url>/2026/01/29/CF2113C%20Smilo%20and%20Minecraft/</url>
+    <content><![CDATA[题目链接： https://codeforces.com/problemset/problem/2113/C题意：给定一个  的区域，某些位置有金块，每次可以在空格子放置一个 TNT，炸掉以 TNT 为中心、边长  的正方形区域中的所有物品，并获得位于正方形边界上的所有金块，求可以收集到金块的最大值。思路：假如我们把第一个爆炸点选在 ，这周围的金子就被炸没了，之后我们在这片区域四周选择新的爆炸点就不会让其他的金子消失。所以可以枚举第一个爆炸点选取的位置所炸掉的金子个数。用所有金子的数量减去，来达到最大值。可以使用二维前缀和进行优化。代码： 
+#include &lt;bits/stdc++.h&gt;using namespace std;#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=505;char a[N][N];int s[N][N];void solve(){    int n,m,k;    cin&gt;&gt;n&gt;&gt;m&gt;&gt;k;    k--;//处在爆炸内部的才会消失    int sum=0;    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=m;j++)        {            cin&gt;&gt;a[i][j];            s[i][j]=s[i-1][j]+s[i][j-1]-s[i-1][j-1];            if(a[i][j]=='g'){s[i][j]++;sum++;}        }    }    int ans=0x3f3f3f3f;    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=m;j++)        {            if(a[i][j]=='.')            {                //画个正方形                int l=max(1,j-k);                int r=min(m,j+k);                int u=max(1,i-k);                int b=min(n,i+k);                ans=min(ans,s[b][r]-s[u-1][r]-s[b][l-1]+s[u-1][l-1]);            }        }    }    cout&lt;&lt;sum-ans&lt;&lt;endl;}signed main(){    IOS    int t;    cin&gt;&gt;t;    while(t--)    {        solve();    }}]]></content>
+      <categories>
+        <category>每日一题</category>
+      </categories>
+      <tags>
+        <tag>每日一题</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>2026牛客寒假算法基础集训营5(B D G J F )</title>
     <url>/2026/02/13/2026%E7%89%9B%E5%AE%A2%E5%AF%92%E5%81%87%E7%AE%97%E6%B3%95%E5%9F%BA%E7%A1%80%E9%9B%86%E8%AE%AD%E8%90%A55(B%20D%20G%20J%20F%20)/</url>
     <content><![CDATA[B 智乃的瓷砖思路：按行数和列数进行划分。代码： 
@@ -595,36 +650,10 @@ F 智乃的算法竞赛群友思路：假设我们使用 x 个 qcjjkkt，y 个 t
       </tags>
   </entry>
   <entry>
-    <title>CF1610B. Kalindrome Array</title>
-    <url>/2026/02/01/CF1610B.%20Kalindrome%20Array/</url>
-    <content><![CDATA[题目链接： Problem - 1610B - Codeforces题意：判断一个数组是否是kalindrome（卡林德数组）。如果删去 k 个数组中等于 x 的元素能使其变为回文数组则为卡林德数组。k 可以等于 0。思路：如果一个数组刚开始就是回文数组，那么直接输出 YES。如果不是的话就开始从左右两边向里推进找到对称位置不相同的元素。可以发现，若存在一种不完全的删数方法，那么所有的数全都删掉也一定是可以的，这样就可以简化判断了。而且只会删两端第一次不匹配的两种数（否则一定不合法）。代码： 
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=2e5+5;int a[N];int b[N];int c[N];bool is_hw(int a[],int cnt){    for(int i=1;i&lt;=cnt/2;i++)    {        if(a[i]!=a[cnt-i+1])return false;    }    return true;}void solve(){    int n;    cin&gt;&gt;n;    for(int i=1;i&lt;=n;i++)cin&gt;&gt;a[i];    if(is_hw(a,n)){        cout&lt;&lt;"YES"&lt;&lt;endl;        return;    }    int x,y;    for(int i=1;i&lt;=n;i++)    {        if(a[i]!=a[n-i+1])        {            x=a[i];            y=a[n-i+1];            break;        }    }    int cnt1=0,cnt2=0;    //下面构造一下删去两种元素后的数组    for(int i=1;i&lt;=n;i++)    {        if(a[i]!=x)b[++cnt1]=a[i];        if(a[i]!=y)c[++cnt2]=a[i];    }    if(is_hw(b,cnt1)||is_hw(c,cnt2))cout&lt;&lt;"YES"&lt;&lt;endl;    else cout&lt;&lt;"NO"&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}
-认为这种简单又粗糙的方式很顺手☺️☺️
-]]></content>
-      <categories>
-        <category>每日一题</category>
-      </categories>
-      <tags>
-        <tag>每日一题</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>CF1366C Palindromic Paths</title>
-    <url>/2026/02/01/CF1366C%20Palindromic%20Paths/</url>
-    <content><![CDATA[题目链接： Problem - 1366C - Codeforces题意：给你一个  的矩阵，里面每一位只有0和1，起点从  到  只能向下或向右走，思路：从  到  不管怎么走都要走  步，所以每条回文路径的长度为 。走到 a[i][j] 时一定走了 i+j-2 步，如果这是一条回文路径，那么第 K 步经过的格子值=第 (L-K) 步经过的格子值。但路径不唯一，不同路径在同一步可能选择不同格子。所以为了能够使所有路径都回文，我们要让所有第 K 步的格子都等于第 (L-K) 步的格子。每一步的可达格子集合是固定的。这样对于每一步就有两种选择，都改为 1 或者都改为 0，我们要选择修改次数最少的。所以可以统计每一步的 0/1 的数量。代码： 
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=35;int cnt[100][2];//这里需要注意的是cnt[step][0]表示step步可达的格子中0的数量，step=n+m-2，数组开够大void solve(){    int n,m;    cin&gt;&gt;n&gt;&gt;m;    memset(cnt,0,sizeof(cnt));    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=m;j++)        {            int t;            cin&gt;&gt;t;            int step=i+j-2;            cnt[step][t]++;        }    }    int l=n+m-2;    int ans=0;    for(int i=0,j=l;j&gt;i;j--,i++)    {        ans+=min(cnt[i][0]+cnt[j][0],cnt[i][1]+cnt[j][1]);    }    cout&lt;&lt;ans&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}]]></content>
-      <categories>
-        <category>每日一题</category>
-      </categories>
-      <tags>
-        <tag>每日一题</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>CF2113C Smilo and Minecraft</title>
-    <url>/2026/01/29/CF2113C%20Smilo%20and%20Minecraft/</url>
-    <content><![CDATA[题目链接： https://codeforces.com/problemset/problem/2113/C题意：给定一个  的区域，某些位置有金块，每次可以在空格子放置一个 TNT，炸掉以 TNT 为中心、边长  的正方形区域中的所有物品，并获得位于正方形边界上的所有金块，求可以收集到金块的最大值。思路：假如我们把第一个爆炸点选在 ，这周围的金子就被炸没了，之后我们在这片区域四周选择新的爆炸点就不会让其他的金子消失。所以可以枚举第一个爆炸点选取的位置所炸掉的金子个数。用所有金子的数量减去，来达到最大值。可以使用二维前缀和进行优化。代码： 
-#include &lt;bits/stdc++.h&gt;using namespace std;#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=505;char a[N][N];int s[N][N];void solve(){    int n,m,k;    cin&gt;&gt;n&gt;&gt;m&gt;&gt;k;    k--;//处在爆炸内部的才会消失    int sum=0;    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=m;j++)        {            cin&gt;&gt;a[i][j];            s[i][j]=s[i-1][j]+s[i][j-1]-s[i-1][j-1];            if(a[i][j]=='g'){s[i][j]++;sum++;}        }    }    int ans=0x3f3f3f3f;    for(int i=1;i&lt;=n;i++)    {        for(int j=1;j&lt;=m;j++)        {            if(a[i][j]=='.')            {                //画个正方形                int l=max(1,j-k);                int r=min(m,j+k);                int u=max(1,i-k);                int b=min(n,i+k);                ans=min(ans,s[b][r]-s[u-1][r]-s[b][l-1]+s[u-1][l-1]);            }        }    }    cout&lt;&lt;sum-ans&lt;&lt;endl;}signed main(){    IOS    int t;    cin&gt;&gt;t;    while(t--)    {        solve();    }}]]></content>
+    <title>CF907C. Shockers</title>
+    <url>/2026/01/31/CF907C.%20Shockers/</url>
+    <content><![CDATA[题目链接： https://codeforces.com/problemset/problem/907/C题意：给定 n 种字符串，三种不同的形式，! 表示受罚，. 表示不受罚，? 表示猜测。保证最后一次才猜对。问能少被惩罚多少次。思路：纯模拟，对于! 串取交集，对. ?串取差集。建立一个待定字符集。每次按照题目要求进行待定集的修改，当待定字母数成为 1 之后的操作都是多余的。代码： 
+#include&lt;bits/stdc++.h&gt;using namespace std;#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=50;int a[N];void solve(){    int n;    cin&gt;&gt;n;    for(int i=0;i&lt;26;i++)a[i]=1;//这里将待定集合都置为1.    int num=26;//最初需要猜测26次    int ans=0;    for(int i=1;i&lt;=n;i++)    {        char op;        cin&gt;&gt;op;        string str;        cin&gt;&gt;str;        if(op=='.'){            for(int j=0;j&lt;str.size();j++)            {                if(a[str[j]-'a'])                {                    a[str[j]-'a']=0;//排除这个字母。                    num--;                }            }        }        else if(op=='!')        {            //这时需要将待定集中非字符串内容去除            if(num==1)ans++;//这时候要是能猜对了你还猜也挨电。            int temp[26]={0};            for(int j=0;j&lt;str.size();j++)            {                temp[str[j]-'a']=1;            }            for(int j=0;j&lt;26;j++)            {                if(a[j]&amp;&amp;temp[j]==0)                {                    a[j]=0;                    num--;                }            }        }else {            if(i!=n){                if(num==1)ans++;//表示此时只需要一次就能猜对了，但是多猜了一次                if(a[str[0]-'a'])num--;                a[str[0]-'a']=0;            }        }    }    cout&lt;&lt;ans;}signed main(){    IOS    int t=1;    //cin&gt;&gt;t;    while(t--)    {        solve();    }}]]></content>
       <categories>
         <category>每日一题</category>
       </categories>
@@ -637,18 +666,6 @@ F 智乃的算法竞赛群友思路：假设我们使用 x 个 qcjjkkt，y 个 t
     <url>/2026/01/31/CF581B%20Luxurious%20Houses/</url>
     <content><![CDATA[题目链接： https://codeforces.com/problemset/problem/2113/C题意：有 n 座从左到右排列的建筑，其初始高度已知。对于每个位置 i（1 ≤ i ≤ n），问：最少给第 i 座建筑增加多少层，才能使其高度 严格大于 它右侧所有建筑的高度（即成为“豪华型房屋”）？所有询问相互独立，实际高度不改变。思路：从后往前找，每次更新右侧楼房高度最大值，如果当前楼房比最大高度低，则在最大高度上加一层。代码： 
 #include &lt;bits/stdc++.h&gt;using namespace std;#define int long longconst int N=1e5+5;int a[N];int ans[N];void solve(){    int n;    cin&gt;&gt;n;    for(int i=1;i&lt;=n;i++)    {        cin&gt;&gt;a[i];    }    int h=0;    for(int i=n;i&gt;0;i--)    {        if(a[i]&gt;h)ans[i]=0;        else ans[i]=h+1-a[i];        h=max(h,a[i]);    }    for(int i=1;i&lt;=n;i++)cout&lt;&lt;ans[i]&lt;&lt;" ";}signed main(){    int t=1;    while(t--)    {        solve();    }}]]></content>
-      <categories>
-        <category>每日一题</category>
-      </categories>
-      <tags>
-        <tag>每日一题</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>CF907C. Shockers</title>
-    <url>/2026/01/31/CF907C.%20Shockers/</url>
-    <content><![CDATA[题目链接： https://codeforces.com/problemset/problem/907/C题意：给定 n 种字符串，三种不同的形式，! 表示受罚，. 表示不受罚，? 表示猜测。保证最后一次才猜对。问能少被惩罚多少次。思路：纯模拟，对于! 串取交集，对. ?串取差集。建立一个待定字符集。每次按照题目要求进行待定集的修改，当待定字母数成为 1 之后的操作都是多余的。代码： 
-#include&lt;bits/stdc++.h&gt;using namespace std;#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int N=50;int a[N];void solve(){    int n;    cin&gt;&gt;n;    for(int i=0;i&lt;26;i++)a[i]=1;//这里将待定集合都置为1.    int num=26;//最初需要猜测26次    int ans=0;    for(int i=1;i&lt;=n;i++)    {        char op;        cin&gt;&gt;op;        string str;        cin&gt;&gt;str;        if(op=='.'){            for(int j=0;j&lt;str.size();j++)            {                if(a[str[j]-'a'])                {                    a[str[j]-'a']=0;//排除这个字母。                    num--;                }            }        }        else if(op=='!')        {            //这时需要将待定集中非字符串内容去除            if(num==1)ans++;//这时候要是能猜对了你还猜也挨电。            int temp[26]={0};            for(int j=0;j&lt;str.size();j++)            {                temp[str[j]-'a']=1;            }            for(int j=0;j&lt;26;j++)            {                if(a[j]&amp;&amp;temp[j]==0)                {                    a[j]=0;                    num--;                }            }        }else {            if(i!=n){                if(num==1)ans++;//表示此时只需要一次就能猜对了，但是多猜了一次                if(a[str[0]-'a'])num--;                a[str[0]-'a']=0;            }        }    }    cout&lt;&lt;ans;}signed main(){    IOS    int t=1;    //cin&gt;&gt;t;    while(t--)    {        solve();    }}]]></content>
       <categories>
         <category>每日一题</category>
       </categories>
@@ -1100,6 +1117,24 @@ P1462 通往奥格瑞玛的道路题目链接： https://www.luogu.com.cn/proble
       </tags>
   </entry>
   <entry>
+    <title>小苯的最短路</title>
+    <url>/2026/01/28/%E5%B0%8F%E8%8B%AF%E7%9A%84%E6%9C%80%E7%9F%AD%E8%B7%AF/</url>
+    <content><![CDATA[题目链接： https://ac.nowcoder.com/acm/problem/284229思路：结论题，首先需要推导的是怎样走最短，是直接从 1 走到 i 呢还是绕路经过某些点到 i 呢。假设我们通过点 j 到达点 i 吧。那么花费就是 ，由  可得：所以可知直接从 1 走到 i 最短。所以  。所以对于前半部分，如果 n 为偶数则为 0，如果 n 为奇数则为 1；对于后半部分，连续整数从 1 到 n 的异或结果有个规律，令 ，
+
+x=0 时，f (n)=n.
+x=1 时，f (n)=1.
+x=2 时，f (n)=n+1.
+x=3 时，f (n)=0.代码：
+
+#include&lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);void solve(){    int n;    cin&gt;&gt;n;    int x=n%2;    if(n%4==0) cout&lt;&lt;(n^x);    else if(n%4==1)cout&lt;&lt;(1^x);    else if(n%4==2)cout&lt;&lt;((n+1)^x);    else if(n%4==3)cout&lt;&lt;(0^x);    cout&lt;&lt;endl;}signed main(){    IOS    int t;    cin&gt;&gt;t;    while(t--)    {        solve();    }}]]></content>
+      <categories>
+        <category>每日一题</category>
+      </categories>
+      <tags>
+        <tag>每日一题</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>大一第七次周赛题解</title>
     <url>/2025/12/28/%E5%A4%A7%E4%B8%80%E7%AC%AC%E4%B8%83%E6%AC%A1%E5%91%A8%E8%B5%9B/</url>
     <content><![CDATA[A - 2链接： https://codeforces.com/problemset/problem/1692/A分析： 输入四个数后比较 a 和 b c d 的大小，如果 a 小了，ans加一，最后输出 ans即可。代码实现：
@@ -1177,6 +1212,57 @@ G - 子知识点： 枚举题意：从数组里面选一些数字使得被选中
       </tags>
   </entry>
   <entry>
+    <title>牛客周赛Round 131</title>
+    <url>/2026/02/23/%E7%89%9B%E5%AE%A2%E5%91%A8%E8%B5%9BRound%20131/</url>
+    <content><![CDATA[A ICPC Balloons思路：简单的 if-else 或者是 swich-case。果然我只有碰到这种简单题才能想到多解。代码：
+void solve(){    char c;    cin&gt;&gt;c;    if(c=='A')cout&lt;&lt;"red";    else if(c=='B')cout&lt;&lt;"orange";    else if(c=='C')cout&lt;&lt;"blue";    else if(c=='D')cout&lt;&lt;"green";}
+B String Covering思路：可以发现，单个 1 是染不出来的。代码：
+void solve(){    int n;    cin&gt;&gt;n;    string s;    cin&gt;&gt;s;    bool flag=true;    int i=0;    while(i&lt;n){        if(s[i]=='1'){            int j=i;            while(j&lt;n&amp;&amp;s[j]=='1')j++;            if(j-i==1){                flag=false;                break;            }            i=j;        }else i++;    }    if(flag)cout&lt;&lt;"YES"&lt;&lt;endl;    else cout&lt;&lt;"NO"&lt;&lt;endl;}
+C Get The Sequence思路：遍历 a[i] 如果 a[i]&gt;=b[pos] 那么 pos++ 否则就找下一个 a 来匹配。不匹配的 a 可以直接删除。代码：
+void solve(){    int n,m;    cin&gt;&gt;n&gt;&gt;m;    vector&lt;int&gt;a(n);    vector&lt;int&gt;b(m);    for(int i=0;i&lt;n;i++)    {        cin&gt;&gt;a[i];    }    for(int i=0;i&lt;m;i++)    {        cin&gt;&gt;b[i];    }    int j=0;    for(int i=0;i&lt;n&amp;&amp;j&lt;m;i++)    {        if(a[i]&gt;=b[j]){            j++;        }    }    if(j==m)cout&lt;&lt;"YES"&lt;&lt;endl;    else cout&lt;&lt;"NO"&lt;&lt;endl;}
+D Longest Subsequence思路：要求最长子序列，我们可以用 dp[x] 来记录以 x 结尾的最长子序列的长度，它只能从 dp[x-1] 或 dp[x+1] 上演变过来。所以 dp[x]=max(dp[x],max(dp[x-1],dp[x+1])+1)。代码：
+void solve(){    int n;    cin&gt;&gt;n;    vector&lt;int&gt; a(n);    for(int i=0;i&lt;n;i++)    {        cin&gt;&gt;a[i];    }    vector&lt;int&gt; dp(n+5,0);    int ans=0;    for(int i=0;i&lt;n;i++)    {        int m=max(dp[a[i]+1],dp[a[i]-1])+1;        dp[a[i]]=max(m,dp[a[i]]);        ans=max(ans,dp[a[i]]);    }    cout&lt;&lt;ans&lt;&lt;endl;}
+E Eat The Candy思路：对每一个盒子都计算它所能达到的最大值，最后取所有盒子的最大值。对于每个位置计算：从左边能搬多少糖到 i、从右边能搬多少糖到 i。代码：
+void solve(){    int n;    cin&gt;&gt;n;    vector&lt;int&gt; a(n);    for(int i=0;i&lt;n;i++)    {        cin&gt;&gt;a[i];    }    vector&lt;int&gt; b(n),c(n);    int now=a[0];    for(int i=0;i&lt;n-1;i++)    {        b[i+1]=b[i]+min(a[i+1],now);        now=a[i+1]-min(a[i+1],now);    }    now=a[n-1];    for(int i=n-1;i&gt;=1;i--)    {        c[i-1]=c[i]+min(now,a[i-1]);        now=a[i-1]-min(a[i-1],now);    }    int ans=0;    for(int i=0;i&lt;n;i++)    {        int m=a[i];        if(i)m+=b[i-1];        if(i!=n-1)m+=c[i+1];        ans=max(ans,m);    }    cout&lt;&lt;ans&lt;&lt;endl;}
+F Bracket Coloring思路：括号匹配想到用栈。每一对括号考虑其前后是否相同。代码：
+const int MOD=998244353;void solve(){    int n;    cin&gt;&gt;n;    string s;    cin&gt;&gt;s;    int ans=1;    vector&lt;int&gt; st;    for(int i=0;i&lt;s.size();i++)    {        if(s[i]=='('){            if(i==0||s[i-1]==')')//如果是新的括号组的开始                st.push_back(1);            else st.push_back(0);//连续左括号中的一个        }else{            if(st.size()==1){//栈大小为1当前匹配的是最外层括号                ans=ans*2%MOD;            }else if(st.back()==1){//栈顶为1，这对括号独立                //序列中两个相邻位置的括号字符相同（同为 ‘(’或同为‘)’），则它们的颜色不能相同。                if(i==s.size()-1||s[i+1]=='(')                    ans=ans*2%MOD;            }            st.pop_back();        }    }    cout&lt;&lt;ans&lt;&lt;endl;}
+]]></content>
+      <categories>
+        <category>我的训练</category>
+      </categories>
+      <tags>
+        <tag>题解</tag>
+        <tag>牛客</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>牛客周赛Round 129题解（ABCDE）</title>
+    <url>/2026/02/09/%E7%89%9B%E5%AE%A2%E5%91%A8%E8%B5%9BRound%20129%E9%A2%98%E8%A7%A3%EF%BC%88ABCDE%EF%BC%89/</url>
+    <content><![CDATA[比赛链接：牛客竞赛_ACM/NOI/CSP/CCPC/ICPC算法编程高难度练习赛_牛客竞赛OJ点开看着 C 题有意思，所以打算今天来补补题。然后突然发现笔记还有好多周赛的题没补，很恐怖了。👹👹
+A 小红的大小判断题意： 判断  和  谁大。
+思路：这个题很考验数学，嗯……代码： 
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);void solve(){    int x;    cin&gt;&gt;x;    if(x!=1)cout&lt;&lt;"right";    else cout&lt;&lt;"equal";}signed main(){	IOS	//int t;	//cin&gt;&gt;t;	int t=1;	while(t--)	{		solve();	}}
+B 小红的大小再判断题意：判断该字符串反转后的字典序和原串哪个更大。思路：用 reverse 反转再拿 compare 比较。不记得 compare 就用 for 循环比较。代码： 
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);void solve(){    string s;    cin&gt;&gt;s;    string re=s;    reverse(re.begin(),re.end());    if(s.compare(re)==0)cout&lt;&lt;"equal";    else if(s.compare(re)&lt;0)cout&lt;&lt;"right";    else cout&lt;&lt;"left";}signed main(){	IOS	//int t;	//cin&gt;&gt;t;	int t=1;	while(t--)	{		solve();	}}
+C 小红的肥鹅健身房题意：给一个 n 行 m 列的矩阵，某些格子上有一个数字。我们使用  表示网格中从上往下数第 i 行和从左往右数第 j 列的单元格中的数字。小红每次操作可以选择两个相等的数字合成出一个比原数字大 1 的数字（原来两个数字消失，新数字在矩阵上任意一个空位置生成），例如选择两个 13，可以合成一个 14。如果生成的数字不小于 k，小红还可以获得一枚金币。初始棋盘上的数字不计入金币获得。现在问小红最多可以合成多少次，以及最多可以获得多少枚金币。思路：这个题其实就是统计每个数字出现的次数然后去从小到大循环一次，但是不建议开个数组去存，那样不好控制。使用 map 键值对存储。遍历map中的每个数字，大于 2 的合成。代码： 
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);map&lt;int,int&gt;a;void solve(){    int n,m,k;    cin&gt;&gt;n&gt;&gt;m&gt;&gt;k;    int cnt=0,ans=0;    for(int i=0;i&lt;n*m;i++)    {        int x;        cin&gt;&gt;x;        if(x!=0)a[x]++;    }    for(auto [u,v]:a)    {        if(v&gt;=2){            int t=v/2;            a[u+1]+=t;            cnt+=t;            if(u+1&gt;=k)ans+=t;        }    }    cout&lt;&lt;cnt&lt;&lt;" "&lt;&lt;ans&lt;&lt;endl;}signed main(){	IOS	//int t;	//cin&gt;&gt;t;	int t=1;	while(t--)	{		solve();	}}
+D 小红的神秘密码解锁题意：密码 s 由 0 和 1 组成，下标从 1 开始。连续相同字符构成一个“颜色块”。可以选择一个连续子串 [l,r]，把其中的 0 变 1，1 变 0。有多少种不同的翻转区间[l,r]，使得翻转后颜色块的数量 不变。思路：翻转的结果只和左右边界有关。如果 a[l] 和 a[l-1] 不同的话，在翻转后颜色块减一，如果相等的话，颜色块加一。右边界也一样。内部的翻转不会影响相邻关系，颜色块数量不变。如果要使翻转后颜色块数量不变的话就需要左边相等右边不等或者左边不等右边相等。所以只需要统计一下相邻两个密码相等/不相等的个数，进行组合就可以得到结果。代码： 
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);void solve(){    string s;    cin&gt;&gt;s;    int n1=0,n2=0;    for(int i=1;i&lt;s.size();i++)    {        if(s[i]!=s[i-1])n1++;        else n2++;    }    cout&lt;&lt;n1*n2+1;//这里的加一是翻转整个字符串。}signed main(){	IOS	//int t;	//cin&gt;&gt;t;	int t=1;	while(t--)	{		solve();	}}
+E 小红的多维空间冒险题意： 
+思路：只有 0 或 1 两种数，所以当  时 ；当  时 。最后其实就是 。也就是坐标位上不同的数量为 。有  个节点，所以就有  个坐标位。从中任意选出 k 个。也就是  。节点无序所以再除以 2 即为 代码： 
+#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int MOD=1e9+7;int qmi(int a,int b){    int res=1;    while(b){        if(b&amp;1)res=res*a%MOD;        a=a*a%MOD;        b&gt;&gt;=1;    }    return res%MOD;}void solve(){    int n;    cin&gt;&gt;n;    int m=qmi(2,n-1);    int t=n;    for(int i=1;i&lt;=n;i++)    {        if(i==1)t=n;        else{            t=t*(n-i+1)%MOD;            t=t*qmi(i,MOD-2)%MOD;        }        cout&lt;&lt;t*m%MOD&lt;&lt;" ";    }}signed main(){	IOS	//int t;	//cin&gt;&gt;t;	int t=1;	while(t--)	{		solve();	}}
+
+F 先放放😫😫
+]]></content>
+      <categories>
+        <category>我的训练</category>
+      </categories>
+      <tags>
+        <tag>题解</tag>
+        <tag>牛客</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>动态规划01</title>
     <url>/2026/02/23/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%9201/</url>
     <content><![CDATA[线性 dp–数字三角形模型数字三角形 Number Triangles题目链接：P1216 [IOI 1994 / USACO1.5] 数字三角形 Number Triangles - 洛谷思路：把这个三角抽象为二维数组。动态规划，我们设  表示从  到  的所有方案的集合的最大值。这个点可以由  或者  走过来。所以状态转移方程为 。答案就是最下面一层的最大值。代码：
@@ -1228,41 +1314,6 @@ LCIS题目链接：P10954 LCIS - 洛谷思路：设 f[i][j] 表示 a 的前 i �
       </tags>
   </entry>
   <entry>
-    <title>CF10518M.Too Easy</title>
-    <url>/2026/02/02/CF10518M.Too%20Easy/</url>
-    <content><![CDATA[题目链接： Problem - M - Codeforces题意：有一个无限大的二维网格，你从坐标  出发，要到达坐标 （也可能是同一个点）。每一步你可以向左、右、上、下走一格。你的任务是找出到达目标坐标所需的最少步数。你不能连续朝同一个方向走超过  步。思路：先不看题目的限制，从一个坐标到另一个坐标需要走的步数为 ，这里 s 和 t 值的大小是不确定的所以取绝对值，高级一点就叫曼哈顿距离。现在题目增加了一个不能在同一个方向连续走超过  步，其实就是我连续走 k 步然后换个方向走一步，然后再回来再走 k 步，这样循环下去。我们可以把方向分成主方向（步数多）和次方向。这样在主方向最多可以走 次方向步数 步，这时候是没走多余步数的。现在就可以分成两种情况：
-
-主方向次方向 这种情况说明主方向可以被次方向合理分割，这样就直接输出曼哈顿距离即可。
-主方向次方向 这时候次方向已经不够了，所以需要走额外的步数来调整。超出的步数 主方向次方向，所以此时需要向无关方向走 1 步，朝主方向走 k 步，再向无关方向反方向走一步 (回到原位)，再朝主方向走 k 步。这样是一个循环，所以需要  个循环，每个循环额外花费 2 步。所以额外步数的计算可以用 ceil 向上取整去计算也可以使用 主方向次方向 计算。
-
-代码： 
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);void solve(){    int x1,x2,y1,y2,k;    cin&gt;&gt;x1&gt;&gt;y1&gt;&gt;x2&gt;&gt;y2&gt;&gt;k;    int x=abs(x1-x2),y=abs(y1-y2);    if(x&lt;y)swap(x,y);    if(x&lt;=(y+1)*k)cout&lt;&lt;x+y&lt;&lt;endl;    else{        int step=(x-(y+1)*k+2*k-1)/(2*k);        cout&lt;&lt;x+y+step*2&lt;&lt;endl;    }}signed main(){	IOS	int t;	cin&gt;&gt;t;	//int t=1;	while(t--)	{		solve();	}}]]></content>
-      <categories>
-        <category>每日一题</category>
-      </categories>
-      <tags>
-        <tag>每日一题</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>小苯的最短路</title>
-    <url>/2026/01/28/%E5%B0%8F%E8%8B%AF%E7%9A%84%E6%9C%80%E7%9F%AD%E8%B7%AF/</url>
-    <content><![CDATA[题目链接： https://ac.nowcoder.com/acm/problem/284229思路：结论题，首先需要推导的是怎样走最短，是直接从 1 走到 i 呢还是绕路经过某些点到 i 呢。假设我们通过点 j 到达点 i 吧。那么花费就是 ，由  可得：所以可知直接从 1 走到 i 最短。所以  。所以对于前半部分，如果 n 为偶数则为 0，如果 n 为奇数则为 1；对于后半部分，连续整数从 1 到 n 的异或结果有个规律，令 ，
-
-x=0 时，f (n)=n.
-x=1 时，f (n)=1.
-x=2 时，f (n)=n+1.
-x=3 时，f (n)=0.代码：
-
-#include&lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);void solve(){    int n;    cin&gt;&gt;n;    int x=n%2;    if(n%4==0) cout&lt;&lt;(n^x);    else if(n%4==1)cout&lt;&lt;(1^x);    else if(n%4==2)cout&lt;&lt;((n+1)^x);    else if(n%4==3)cout&lt;&lt;(0^x);    cout&lt;&lt;endl;}signed main(){    IOS    int t;    cin&gt;&gt;t;    while(t--)    {        solve();    }}]]></content>
-      <categories>
-        <category>每日一题</category>
-      </categories>
-      <tags>
-        <tag>每日一题</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Codeforces Round 867 (Div3) E + 摩尔投票算法</title>
     <url>/2025/12/27/%E6%91%A9%E5%B0%94%E6%8A%95%E7%A5%A8%E7%AE%97%E6%B3%95/</url>
     <content><![CDATA[题目链接： https://codeforces.com/problemset/problem/1822/E题目大意：求变成“反回文串”的最小次数。思路：我们先来看看它的要求， , 比如我有 5 个字符，要求第 3 个和第 5-3+1 个字符不同，很显然这是不可能的。所以对于奇数长度的字符串，这个要求不能满足。再观察一下还有什么情况不满足要求，对于 cccccc 这样的字符串无论怎么交换都不能满足要求，这可以是一种情况，再来观察一下，cccccb 呢？也不可以，我们来找找可以满足要求的最多的 c 的数量，cccbbb ,所以当一个字符出现的次数大于 n/2 时也是无解的。好了，那对于一个偶数长度的字符串我们如何去交换，使得其操作次数最小又能满足要求呢？我们应该去交换两个不满足要求的字符，这样实现两两交换，去尽可能减少操作次数。我们先用map根据字符来当下标，把所有回文对的下标存起来，来求得最多的字符数。然后遍历数组（这里只需要遍历一半），去求得需要修改得字符数。和代码：
@@ -1282,30 +1333,6 @@ Acwing 4547. 伊格内修斯和公主IV看一道模板题吧。链接：[https:/
       <tags>
         <tag>每日一题</tag>
         <tag>CF</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>牛客周赛Round 131</title>
-    <url>/2026/02/23/%E7%89%9B%E5%AE%A2%E5%91%A8%E8%B5%9BRound%20131/</url>
-    <content><![CDATA[A ICPC Balloons思路：简单的 if-else 或者是 swich-case。果然我只有碰到这种简单题才能想到多解。代码：
-void solve(){    char c;    cin&gt;&gt;c;    if(c=='A')cout&lt;&lt;"red";    else if(c=='B')cout&lt;&lt;"orange";    else if(c=='C')cout&lt;&lt;"blue";    else if(c=='D')cout&lt;&lt;"green";}
-B String Covering思路：可以发现，单个 1 是染不出来的。代码：
-void solve(){    int n;    cin&gt;&gt;n;    string s;    cin&gt;&gt;s;    bool flag=true;    int i=0;    while(i&lt;n){        if(s[i]=='1'){            int j=i;            while(j&lt;n&amp;&amp;s[j]=='1')j++;            if(j-i==1){                flag=false;                break;            }            i=j;        }else i++;    }    if(flag)cout&lt;&lt;"YES"&lt;&lt;endl;    else cout&lt;&lt;"NO"&lt;&lt;endl;}
-C Get The Sequence思路：遍历 a[i] 如果 a[i]&gt;=b[pos] 那么 pos++ 否则就找下一个 a 来匹配。不匹配的 a 可以直接删除。代码：
-void solve(){    int n,m;    cin&gt;&gt;n&gt;&gt;m;    vector&lt;int&gt;a(n);    vector&lt;int&gt;b(m);    for(int i=0;i&lt;n;i++)    {        cin&gt;&gt;a[i];    }    for(int i=0;i&lt;m;i++)    {        cin&gt;&gt;b[i];    }    int j=0;    for(int i=0;i&lt;n&amp;&amp;j&lt;m;i++)    {        if(a[i]&gt;=b[j]){            j++;        }    }    if(j==m)cout&lt;&lt;"YES"&lt;&lt;endl;    else cout&lt;&lt;"NO"&lt;&lt;endl;}
-D Longest Subsequence思路：要求最长子序列，我们可以用 dp[x] 来记录以 x 结尾的最长子序列的长度，它只能从 dp[x-1] 或 dp[x+1] 上演变过来。所以 dp[x]=max(dp[x],max(dp[x-1],dp[x+1])+1)。代码：
-void solve(){    int n;    cin&gt;&gt;n;    vector&lt;int&gt; a(n);    for(int i=0;i&lt;n;i++)    {        cin&gt;&gt;a[i];    }    vector&lt;int&gt; dp(n+5,0);    int ans=0;    for(int i=0;i&lt;n;i++)    {        int m=max(dp[a[i]+1],dp[a[i]-1])+1;        dp[a[i]]=max(m,dp[a[i]]);        ans=max(ans,dp[a[i]]);    }    cout&lt;&lt;ans&lt;&lt;endl;}
-E Eat The Candy思路：对每一个盒子都计算它所能达到的最大值，最后取所有盒子的最大值。对于每个位置计算：从左边能搬多少糖到 i、从右边能搬多少糖到 i。代码：
-void solve(){    int n;    cin&gt;&gt;n;    vector&lt;int&gt; a(n);    for(int i=0;i&lt;n;i++)    {        cin&gt;&gt;a[i];    }    vector&lt;int&gt; b(n),c(n);    int now=a[0];    for(int i=0;i&lt;n-1;i++)    {        b[i+1]=b[i]+min(a[i+1],now);        now=a[i+1]-min(a[i+1],now);    }    now=a[n-1];    for(int i=n-1;i&gt;=1;i--)    {        c[i-1]=c[i]+min(now,a[i-1]);        now=a[i-1]-min(a[i-1],now);    }    int ans=0;    for(int i=0;i&lt;n;i++)    {        int m=a[i];        if(i)m+=b[i-1];        if(i!=n-1)m+=c[i+1];        ans=max(ans,m);    }    cout&lt;&lt;ans&lt;&lt;endl;}
-F Bracket Coloring思路：括号匹配想到用栈。每一对括号考虑其前后是否相同。代码：
-const int MOD=998244353;void solve(){    int n;    cin&gt;&gt;n;    string s;    cin&gt;&gt;s;    int ans=1;    vector&lt;int&gt; st;    for(int i=0;i&lt;s.size();i++)    {        if(s[i]=='('){            if(i==0||s[i-1]==')')//如果是新的括号组的开始                st.push_back(1);            else st.push_back(0);//连续左括号中的一个        }else{            if(st.size()==1){//栈大小为1当前匹配的是最外层括号                ans=ans*2%MOD;            }else if(st.back()==1){//栈顶为1，这对括号独立                //序列中两个相邻位置的括号字符相同（同为 ‘(’或同为‘)’），则它们的颜色不能相同。                if(i==s.size()-1||s[i+1]=='(')                    ans=ans*2%MOD;            }            st.pop_back();        }    }    cout&lt;&lt;ans&lt;&lt;endl;}
-]]></content>
-      <categories>
-        <category>我的训练</category>
-      </categories>
-      <tags>
-        <tag>题解</tag>
-        <tag>牛客</tag>
       </tags>
   </entry>
   <entry>
@@ -1352,33 +1379,6 @@ void solve(){    int n;    cin&gt;&gt;n;    memset(dp,0x3f,sizeof dp);    for(in
 
 镜像思路：本质是最短路。先来明确一下，只有个位不为 0 时才能反转，反转不会改变位数。首先先来检测一下 a 是否比 b 大一位。如果大的话输出 -1。之后使用队列维护每一个遇到的值，使用 pair 来存储 {当前值,到达当前值的操作次数}。这样的话可能就会遍历很多，所以能剪枝的尽量剪。代码：
 #include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);#define endl '\n'#define PII pair&lt;int,int&gt;int a,b,k;int rev(int x){    int res=0;    while(x&gt;0){        res=x%10+res*10;        x/=10;    }    return res;}void solve(){    cin&gt;&gt;a&gt;&gt;b&gt;&gt;k;    if(a==b){        cout&lt;&lt;"0"&lt;&lt;endl;        return;    }    queue&lt;PII&gt; q;    q.push({a,0});    int ans=-1;    int mx=1;    while(mx&lt;b)mx*=10;    if(a&gt;=mx){        cout&lt;&lt;"-1"&lt;&lt;endl;        return;    }    vector&lt;int&gt; st(mx,0);    st[a]=1;    while(!q.empty()){        auto [x,cnt]=q.front();        q.pop();        if(x%10){            int r=rev(x);            if(r==b){                ans=cnt+1;                break;            }            if(r&lt;mx&amp;&amp;!st[r]){                st[r]=1;                q.push({r,cnt+1});            }        }        int m=x+k;        if(m==b){            ans=cnt+1;            break;        }        if(m&lt;mx&amp;&amp;!st[m]){            st[m]=1;            q.push({m,cnt+1});        }    }    cout&lt;&lt;ans&lt;&lt;endl;}signed main(){	IOS	int t;	cin&gt;&gt;t;	while(t--)	{		solve();	}}]]></content>
-      <categories>
-        <category>我的训练</category>
-      </categories>
-      <tags>
-        <tag>题解</tag>
-        <tag>牛客</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>牛客周赛Round 129题解（ABCDE）</title>
-    <url>/2026/02/09/%E7%89%9B%E5%AE%A2%E5%91%A8%E8%B5%9BRound%20129%E9%A2%98%E8%A7%A3%EF%BC%88ABCDE%EF%BC%89/</url>
-    <content><![CDATA[比赛链接：牛客竞赛_ACM/NOI/CSP/CCPC/ICPC算法编程高难度练习赛_牛客竞赛OJ点开看着 C 题有意思，所以打算今天来补补题。然后突然发现笔记还有好多周赛的题没补，很恐怖了。👹👹
-A 小红的大小判断题意： 判断  和  谁大。
-思路：这个题很考验数学，嗯……代码： 
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);void solve(){    int x;    cin&gt;&gt;x;    if(x!=1)cout&lt;&lt;"right";    else cout&lt;&lt;"equal";}signed main(){	IOS	//int t;	//cin&gt;&gt;t;	int t=1;	while(t--)	{		solve();	}}
-B 小红的大小再判断题意：判断该字符串反转后的字典序和原串哪个更大。思路：用 reverse 反转再拿 compare 比较。不记得 compare 就用 for 循环比较。代码： 
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);void solve(){    string s;    cin&gt;&gt;s;    string re=s;    reverse(re.begin(),re.end());    if(s.compare(re)==0)cout&lt;&lt;"equal";    else if(s.compare(re)&lt;0)cout&lt;&lt;"right";    else cout&lt;&lt;"left";}signed main(){	IOS	//int t;	//cin&gt;&gt;t;	int t=1;	while(t--)	{		solve();	}}
-C 小红的肥鹅健身房题意：给一个 n 行 m 列的矩阵，某些格子上有一个数字。我们使用  表示网格中从上往下数第 i 行和从左往右数第 j 列的单元格中的数字。小红每次操作可以选择两个相等的数字合成出一个比原数字大 1 的数字（原来两个数字消失，新数字在矩阵上任意一个空位置生成），例如选择两个 13，可以合成一个 14。如果生成的数字不小于 k，小红还可以获得一枚金币。初始棋盘上的数字不计入金币获得。现在问小红最多可以合成多少次，以及最多可以获得多少枚金币。思路：这个题其实就是统计每个数字出现的次数然后去从小到大循环一次，但是不建议开个数组去存，那样不好控制。使用 map 键值对存储。遍历map中的每个数字，大于 2 的合成。代码： 
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);map&lt;int,int&gt;a;void solve(){    int n,m,k;    cin&gt;&gt;n&gt;&gt;m&gt;&gt;k;    int cnt=0,ans=0;    for(int i=0;i&lt;n*m;i++)    {        int x;        cin&gt;&gt;x;        if(x!=0)a[x]++;    }    for(auto [u,v]:a)    {        if(v&gt;=2){            int t=v/2;            a[u+1]+=t;            cnt+=t;            if(u+1&gt;=k)ans+=t;        }    }    cout&lt;&lt;cnt&lt;&lt;" "&lt;&lt;ans&lt;&lt;endl;}signed main(){	IOS	//int t;	//cin&gt;&gt;t;	int t=1;	while(t--)	{		solve();	}}
-D 小红的神秘密码解锁题意：密码 s 由 0 和 1 组成，下标从 1 开始。连续相同字符构成一个“颜色块”。可以选择一个连续子串 [l,r]，把其中的 0 变 1，1 变 0。有多少种不同的翻转区间[l,r]，使得翻转后颜色块的数量 不变。思路：翻转的结果只和左右边界有关。如果 a[l] 和 a[l-1] 不同的话，在翻转后颜色块减一，如果相等的话，颜色块加一。右边界也一样。内部的翻转不会影响相邻关系，颜色块数量不变。如果要使翻转后颜色块数量不变的话就需要左边相等右边不等或者左边不等右边相等。所以只需要统计一下相邻两个密码相等/不相等的个数，进行组合就可以得到结果。代码： 
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);void solve(){    string s;    cin&gt;&gt;s;    int n1=0,n2=0;    for(int i=1;i&lt;s.size();i++)    {        if(s[i]!=s[i-1])n1++;        else n2++;    }    cout&lt;&lt;n1*n2+1;//这里的加一是翻转整个字符串。}signed main(){	IOS	//int t;	//cin&gt;&gt;t;	int t=1;	while(t--)	{		solve();	}}
-E 小红的多维空间冒险题意： 
-思路：只有 0 或 1 两种数，所以当  时 ；当  时 。最后其实就是 。也就是坐标位上不同的数量为 。有  个节点，所以就有  个坐标位。从中任意选出 k 个。也就是  。节点无序所以再除以 2 即为 代码： 
-#include &lt;bits/stdc++.h&gt;using namespace std;#define int long long#define IOS ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);const int MOD=1e9+7;int qmi(int a,int b){    int res=1;    while(b){        if(b&amp;1)res=res*a%MOD;        a=a*a%MOD;        b&gt;&gt;=1;    }    return res%MOD;}void solve(){    int n;    cin&gt;&gt;n;    int m=qmi(2,n-1);    int t=n;    for(int i=1;i&lt;=n;i++)    {        if(i==1)t=n;        else{            t=t*(n-i+1)%MOD;            t=t*qmi(i,MOD-2)%MOD;        }        cout&lt;&lt;t*m%MOD&lt;&lt;" ";    }}signed main(){	IOS	//int t;	//cin&gt;&gt;t;	int t=1;	while(t--)	{		solve();	}}
-
-F 先放放😫😫
-]]></content>
       <categories>
         <category>我的训练</category>
       </categories>
