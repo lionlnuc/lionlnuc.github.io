@@ -300,6 +300,7 @@
 }
 .page-container .right-side-tools-container {
   position: fixed;
+  z-index: 1010;
   bottom: 5%;
   right: 38px;
   opacity: 1;
