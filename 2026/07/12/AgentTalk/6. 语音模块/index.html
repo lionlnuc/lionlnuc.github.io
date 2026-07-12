@@ -1,0 +1,1847 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="软件开发,编程,技术学习,工程实践,C++,Java,Hexo,算法">
+    
+    
+    <meta name="author" content="Lionlnuc">
+    
+    <!-- Completely eliminate flash of wrong theme -->
+    <script>
+        (function() {
+            const THEME_KEY = "REDEFINE-THEME-STATUS";
+            const DARK = "dark", LIGHT = "light";
+            
+            // Get preferred theme
+            function getTheme() {
+                try {
+                    const saved = localStorage.getItem(THEME_KEY);
+                    if (saved) {
+                        const { isDark } = JSON.parse(saved);
+                        return isDark ? DARK : LIGHT;
+                    }
+                } catch (e) {}
+                
+                return matchMedia("(prefers-color-scheme: dark)").matches ? DARK : LIGHT;
+            }
+            
+            // Apply theme to document
+            function applyTheme(theme) {
+                const isDark = theme === DARK;
+                const root = document.documentElement;
+                
+                // Set classes for compatibility
+                root.classList.add(theme);
+                root.classList.remove(isDark ? LIGHT : DARK);
+                root.style.colorScheme = theme;
+            }
+            
+            // Initial application
+            const theme = getTheme();
+            applyTheme(theme);
+            
+            // Listen for system preference changes
+            matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ({ matches }) => {
+                // Only update if using system preference (no localStorage entry)
+                if (!localStorage.getItem(THEME_KEY)) {
+                    applyTheme(matches ? DARK : LIGHT);
+                }
+            });
+            
+            // Set body classes ASAP (before DOMContentLoaded)
+            (function() {
+                const addBodyClass = () => {
+                    const b = document.body;
+                    if (!b) return false;
+                    b.classList.add(theme + "-mode");
+                    return true;
+                };
+
+                // Try immediately
+                if (addBodyClass()) return;
+
+                // Observe until body exists
+                const mo = new MutationObserver(() => {
+                    if (addBodyClass()) mo.disconnect();
+                });
+                mo.observe(document.documentElement, { childList: true, subtree: true });
+            })();
+        })();
+    </script>
+    
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="https://lionlnuc.github.io/2026/07/12/agenttalk/6. 语音模块/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+    
+        
+        <meta name="description" content="记录软件开发、技术学习、工程实践与生活思考的个人博客。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="6.语音模块、ASR、TTS 与流式播放">
+<meta property="og:url" content="https://lionlnuc.github.io/2026/07/12/AgentTalk/6.%20%E8%AF%AD%E9%9F%B3%E6%A8%A1%E5%9D%97/">
+<meta property="og:site_name" content="Lionlnuc - 享受编程，享受生活">
+<meta property="og:description" content="记录软件开发、技术学习、工程实践与生活思考的个人博客。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://lionlnuc.github.io/images/redefine-og.webp">
+<meta property="article:published_time" content="2026-07-11T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-07-11T16:00:00.000Z">
+<meta property="article:author" content="Lionlnuc">
+<meta property="article:tag" content="AgentTalk">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lionlnuc.github.io/images/redefine-og.webp">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/image/logo.png" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/image/logo.png">
+    <meta name="theme-color" content="#83cff9">
+    <link rel="shortcut icon" href="/image/logo.png">
+    <!--- Page Info-->
+    
+    <title>
+        
+            6.语音模块、ASR、TTS 与流式播放 | Lionlnuc
+        
+    </title>
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
+
+
+    <!--- Inject Part-->
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/css/build/tailwind.css">
+
+    
+
+    
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
+
+    
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
+
+    <!--- Font Part-->
+    
+    
+    
+    
+    
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"lionlnuc.github.io","root":"/","language":"zh-CN","path":"search.json"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":false,"title_alignment":"left","headings_top_spacing":{"h1":"3.2rem","h2":"2.4rem","h3":"1.9rem","h4":"1.6rem","h5":"1.4rem","h6":"1.3rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#83cff9","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":true,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":false,"custom_message":"Now loading......"},"side_tools":{"gear_rotation":true,"auto_expand":false},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"记录软件开发、技术学习、工程实践与生活思考的个人博客。"},"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/home-banner-light.webp","dark":"/images/home-banner-dark.webp"},"title":"Lionlnuc","subtitle":{"text":["技术学习与工程实践","记录问题、方案与思考","持续构建个人知识体系"],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":85,"backing_speed":24,"starting_delay":1000,"backing_delay":2200,"loop":true,"smart_backspace":true},"text_color":{"light":"#101010","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":true,"style":"default","links":[{"icon":"fa-brands fa-github","url":"https://github.com/lionlnuc","name":"github"},{"icon":"fa-solid fa-code","url":"https://blog.csdn.net/a140781","name":"CSDN"},{"icon":"fa-solid fa-at","url":"you@example.com"},{"icon":"fa-brands fa-telegram","url":null},{"icon":"/images/custom-icon.svg","url":null}],"qrs":[{"icon":"fa-brands fa-weixin","qr":"https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/qrcode_for_gh_94f2768aad8b_258.jpg","name":"weixin"},{"icon":"/images/custom-icon.svg","qr":null}]}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":false,"version":"11.4.1","theme":{"light":"default","dark":"dark"}}},"version":"2.9.0","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"专题":{"path":"/categories","icon":"fa-solid fa-layer-group"},"文章":{"icon":"fa-solid fa-book","submenus":{"归档":"/archives","标签":"/tags","说说":"/shuoshuo"}},"关于":{"path":"/about","icon":"fa-regular fa-user"},"GitHub":{"icon":"fa-brands fa-github","path":"https://github.com/lionlnuc"}},"search":{"enable":true,"preload":false,"path":"search.json","field":"post","content":false,"format":"striptags"}},"page_templates":{"friends_column":2,"tags_style":"blur","masonry":{"batch_size":12,"initial_batch_size":24}},"home":{"sidebar":{"enable":true,"position":"right","first_item":"info","announcement":"记录学习、实践与思考","show_on_mobile":true,"links":{"技术专题":{"path":"/categories","icon":"fa-solid fa-layer-group"},"文章归档":{"path":"/archives","icon":"fa-regular fa-archive"},"标签索引":{"path":"/tags","icon":"fa-regular fa-tags"},"关于本站":{"path":"/about","icon":"fa-regular fa-user"}}},"article_date_format":"auto","excerpt_length":160,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footer":{"runtime":true,"icon":"<i class=\"fa-solid fa-heart fa-beat\" style=\"--fa-animation-duration: 0.5s; color: #f54545\"></i>","start":"2025/12/15 22:45:00","statistics":true,"customize":null,"icp":{"enable":false,"number":null,"url":null}},"footerStart":"2025/12/15 22:45:00","mermaid":{"style":{"light":"default","dark":"dark"}}};
+    window.lang_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+    window.i18n = {"search":"站内搜索您需要的内容...","toc":"目录","prev":"上一页","next":"下一页","prev_posts":"上一篇","next_posts":"下一篇","page":"第 %d 页","recent_posts":"最新文章","share":"分享","powered_by":"由 %s 驱动","theme":"主题","rss_feed":"RSS Feed","category":"分类","categories":"分类","tag":"标签","tags":"标签","post":"文章","posts":"文章","tagcloud":"标签云","comment":"评论","comments":"评论","top":"置顶","sticky":"置顶","go-back-home":"回到首页","masonry_loading":"照片加载中...","image_viewer":"图片查看器","close":"关闭","exif":{"title":"EXIF","cards":{"camera":"相机","lens":"镜头","exposure":"曝光","other":"其他"},"fields":{"make":"品牌","model":"机型","date_taken":"拍摄时间","lens_model":"镜头","focal_length":"焦距","focus_mode":"对焦模式","shutter":"快门","aperture":"光圈","iso":"感光度","exposure_program":"曝光程序","exposure_compensation":"曝光补偿","metering_mode":"测光模式","flash":"闪光灯","white_balance":"白平衡","latitude":"纬度","longitude":"经度","altitude":"海拔"},"status":{"loading":"加载中...","no_exif":"无 EXIF 信息","library_missing":"EXIF 库未加载","image_source_missing":"图片地址不可用","unavailable":"EXIF 不可用（可能被 CORS 阻止或缺少元数据）","flag_unavailable":"EXIF 不可用"}},"home":"首页","archive":"归档","archives":"归档","about":"关于","links":"链接","link":"链接","friends":"友情链接","friend":"友情链接","timeline":"时间轴","shuoshuo":"说说","bookmarks":"书签","site_uv":"访问人数","site_pv":"总访问量","read_more":"阅读全文","wordcount":"字","min2read":"分钟","changelog":"更新日志","status":"状态","runtime":"博客已运行","days":"天","hours":"小时","minutes":"分钟","seconds":"秒","optimized_by":"并由 Evan 进行优化","rights":"版权所有","site_posts":"共撰写了 %s 篇文章","site_wordcount":"共 %s 字","copyright":{"title":"标题","author":"作者","link":"链接","create_time":"创建于","update_time":"更新于","license_title":"版权声明","license_content":"本文章采用 %s 进行许可。","all_rights_reserved":"版权所有 &#169 %s，禁止转载。","public_domain":"本文为公有领域作品，可自由转载、引用。"},"ago":{"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"},"create_time":"创建","update_time":"更新","expired":"这篇文章最后更新于 %s 天前，内容可能已经过时。"};
+    window.data = {"masonry":true};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 8.1.2"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+<body>
+	<div class="progress-bar-container">
+	
+	<span class="scroll-progress-bar"></span>
+	
+
+	
+	<span class="pjax-progress-bar"></span>
+	<!--        <span class="swup-progress-icon">-->
+	<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+	<!--        </span>-->
+	
+</div>
+
+<main class="page-container" id="swup">
+
+	
+
+	<div class="main-content-container flex flex-col justify-between min-h-dvh">
+		<div class="main-content-header">
+			<header class="navbar-container px-6 md:px-12">
+    <div class="navbar-content transition-navbar ">
+        <div class="left">
+            
+                <a class="logo-image h-8 w-8 sm:w-10 sm:h-10 mr-3" href="/">
+                    <img src="/image/logo.png" class="w-full h-full rounded-xs">
+                </a>
+            
+            <a class="logo-title" href="/">
+                
+                Lionlnuc
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    首页
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/categories"
+                                        >
+                                    <i class="fa-solid fa-layer-group fa-fw"></i>
+                                    专题
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="has-dropdown"
+                                   href="#"
+                                        onClick=&#34;return false;&#34;>
+                                    <i class="fa-solid fa-book fa-fw"></i>
+                                    文章
+                                    <i class="fa-solid fa-chevron-down fa-fw"></i>
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                                    <ul class="sub-menu">
+                                        
+                                            <li>
+                                                <a href="/archives">
+                                                    归档
+                                                </a>
+                                            </li>
+                                        
+                                            <li>
+                                                <a href="/tags">
+                                                    标签
+                                                </a>
+                                            </li>
+                                        
+                                            <li>
+                                                <a href="/shuoshuo">
+                                                    说说
+                                                </a>
+                                            </li>
+                                        
+                                    </ul>
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/about"
+                                        >
+                                    <i class="fa-regular fa-user fa-fw"></i>
+                                    关于
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   target="_blank" rel="noopener" href="https://github.com/lionlnuc"
+                                        >
+                                    <i class="fa-brands fa-github fa-fw"></i>
+                                    GITHUB
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                        <li class="navbar-item search search-popup-trigger">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-dvh w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                        >
+                            <span>
+                                首页
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/categories"
+                        >
+                            <span>
+                                专题
+                            </span>
+                            
+                                <i class="fa-solid fa-layer-group fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item-sub text-base my-1.5 flex flex-col w-full">
+                        
+                        <div class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary cursor-pointer text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                             navbar-data-toggle="submenu-文章"
+                        >
+                            <span>
+                                文章
+                            </span>
+                            
+                                <i class="fa-solid fa-chevron-right fa-sm fa-fw transition-all"></i>
+                            
+                        </div>
+                        
+
+                        
+                            <div class="flex-col items-start px-2 py-2 hidden" data-target="submenu-文章">
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           href="/archives">归档</a>
+                                    </div>
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           href="/tags">标签</a>
+                                    </div>
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           href="/shuoshuo">说说</a>
+                                    </div>
+                                
+                            </div>
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/about"
+                        >
+                            <span>
+                                关于
+                            </span>
+                            
+                                <i class="fa-regular fa-user fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           target="_blank" rel="noopener" href="https://github.com/lionlnuc"
+                        >
+                            <span>
+                                GITHUB
+                            </span>
+                            
+                                <i class="fa-brands fa-github fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+                
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/categories"
+                        >
+                            <span>技术专题</span>
+                            <i class="fa-solid fa-layer-group fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/archives"
+                        >
+                            <span>文章归档</span>
+                            <i class="fa-regular fa-archive fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/tags"
+                        >
+                            <span>标签索引</span>
+                            <i class="fa-regular fa-tags fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/about"
+                        >
+                            <span>关于本站</span>
+                            <i class="fa-regular fa-user fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">8</div>
+        <div class="label text-third-text-color text-sm">标签</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">3</div>
+        <div class="label text-third-text-color text-sm">专题</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">44</div>
+        <div class="label text-third-text-color text-sm">文章</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+		</div>
+
+		<div class="main-content-body transition-fade-up">
+			
+
+			<div class="main-content">
+				<div class="post-page-container flex relative justify-between box-border w-full h-full">
+	<div class="article-content-container">
+
+		<div class="article-title relative w-full">
+			
+			<div class="w-full flex items-center pt-6 justify-start">
+				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">6.语音模块、ASR、TTS 与流式播放</h1>
+			</div>
+			
+		</div>
+
+		
+		<div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+			<div class="avatar w-[46px] h-[46px] shrink-0 rounded-medium border border-border-color p-px">
+				<img src="/image/avatar.png">
+			</div>
+			<div class="info flex flex-col justify-between">
+				<div class="author flex items-center">
+					<span class="name text-default-text-color text-lg font-semibold">Lionlnuc</span>
+					
+					<span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv4</span>
+					
+				</div>
+				<div class="meta-info">
+					<div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2026-07-12</span>
+        <span class="mobile">2026-07-12</span>
+        <span class="hover-info">创建</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2026-07-12</span>
+            <span class="mobile">2026-07-12</span>
+            <span class="hover-info">更新</span>
+        </span>
+    
+
+    
+        <span class="article-categories article-meta-item">
+            <i class="fa-regular fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/AgentTalk/">AgentTalk</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/AgentTalk/">AgentTalk</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+				</div>
+			</div>
+		</div>
+		
+
+		
+
+
+		<div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+			<h1 id="语音模块、ASR、TTS-与流式播放"><a href="#语音模块、ASR、TTS-与流式播放" class="headerlink" title="语音模块、ASR、TTS 与流式播放"></a>语音模块、ASR、TTS 与流式播放</h1><h2 id="一、目标"><a href="#一、目标" class="headerlink" title="一、目标"></a>一、目标</h2><p>本节在文字聊天基础上加入完整语音交互能力：</p>
+<ul>
+<li>前端麦克风语音输入；</li>
+<li>VAD 人声检测；</li>
+<li>录音数据转 PCM；</li>
+<li>后端 ASR 语音识别；</li>
+<li>识别文本继续走聊天流程；</li>
+<li>后端 TTS 语音合成；</li>
+<li>文本与音频通过 SSE 同时流式返回；</li>
+<li>前端 MediaSource 实现边下边播；</li>
+<li>新消息打断旧回复与旧语音播放。</li>
+</ul>
+<p><u>本节把项目从“文字聊天”升级为“语音对话”，核心难点是异步 I/O、WebSocket、SSE、多线程和浏览器音频播放的组合。</u></p>
+<hr>
+<h2 id="二、语音交互整体流程"><a href="#二、语音交互整体流程" class="headerlink" title="二、语音交互整体流程"></a>二、语音交互整体流程</h2><h3 id="2-1-三个核心概念"><a href="#2-1-三个核心概念" class="headerlink" title="2.1 三个核心概念"></a>2.1 三个核心概念</h3><table>
+<thead>
+<tr>
+<th>缩写</th>
+<th>全称</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ASR</td>
+<td>Automatic Speech Recognition</td>
+<td>语音转文字</td>
+</tr>
+<tr>
+<td>NLP / LLM</td>
+<td>Natural Language Processing / Large Language Model</td>
+<td>理解文本并生成回复</td>
+</tr>
+<tr>
+<td>TTS</td>
+<td>Text To Speech</td>
+<td>文字转语音</td>
+</tr>
+</tbody></table>
+<h3 id="2-2-项目语音流程"><a href="#2-2-项目语音流程" class="headerlink" title="2.2 项目语音流程"></a>2.2 项目语音流程</h3><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">用户说话</span><br><span class="line">  ↓</span><br><span class="line">前端 VAD 判断人声开始/结束</span><br><span class="line">  ↓</span><br><span class="line">获取一段音频 Float32Array</span><br><span class="line">  ↓</span><br><span class="line">转成 16-bit PCM</span><br><span class="line">  ↓</span><br><span class="line">FormData 上传到 Django ASR 接口</span><br><span class="line">  ↓</span><br><span class="line">后端通过 WebSocket 调用阿里云 ASR</span><br><span class="line">  ↓</span><br><span class="line">得到识别文本</span><br><span class="line">  ↓</span><br><span class="line">前端把识别文本交给聊天输入逻辑</span><br><span class="line">  ↓</span><br><span class="line">后端调用大模型生成回复</span><br><span class="line">  ↓</span><br><span class="line">后端同时调用 TTS 合成音频</span><br><span class="line">  ↓</span><br><span class="line">SSE 返回文本片段和音频片段</span><br><span class="line">  ↓</span><br><span class="line">前端显示文字并播放语音</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="三、消息打断机制"><a href="#三、消息打断机制" class="headerlink" title="三、消息打断机制"></a>三、消息打断机制</h2><h3 id="3-1-为什么需要打断？"><a href="#3-1-为什么需要打断？" class="headerlink" title="3.1 为什么需要打断？"></a>3.1 为什么需要打断？</h3><p>用户可能在 AI 尚未回复完时又发送新消息，或者开始说话。这时旧回复如果继续追加，会造成：</p>
+<ul>
+<li>新旧回复混在一起；</li>
+<li>旧语音继续播放；</li>
+<li>当前聊天上下文混乱。</li>
+</ul>
+<h3 id="3-2-processId-设计"><a href="#3-2-processId-设计" class="headerlink" title="3.2 processId 设计"></a>3.2 processId 设计</h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> processId = <span class="number">0</span></span><br></pre></td></tr></table></figure></div>
+
+<p>每次发送新消息：</p>
+<div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> curId = ++processId</span><br></pre></td></tr></table></figure></div>
+
+<p>流式回调中判断：</p>
+<div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (curId !== processId) <span class="keyword">return</span></span><br></pre></td></tr></table></figure></div>
+
+<p>含义：</p>
+<ul>
+<li>每次请求都有自己的版本号 <code>curId</code>；</li>
+<li>如果后续又发送了新消息，<code>processId</code> 自增；</li>
+<li>老请求回来的数据版本号不一致，直接丢弃。</li>
+</ul>
+<h3 id="3-3-打断语音播放"><a href="#3-3-打断语音播放" class="headerlink" title="3.3 打断语音播放"></a>3.3 打断语音播放</h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">handleStop</span>(<span class="params"></span>) {</span><br><span class="line">  ++processId</span><br><span class="line">  <span class="title function_">stopAudio</span>()</span><br><span class="line">}</span><br></pre></td></tr></table></figure></div>
+
+<p>触发场景：</p>
+<ul>
+<li>用户开始新一轮语音输入；</li>
+<li>用户关闭聊天框；</li>
+<li>用户切换输入模式；</li>
+<li>用户发送新消息。</li>
+</ul>
+<hr>
+<h2 id="四、前端-VAD-语音检测"><a href="#四、前端-VAD-语音检测" class="headerlink" title="四、前端 VAD 语音检测"></a>四、前端 VAD 语音检测</h2><h3 id="4-1-安装依赖"><a href="#4-1-安装依赖" class="headerlink" title="4.1 安装依赖"></a>4.1 安装依赖</h3><div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd frontend</span><br><span class="line">npm install @ricky0123/vad-web</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="4-2-拷贝静态资源"><a href="#4-2-拷贝静态资源" class="headerlink" title="4.2 拷贝静态资源"></a>4.2 拷贝静态资源</h3><p>需要复制到：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">frontend/public/vad/</span><br></pre></td></tr></table></figure></div>
+
+<p>资源来源：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">frontend/node_modules/@ricky0123/vad-web/dist/</span><br><span class="line">├── silero_vad_legacy.onnx</span><br><span class="line">└── vad.worklet.bundle.min.js</span><br><span class="line"></span><br><span class="line">frontend/node_modules/onnxruntime-web/dist/</span><br><span class="line">├── *.wasm</span><br><span class="line">└── ort-wasm-simd-threaded.mjs</span><br></pre></td></tr></table></figure></div>
+
+<p>添加 <code>.gitignore</code>：</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">frontend/public/vad/</span><br></pre></td></tr></table></figure></div>
+
+<p>这些文件体积较大，不建议提交到仓库。</p>
+<h3 id="4-3-Microphone-vue-组件结构"><a href="#4-3-Microphone-vue-组件结构" class="headerlink" title="4.3 Microphone.vue 组件结构"></a>4.3 Microphone.vue 组件结构</h3><div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">&lt;script setup&gt;</span><br><span class="line">import { onBeforeUnmount, onMounted, ref } from 'vue'</span><br><span class="line">import { MicVAD } from '@ricky0123/vad-web'</span><br><span class="line">import KeyboardIcon from '@/components/character/icons/KeyboardIcon.vue'</span><br><span class="line">import api from '@/js/http/api.js'</span><br><span class="line"></span><br><span class="line">const emit = defineEmits(['close', 'send', 'stop'])</span><br><span class="line">const isSpeaking = ref(false)</span><br><span class="line">let vadInstance = null</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div class="absolute bottom-4 left-2 h-12 w-86 flex items-center bg-black/30 backdrop-blur-sm text-white rounded-2xl"&gt;</span><br><span class="line">    &lt;div v-if="isSpeaking" class="flex items-center justify-center gap-1 h-6 flex-1"&gt;</span><br><span class="line">      &lt;div</span><br><span class="line">        v-for="i in 32"</span><br><span class="line">        :key="i"</span><br><span class="line">        class="w-0.5 bg-blue-400 rounded-full animate-wave"</span><br><span class="line">        :style="{ animationDelay: `${i * 0.1}s` }"</span><br><span class="line">      &gt;&lt;/div&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">    &lt;div v-else class="text-white/50 text-base w-full text-center"&gt;</span><br><span class="line">      语音输入</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">    &lt;div @click="emit('close')" class="absolute right-2 w-8 h-8 flex justify-center items-center cursor-pointer"&gt;</span><br><span class="line">      &lt;KeyboardIcon /&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="4-4-音浪动画"><a href="#4-4-音浪动画" class="headerlink" title="4.4 音浪动画"></a>4.4 音浪动画</h3><div class="code-container" data-rel="Css"><figure class="iseeu highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.animate-wave</span> {</span><br><span class="line">  <span class="attribute">height</span>: <span class="number">4px</span>;</span><br><span class="line">  <span class="attribute">animation</span>: wave-animation <span class="number">0.6s</span> ease-in-out infinite alternate;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="keyword">@keyframes</span> wave-animation {</span><br><span class="line">  <span class="number">0%</span> {</span><br><span class="line">    <span class="attribute">height</span>: <span class="number">4px</span>;</span><br><span class="line">    <span class="attribute">opacity</span>: <span class="number">0.3</span>;</span><br><span class="line">  }</span><br><span class="line">  <span class="number">100%</span> {</span><br><span class="line">    <span class="attribute">height</span>: <span class="number">20px</span>;</span><br><span class="line">    <span class="attribute">opacity</span>: <span class="number">1</span>;</span><br><span class="line">  }</span><br><span class="line">}</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="4-5-初始化-VAD"><a href="#4-5-初始化-VAD" class="headerlink" title="4.5 初始化 VAD"></a>4.5 初始化 VAD</h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">startRecording</span> = <span class="keyword">async</span> (<span class="params"></span>) =&gt; {</span><br><span class="line">  <span class="keyword">const</span> baseUrl = <span class="string">'http://localhost:5173/vad/'</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">try</span> {</span><br><span class="line">    vadInstance = <span class="keyword">await</span> <span class="title class_">MicVAD</span>.<span class="title function_">new</span>({</span><br><span class="line">      <span class="attr">baseAssetPath</span>: baseUrl,</span><br><span class="line"></span><br><span class="line">      <span class="attr">onSpeechStart</span>: <span class="function">() =&gt;</span> {</span><br><span class="line">        isSpeaking.<span class="property">value</span> = <span class="literal">true</span></span><br><span class="line">        <span class="title function_">emit</span>(<span class="string">'stop'</span>)</span><br><span class="line">      },</span><br><span class="line"></span><br><span class="line">      <span class="attr">onSpeechEnd</span>: <span class="function"><span class="params">audio</span> =&gt;</span> {</span><br><span class="line">        isSpeaking.<span class="property">value</span> = <span class="literal">false</span></span><br><span class="line">        <span class="keyword">const</span> pcm16 = <span class="title function_">float32ToInt16</span>(audio)</span><br><span class="line">        <span class="title function_">sendToBackend</span>(pcm16)</span><br><span class="line">      },</span><br><span class="line"></span><br><span class="line">      <span class="attr">ortConfig</span>: <span class="function"><span class="params">ort</span> =&gt;</span> {</span><br><span class="line">        ort.<span class="property">env</span>.<span class="property">wasm</span>.<span class="property">wasmPaths</span> = baseUrl</span><br><span class="line">        ort.<span class="property">env</span>.<span class="property">logLevel</span> = <span class="string">'error'</span></span><br><span class="line">      },</span><br><span class="line"></span><br><span class="line">      <span class="attr">positiveSpeechThreshold</span>: <span class="number">0.8</span>,</span><br><span class="line">      <span class="attr">negativeSpeechThreshold</span>: <span class="number">0.65</span>,</span><br><span class="line">      <span class="attr">minSpeechFrames</span>: <span class="number">5</span>,</span><br><span class="line">      <span class="attr">redemptionFrames</span>: <span class="number">5</span>,</span><br><span class="line">    })</span><br><span class="line"></span><br><span class="line">    <span class="keyword">await</span> vadInstance.<span class="title function_">start</span>()</span><br><span class="line">  } <span class="keyword">catch</span> (e) {</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">'VAD 初始化失败:'</span>, e)</span><br><span class="line">  }</span><br><span class="line">}</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="4-6-生命周期释放资源"><a href="#4-6-生命周期释放资源" class="headerlink" title="4.6 生命周期释放资源"></a>4.6 生命周期释放资源</h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">onMounted</span>(<span class="function">() =&gt;</span> {</span><br><span class="line">  <span class="title function_">startRecording</span>()</span><br><span class="line">})</span><br><span class="line"></span><br><span class="line"><span class="title function_">onBeforeUnmount</span>(<span class="function">() =&gt;</span> {</span><br><span class="line">  <span class="keyword">if</span> (vadInstance) {</span><br><span class="line">    vadInstance.<span class="title function_">destroy</span>()</span><br><span class="line">    vadInstance = <span class="literal">null</span></span><br><span class="line">  }</span><br><span class="line">})</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="五、音频格式转换与上传"><a href="#五、音频格式转换与上传" class="headerlink" title="五、音频格式转换与上传"></a>五、音频格式转换与上传</h2><h3 id="5-1-Float32-转-PCM16"><a href="#5-1-Float32-转-PCM16" class="headerlink" title="5.1 Float32 转 PCM16"></a>5.1 Float32 转 PCM16</h3><p>VAD 输出的是 <code>Float32Array</code>，ASR 接口需要 PCM 音频。</p>
+<div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">float32ToInt16</span> = float32Array =&gt; {</span><br><span class="line">  <span class="keyword">const</span> buffer = <span class="keyword">new</span> <span class="title class_">Int16Array</span>(float32Array.<span class="property">length</span>)</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; float32Array.<span class="property">length</span>; i++) {</span><br><span class="line">    <span class="keyword">let</span> s = <span class="title class_">Math</span>.<span class="title function_">max</span>(-<span class="number">1</span>, <span class="title class_">Math</span>.<span class="title function_">min</span>(<span class="number">1</span>, float32Array[i]))</span><br><span class="line">    buffer[i] = s &lt; <span class="number">0</span> ? s * <span class="number">0x8000</span> : s * <span class="number">0x7fff</span></span><br><span class="line">  }</span><br><span class="line">  <span class="keyword">return</span> buffer.<span class="property">buffer</span></span><br><span class="line">}</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="5-2-上传到后端"><a href="#5-2-上传到后端" class="headerlink" title="5.2 上传到后端"></a>5.2 上传到后端</h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">sendToBackend</span> = <span class="keyword">async</span> arrayBuffer =&gt; {</span><br><span class="line">  <span class="keyword">const</span> blob = <span class="keyword">new</span> <span class="title class_">Blob</span>([arrayBuffer], { <span class="attr">type</span>: <span class="string">'audio/pcm'</span> })</span><br><span class="line">  <span class="keyword">const</span> formData = <span class="keyword">new</span> <span class="title class_">FormData</span>()</span><br><span class="line">  formData.<span class="title function_">append</span>(<span class="string">'audio'</span>, blob, <span class="string">'voice.pcm'</span>)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">try</span> {</span><br><span class="line">    <span class="keyword">const</span> res = <span class="keyword">await</span> api.<span class="title function_">post</span>(<span class="string">'/api/friend/message/asr/asr/'</span>, formData)</span><br><span class="line">    <span class="keyword">const</span> data = res.<span class="property">data</span></span><br><span class="line">    <span class="keyword">if</span> (data.<span class="property">result</span> === <span class="string">'success'</span>) {</span><br><span class="line">      <span class="title function_">emit</span>(<span class="string">'send'</span>, <span class="literal">null</span>, data.<span class="property">text</span>)</span><br><span class="line">    }</span><br><span class="line">  } <span class="keyword">catch</span> (err) {</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">error</span>(err)</span><br><span class="line">  }</span><br><span class="line">}</span><br></pre></td></tr></table></figure></div>
+
+<p><code>emit('send', null, data.text)</code> 会把识别出的文本交给父组件 <code>InputField.vue</code> 的 <code>handleSend</code>。</p>
+<hr>
+<h2 id="六、InputField-中切换文字-语音输入"><a href="#六、InputField-中切换文字-语音输入" class="headerlink" title="六、InputField 中切换文字 / 语音输入"></a>六、InputField 中切换文字 / 语音输入</h2><h3 id="6-1-状态设计"><a href="#6-1-状态设计" class="headerlink" title="6.1 状态设计"></a>6.1 状态设计</h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> showMic = <span class="title function_">ref</span>(<span class="literal">false</span>)</span><br></pre></td></tr></table></figure></div>
+
+<p>模板：</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;form v-if="!showMic" @submit.prevent="handleSend" class="absolute bottom-4 left-2 h-12 w-86 flex items-center"&gt;</span><br><span class="line">  &lt;input v-model="message" ref="inputRef" class="input bg-black/30 text-white w-full h-full rounded-2xl" /&gt;</span><br><span class="line">  &lt;div @click="handleSend"&gt;发送&lt;/div&gt;</span><br><span class="line">  &lt;div @click="showMic = true"&gt;麦克风&lt;/div&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line"></span><br><span class="line">&lt;Microphone</span><br><span class="line">  v-else</span><br><span class="line">  @close="showMic = false"</span><br><span class="line">  @send="handleSend"</span><br><span class="line">  @stop="handleStop"</span><br><span class="line">/&gt;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="6-2-handleSend-支持语音文本"><a href="#6-2-handleSend-支持语音文本" class="headerlink" title="6.2 handleSend 支持语音文本"></a>6.2 handleSend 支持语音文本</h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">handleSend</span>(<span class="params">event, audio_msg</span>) {</span><br><span class="line">  <span class="keyword">let</span> content</span><br><span class="line">  <span class="keyword">if</span> (audio_msg) {</span><br><span class="line">    content = audio_msg.<span class="title function_">trim</span>()</span><br><span class="line">  } <span class="keyword">else</span> {</span><br><span class="line">    content = message.<span class="property">value</span>.<span class="title function_">trim</span>()</span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (!content) <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> curId = ++processId</span><br><span class="line">  message.<span class="property">value</span> = <span class="string">''</span></span><br><span class="line"></span><br><span class="line">  <span class="title function_">emit</span>(<span class="string">'pushBackMessage'</span>, { <span class="attr">role</span>: <span class="string">'user'</span>, content, <span class="attr">id</span>: crypto.<span class="title function_">randomUUID</span>() })</span><br><span class="line">  <span class="title function_">emit</span>(<span class="string">'pushBackMessage'</span>, { <span class="attr">role</span>: <span class="string">'ai'</span>, <span class="attr">content</span>: <span class="string">''</span>, <span class="attr">id</span>: crypto.<span class="title function_">randomUUID</span>() })</span><br><span class="line"></span><br><span class="line">  <span class="keyword">await</span> <span class="title function_">streamApi</span>(<span class="string">'/api/friend/message/chat/'</span>, {</span><br><span class="line">    <span class="attr">body</span>: {</span><br><span class="line">      <span class="attr">friend_id</span>: props.<span class="property">friendID</span>,</span><br><span class="line">      <span class="attr">message</span>: content,</span><br><span class="line">    },</span><br><span class="line">    <span class="title function_">onmessage</span>(<span class="params">data, isDone</span>) {</span><br><span class="line">      <span class="keyword">if</span> (curId !== processId) <span class="keyword">return</span></span><br><span class="line">      <span class="keyword">if</span> (data.<span class="property">content</span>) {</span><br><span class="line">        <span class="title function_">emit</span>(<span class="string">'addToLastMessage'</span>, data.<span class="property">content</span>)</span><br><span class="line">      }</span><br><span class="line">      <span class="keyword">if</span> (data.<span class="property">audio</span>) {</span><br><span class="line">        <span class="title function_">handleAudioChunk</span>(data.<span class="property">audio</span>)</span><br><span class="line">      }</span><br><span class="line">    },</span><br><span class="line">  })</span><br><span class="line">}</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="七、后端-ASR-语音识别"><a href="#七、后端-ASR-语音识别" class="headerlink" title="七、后端 ASR 语音识别"></a>七、后端 ASR 语音识别</h2><h3 id="7-1-安装依赖"><a href="#7-1-安装依赖" class="headerlink" title="7.1 安装依赖"></a>7.1 安装依赖</h3><div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd backend</span><br><span class="line">pip install websockets</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="7-2-环境变量"><a href="#7-2-环境变量" class="headerlink" title="7.2 环境变量"></a>7.2 环境变量</h3><div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">API_KEY="你的 API Key"</span><br><span class="line">WSS_URL="wss://dashscope.aliyuncs.com/api-ws/v1/inference"</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="7-3-ASRView"><a href="#7-3-ASRView" class="headerlink" title="7.3 ASRView"></a>7.3 ASRView</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> uuid</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> websockets</span><br><span class="line"><span class="keyword">from</span> rest_framework.views <span class="keyword">import</span> APIView</span><br><span class="line"><span class="keyword">from</span> rest_framework.response <span class="keyword">import</span> Response</span><br><span class="line"><span class="keyword">from</span> rest_framework.permissions <span class="keyword">import</span> IsAuthenticated</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ASRView</span>(<span class="title class_ inherited__">APIView</span>):</span><br><span class="line">    permission_classes = [IsAuthenticated]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">post</span>(<span class="params">self, request</span>):</span><br><span class="line">        audio = request.FILES.get(<span class="string">'audio'</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> audio:</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">'result'</span>: <span class="string">'音频不存在'</span>})</span><br><span class="line"></span><br><span class="line">        pcm_data = audio.read()</span><br><span class="line">        text = asyncio.run(<span class="variable language_">self</span>.run_asr_tasks(pcm_data))</span><br><span class="line">        <span class="keyword">return</span> Response({<span class="string">'result'</span>: <span class="string">'success'</span>, <span class="string">'text'</span>: text})</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="7-4-发送音频"><a href="#7-4-发送音频" class="headerlink" title="7.4 发送音频"></a>7.4 发送音频</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">asr_sender</span>(<span class="params">self, pcm_data, ws, task_id</span>):</span><br><span class="line">    chunk = <span class="number">3200</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="built_in">len</span>(pcm_data), chunk):</span><br><span class="line">        <span class="keyword">await</span> ws.send(pcm_data[i:i + chunk])</span><br><span class="line">        <span class="keyword">await</span> asyncio.sleep(<span class="number">0.01</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">await</span> ws.send(json.dumps({</span><br><span class="line">        <span class="string">'header'</span>: {</span><br><span class="line">            <span class="string">'action'</span>: <span class="string">'finish-task'</span>,</span><br><span class="line">            <span class="string">'task_id'</span>: task_id,</span><br><span class="line">            <span class="string">'streaming'</span>: <span class="string">'duplex'</span>,</span><br><span class="line">        },</span><br><span class="line">        <span class="string">'payload'</span>: {<span class="string">'input'</span>: {}},</span><br><span class="line">    }))</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="7-5-接收识别结果"><a href="#7-5-接收识别结果" class="headerlink" title="7.5 接收识别结果"></a>7.5 接收识别结果</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">asr_receiver</span>(<span class="params">self, ws</span>):</span><br><span class="line">    text = <span class="string">''</span></span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">for</span> msg <span class="keyword">in</span> ws:</span><br><span class="line">        data = json.loads(msg)</span><br><span class="line">        event = data[<span class="string">'header'</span>][<span class="string">'event'</span>]</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> event == <span class="string">'result-generated'</span>:</span><br><span class="line">            output = data[<span class="string">'payload'</span>][<span class="string">'output'</span>]</span><br><span class="line">            transcription = output.get(<span class="string">'transcription'</span>)</span><br><span class="line">            <span class="keyword">if</span> transcription <span class="keyword">and</span> transcription.get(<span class="string">'sentence_end'</span>):</span><br><span class="line">                text += transcription[<span class="string">'text'</span>]</span><br><span class="line">        <span class="keyword">elif</span> event <span class="keyword">in</span> [<span class="string">'task-finished'</span>, <span class="string">'task-failed'</span>]:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> text</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="7-6-并发执行发送和接收"><a href="#7-6-并发执行发送和接收" class="headerlink" title="7.6 并发执行发送和接收"></a>7.6 并发执行发送和接收</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">run_asr_tasks</span>(<span class="params">self, pcm_data</span>):</span><br><span class="line">    task_id = uuid.uuid4().<span class="built_in">hex</span></span><br><span class="line">    api_key = os.getenv(<span class="string">'API_KEY'</span>)</span><br><span class="line">    wss_url = os.getenv(<span class="string">'WSS_URL'</span>)</span><br><span class="line">    headers = {<span class="string">'Authorization'</span>: <span class="string">f'Bearer <span class="subst">{api_key}</span>'</span>}</span><br><span class="line"></span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> websockets.connect(wss_url, additional_headers=headers) <span class="keyword">as</span> ws:</span><br><span class="line">        <span class="keyword">await</span> ws.send(json.dumps({</span><br><span class="line">            <span class="string">'header'</span>: {</span><br><span class="line">                <span class="string">'streaming'</span>: <span class="string">'duplex'</span>,</span><br><span class="line">                <span class="string">'task_id'</span>: task_id,</span><br><span class="line">                <span class="string">'action'</span>: <span class="string">'run-task'</span>,</span><br><span class="line">            },</span><br><span class="line">            <span class="string">'payload'</span>: {</span><br><span class="line">                <span class="string">'model'</span>: <span class="string">'gummy-realtime-v1'</span>,</span><br><span class="line">                <span class="string">'parameters'</span>: {</span><br><span class="line">                    <span class="string">'sample_rate'</span>: <span class="number">16000</span>,</span><br><span class="line">                    <span class="string">'format'</span>: <span class="string">'pcm'</span>,</span><br><span class="line">                    <span class="string">'transcription_enabled'</span>: <span class="literal">True</span>,</span><br><span class="line">                },</span><br><span class="line">                <span class="string">'input'</span>: {},</span><br><span class="line">                <span class="string">'task'</span>: <span class="string">'asr'</span>,</span><br><span class="line">                <span class="string">'task_group'</span>: <span class="string">'audio'</span>,</span><br><span class="line">                <span class="string">'function'</span>: <span class="string">'recognition'</span>,</span><br><span class="line">            },</span><br><span class="line">        }))</span><br><span class="line"></span><br><span class="line">        <span class="keyword">async</span> <span class="keyword">for</span> msg <span class="keyword">in</span> ws:</span><br><span class="line">            <span class="keyword">if</span> json.loads(msg)[<span class="string">'header'</span>][<span class="string">'event'</span>] == <span class="string">'task-started'</span>:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">        _, text = <span class="keyword">await</span> asyncio.gather(</span><br><span class="line">            <span class="variable language_">self</span>.asr_sender(pcm_data, ws, task_id),</span><br><span class="line">            <span class="variable language_">self</span>.asr_receiver(ws),</span><br><span class="line">        )</span><br><span class="line">        <span class="keyword">return</span> text</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="7-7-路由"><a href="#7-7-路由" class="headerlink" title="7.7 路由"></a>7.7 路由</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">path(<span class="string">'api/friend/message/asr/asr/'</span>, ASRView.as_view()),</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="八、协程知识补充"><a href="#八、协程知识补充" class="headerlink" title="八、协程知识补充"></a>八、协程知识补充</h2><h3 id="8-1-什么是协程？"><a href="#8-1-什么是协程？" class="headerlink" title="8.1 什么是协程？"></a>8.1 什么是协程？</h3><p>协程是一种轻量级并发模型。它不是由操作系统抢占调度，而是在遇到 <code>await</code> 时主动让出控制权。</p>
+<h3 id="8-2-协程-vs-线程"><a href="#8-2-协程-vs-线程" class="headerlink" title="8.2 协程 vs 线程"></a>8.2 协程 vs 线程</h3><table>
+<thead>
+<tr>
+<th>对比</th>
+<th>协程</th>
+<th>线程</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>调度方式</td>
+<td>用户态事件循环</td>
+<td>操作系统内核</td>
+</tr>
+<tr>
+<td>切换开销</td>
+<td>小</td>
+<td>较大</td>
+</tr>
+<tr>
+<td>适合场景</td>
+<td>高并发 I/O</td>
+<td>CPU 密集或阻塞任务</td>
+</tr>
+<tr>
+<td>并行能力</td>
+<td>单线程内不并行</td>
+<td>多核可并行</td>
+</tr>
+<tr>
+<td>编程关键</td>
+<td><code>async/await</code></td>
+<td>锁、线程安全</td>
+</tr>
+</tbody></table>
+<h3 id="8-3-asyncio-gather"><a href="#8-3-asyncio-gather" class="headerlink" title="8.3 asyncio.gather"></a>8.3 asyncio.gather</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">await</span> asyncio.gather(task1(), task2())</span><br></pre></td></tr></table></figure></div>
+
+<p>表示并发等待多个协程完成。在 ASR 中，发送音频和接收结果需要同时进行，因此使用 <code>gather</code>。</p>
+<hr>
+<h2 id="九、后端-TTS-语音合成"><a href="#九、后端-TTS-语音合成" class="headerlink" title="九、后端 TTS 语音合成"></a>九、后端 TTS 语音合成</h2><h3 id="9-1-为什么更复杂？"><a href="#9-1-为什么更复杂？" class="headerlink" title="9.1 为什么更复杂？"></a>9.1 为什么更复杂？</h3><p>文字聊天只需要：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LLM 文本片段 → SSE 文本片段</span><br></pre></td></tr></table></figure></div>
+
+<p>语音聊天需要：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">LLM 文本片段</span><br><span class="line">  ↓</span><br><span class="line">一边推给前端显示</span><br><span class="line">  ↓</span><br><span class="line">一边发送给 TTS 服务</span><br><span class="line">  ↓</span><br><span class="line">TTS 返回二进制音频</span><br><span class="line">  ↓</span><br><span class="line">转 base64</span><br><span class="line">  ↓</span><br><span class="line">通过 SSE 推给前端播放</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="9-2-为什么需要线程-队列？"><a href="#9-2-为什么需要线程-队列？" class="headerlink" title="9.2 为什么需要线程 + 队列？"></a>9.2 为什么需要线程 + 队列？</h3><p>Django 的 <code>StreamingHttpResponse</code> 是同步生成器，而 TTS WebSocket 和 LangGraph <code>astream</code> 是异步任务。</p>
+<p>因此设计：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">主线程：同步 event_stream，不断从 Queue 取消息并 yield 给前端</span><br><span class="line">子线程：运行 asyncio.run，调用 LLM 和 TTS，把文本/音频塞进 Queue</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="9-3-线程安全队列"><a href="#9-3-线程安全队列" class="headerlink" title="9.3 线程安全队列"></a>9.3 线程安全队列</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> queue <span class="keyword">import</span> Queue</span><br><span class="line"></span><br><span class="line">mq = Queue()</span><br></pre></td></tr></table></figure></div>
+
+<p>队列内容示例：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">{<span class="string">'content'</span>: <span class="string">'你好'</span>}</span><br><span class="line">{<span class="string">'audio'</span>: <span class="string">'base64字符串'</span>}</span><br><span class="line">{<span class="string">'usage'</span>: {...}}</span><br><span class="line"><span class="literal">None</span></span><br></pre></td></tr></table></figure></div>
+
+<p><code>None</code> 表示结束。</p>
+<h3 id="9-4-音频为什么要-base64？"><a href="#9-4-音频为什么要-base64？" class="headerlink" title="9.4 音频为什么要 base64？"></a>9.4 音频为什么要 base64？</h3><p>SSE 是文本协议，不能直接传二进制音频，因此要：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">audio = base64.b64encode(binary_audio).decode(<span class="string">'utf-8'</span>)</span><br></pre></td></tr></table></figure></div>
+
+<p>前端再用 <code>atob</code> 解码。</p>
+<h3 id="9-5-TTS-返回-SSE"><a href="#9-5-TTS-返回-SSE" class="headerlink" title="9.5 TTS 返回 SSE"></a>9.5 TTS 返回 SSE</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> msg.get(<span class="string">'content'</span>):</span><br><span class="line">    <span class="keyword">yield</span> <span class="string">f"data: <span class="subst">{json.dumps({<span class="string">'content'</span>: msg[<span class="string">'content'</span>]}</span>, ensure_ascii=False)}\n\n"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> msg.get(<span class="string">'audio'</span>):</span><br><span class="line">    <span class="keyword">yield</span> <span class="string">f"data: <span class="subst">{json.dumps({<span class="string">'audio'</span>: msg[<span class="string">'audio'</span>]}</span>, ensure_ascii=False)}\n\n"</span></span><br></pre></td></tr></table></figure></div>
+
+<p>前端同一个 SSE 流中可以同时收到：</p>
+<ul>
+<li><code>content</code>：显示文字；</li>
+<li><code>audio</code>：播放语音。</li>
+</ul>
+<hr>
+<h2 id="十、前端-MediaSource-播放音频流"><a href="#十、前端-MediaSource-播放音频流" class="headerlink" title="十、前端 MediaSource 播放音频流"></a>十、前端 MediaSource 播放音频流</h2><h3 id="10-1-MediaSource-是什么？"><a href="#10-1-MediaSource-是什么？" class="headerlink" title="10.1 MediaSource 是什么？"></a>10.1 MediaSource 是什么？</h3><p>MediaSource Extensions（MSE）允许前端不断向音频 / 视频缓冲区追加二进制片段，实现“边下载边播放”。</p>
+<h3 id="10-2-状态变量"><a href="#10-2-状态变量" class="headerlink" title="10.2 状态变量"></a>10.2 状态变量</h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> mediaSource = <span class="literal">null</span></span><br><span class="line"><span class="keyword">let</span> sourceBuffer = <span class="literal">null</span></span><br><span class="line"><span class="keyword">let</span> audioPlayer = <span class="keyword">new</span> <span class="title class_">Audio</span>()</span><br><span class="line"><span class="keyword">let</span> audioQueue = []</span><br><span class="line"><span class="keyword">let</span> isUpdating = <span class="literal">false</span></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="10-3-初始化音频流"><a href="#10-3-初始化音频流" class="headerlink" title="10.3 初始化音频流"></a>10.3 初始化音频流</h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">initAudioStream</span> = (<span class="params"></span>) =&gt; {</span><br><span class="line">  audioPlayer.<span class="title function_">pause</span>()</span><br><span class="line">  audioQueue = []</span><br><span class="line">  isUpdating = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">  mediaSource = <span class="keyword">new</span> <span class="title class_">MediaSource</span>()</span><br><span class="line">  audioPlayer.<span class="property">src</span> = <span class="variable constant_">URL</span>.<span class="title function_">createObjectURL</span>(mediaSource)</span><br><span class="line"></span><br><span class="line">  mediaSource.<span class="title function_">addEventListener</span>(<span class="string">'sourceopen'</span>, <span class="function">() =&gt;</span> {</span><br><span class="line">    sourceBuffer = mediaSource.<span class="title function_">addSourceBuffer</span>(<span class="string">'audio/mpeg'</span>)</span><br><span class="line">    sourceBuffer.<span class="title function_">addEventListener</span>(<span class="string">'updateend'</span>, <span class="function">() =&gt;</span> {</span><br><span class="line">      isUpdating = <span class="literal">false</span></span><br><span class="line">      <span class="title function_">processQueue</span>()</span><br><span class="line">    })</span><br><span class="line">  })</span><br><span class="line"></span><br><span class="line">  audioPlayer.<span class="title function_">play</span>().<span class="title function_">catch</span>(<span class="function">() =&gt;</span> {</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">'等待用户交互以播放音频'</span>)</span><br><span class="line">  })</span><br><span class="line">}</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="10-4-处理音频片段"><a href="#10-4-处理音频片段" class="headerlink" title="10.4 处理音频片段"></a>10.4 处理音频片段</h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">handleAudioChunk</span> = base64Data =&gt; {</span><br><span class="line">  <span class="keyword">const</span> binaryString = <span class="title function_">atob</span>(base64Data)</span><br><span class="line">  <span class="keyword">const</span> len = binaryString.<span class="property">length</span></span><br><span class="line">  <span class="keyword">const</span> bytes = <span class="keyword">new</span> <span class="title class_">Uint8Array</span>(len)</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; len; i++) {</span><br><span class="line">    bytes[i] = binaryString.<span class="title function_">charCodeAt</span>(i)</span><br><span class="line">  }</span><br><span class="line">  audioQueue.<span class="title function_">push</span>(bytes)</span><br><span class="line">  <span class="title function_">processQueue</span>()</span><br><span class="line">}</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="10-5-写入-SourceBuffer"><a href="#10-5-写入-SourceBuffer" class="headerlink" title="10.5 写入 SourceBuffer"></a>10.5 写入 SourceBuffer</h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">processQueue</span> = (<span class="params"></span>) =&gt; {</span><br><span class="line">  <span class="keyword">if</span> (isUpdating || audioQueue.<span class="property">length</span> === <span class="number">0</span> || !sourceBuffer || sourceBuffer.<span class="property">updating</span>) {</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  isUpdating = <span class="literal">true</span></span><br><span class="line">  <span class="keyword">const</span> chunk = audioQueue.<span class="title function_">shift</span>()</span><br><span class="line">  <span class="keyword">try</span> {</span><br><span class="line">    sourceBuffer.<span class="title function_">appendBuffer</span>(chunk)</span><br><span class="line">  } <span class="keyword">catch</span> (e) {</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">'SourceBuffer Append Error:'</span>, e)</span><br><span class="line">    isUpdating = <span class="literal">false</span></span><br><span class="line">  }</span><br><span class="line">}</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="10-6-停止音频"><a href="#10-6-停止音频" class="headerlink" title="10.6 停止音频"></a>10.6 停止音频</h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">stopAudio</span> = (<span class="params"></span>) =&gt; {</span><br><span class="line">  audioPlayer.<span class="title function_">pause</span>()</span><br><span class="line">  audioQueue = []</span><br><span class="line">  isUpdating = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (mediaSource) {</span><br><span class="line">    <span class="keyword">if</span> (mediaSource.<span class="property">readyState</span> === <span class="string">'open'</span>) {</span><br><span class="line">      <span class="keyword">try</span> {</span><br><span class="line">        mediaSource.<span class="title function_">endOfStream</span>()</span><br><span class="line">      } <span class="keyword">catch</span> (e) {}</span><br><span class="line">    }</span><br><span class="line">    mediaSource = <span class="literal">null</span></span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (audioPlayer.<span class="property">src</span>) {</span><br><span class="line">    <span class="variable constant_">URL</span>.<span class="title function_">revokeObjectURL</span>(audioPlayer.<span class="property">src</span>)</span><br><span class="line">    audioPlayer.<span class="property">src</span> = <span class="string">''</span></span><br><span class="line">  }</span><br><span class="line">}</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="10-7-组件卸载清理"><a href="#10-7-组件卸载清理" class="headerlink" title="10.7 组件卸载清理"></a>10.7 组件卸载清理</h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">onUnmounted</span>(<span class="function">() =&gt;</span> {</span><br><span class="line">  audioPlayer.<span class="title function_">pause</span>()</span><br><span class="line">  audioPlayer.<span class="property">src</span> = <span class="string">''</span></span><br><span class="line">})</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="十一、路由汇总"><a href="#十一、路由汇总" class="headerlink" title="十一、路由汇总"></a>十一、路由汇总</h2><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">path(<span class="string">'api/friend/message/chat/'</span>, MessageChatView.as_view()),</span><br><span class="line">path(<span class="string">'api/friend/message/asr/asr/'</span>, ASRView.as_view()),</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="十二、开发与部署注意事项"><a href="#十二、开发与部署注意事项" class="headerlink" title="十二、开发与部署注意事项"></a>十二、开发与部署注意事项</h2><h3 id="12-1-开发环境-VAD-路径"><a href="#12-1-开发环境-VAD-路径" class="headerlink" title="12.1 开发环境 VAD 路径"></a>12.1 开发环境 VAD 路径</h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> baseUrl = <span class="string">'http://localhost:5173/vad/'</span></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="12-2-打包到后端后的-VAD-路径"><a href="#12-2-打包到后端后的-VAD-路径" class="headerlink" title="12.2 打包到后端后的 VAD 路径"></a>12.2 打包到后端后的 VAD 路径</h3><p>如果前端已打包到 Django 静态目录，建议改为：</p>
+<div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> baseUrl = <span class="string">'http://127.0.0.1:8000/static/frontend/vad/'</span></span><br></pre></td></tr></table></figure></div>
+
+<p>并将 VAD 文件同步到：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">backend/static/frontend/vad/</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="12-3-MIME-类型配置"><a href="#12-3-MIME-类型配置" class="headerlink" title="12.3 MIME 类型配置"></a>12.3 MIME 类型配置</h3><p>某些静态文件需要正确 MIME，否则浏览器加载失败。</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> mimetypes</span><br><span class="line"></span><br><span class="line">mimetypes.add_type(<span class="string">'application/javascript'</span>, <span class="string">'.js'</span>, <span class="literal">True</span>)</span><br><span class="line">mimetypes.add_type(<span class="string">'application/javascript'</span>, <span class="string">'.mjs'</span>, <span class="literal">True</span>)</span><br><span class="line">mimetypes.add_type(<span class="string">'application/wasm'</span>, <span class="string">'.wasm'</span>, <span class="literal">True</span>)</span><br><span class="line">mimetypes.add_type(<span class="string">'application/octet-stream'</span>, <span class="string">'.onnx'</span>, <span class="literal">True</span>)</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="12-4-代理与网络问题"><a href="#12-4-代理与网络问题" class="headerlink" title="12.4 代理与网络问题"></a>12.4 代理与网络问题</h3><p>ASR / TTS 使用 <code>wss://</code> WebSocket，测试时如果一直卡住：</p>
+<ul>
+<li>检查 API Key；</li>
+<li>检查 <code>WSS_URL</code>；</li>
+<li>检查网络代理；</li>
+<li>关闭可能拦截 WebSocket 的软件；</li>
+<li>查看后端终端异常。</li>
+</ul>
+<hr>
+<h2 id="十三、易错点总结"><a href="#十三、易错点总结" class="headerlink" title="十三、易错点总结"></a>十三、易错点总结</h2><ol>
+<li>空消息要先判断再设置处理中状态，否则会导致后续无法发送；</li>
+<li><code>processId</code> 必须在每次新消息或停止时自增；</li>
+<li>VAD 模型文件必须能被浏览器访问；</li>
+<li><code>baseAssetPath</code> 和 <code>ort.env.wasm.wasmPaths</code> 都要配置；</li>
+<li><code>Float32Array</code> 要转 PCM16；</li>
+<li>ASR 上传要用 <code>FormData</code>；</li>
+<li>后端 WebSocket 任务必须等待 <code>task-started</code> 后再发送音频；</li>
+<li><code>task-failed</code> 不要拼错；</li>
+<li>SSE 不能直接传二进制音频，必须 base64；</li>
+<li><code>SourceBuffer.appendBuffer</code> 不能并发写入，要用队列；</li>
+<li>关闭弹窗时要停止音频并清理 Object URL；</li>
+<li>Nginx 部署时要关闭缓冲：<code>X-Accel-Buffering: no</code>。</li>
+</ol>
+<hr>
+<h2 id="十四、知识补充：线程、协程与队列"><a href="#十四、知识补充：线程、协程与队列" class="headerlink" title="十四、知识补充：线程、协程与队列"></a>十四、知识补充：线程、协程与队列</h2><h3 id="14-1-为什么同时用线程和协程？"><a href="#14-1-为什么同时用线程和协程？" class="headerlink" title="14.1 为什么同时用线程和协程？"></a>14.1 为什么同时用线程和协程？</h3><ul>
+<li>WebSocket ASR / TTS 是 I/O 密集型，适合协程；</li>
+<li>Django SSE 生成器是同步接口；</li>
+<li>需要用线程隔离异步事件循环；</li>
+<li>用队列在线程之间传输数据。</li>
+</ul>
+<h3 id="14-2-Queue-的作用"><a href="#14-2-Queue-的作用" class="headerlink" title="14.2 Queue 的作用"></a>14.2 Queue 的作用</h3><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">异步子线程：LLM/TTS 产生数据 → mq.put(...)</span><br><span class="line">同步主线程：event_stream 从 mq.get() → yield 给前端</span><br></pre></td></tr></table></figure></div>
+
+<p><code>queue.Queue</code> 是线程安全的，适合线程间通信。</p>
+<h3 id="14-3-asyncio-Queue-与-queue-Queue-区别"><a href="#14-3-asyncio-Queue-与-queue-Queue-区别" class="headerlink" title="14.3 asyncio.Queue 与 queue.Queue 区别"></a>14.3 asyncio.Queue 与 queue.Queue 区别</h3><table>
+<thead>
+<tr>
+<th>队列</th>
+<th>适合场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>queue.Queue</code></td>
+<td>多线程之间通信</td>
+</tr>
+<tr>
+<td><code>asyncio.Queue</code></td>
+<td>同一事件循环中的协程之间通信</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="十五、小结"><a href="#十五、小结" class="headerlink" title="十五、小结"></a>十五、小结</h2><p>本节实现了完整语音链路：</p>
+<ul>
+<li>前端用 VAD 检测用户说话；</li>
+<li>音频转换为 PCM 并上传；</li>
+<li>后端通过 WebSocket 调用 ASR；</li>
+<li>识别文本复用文字聊天流程；</li>
+<li>后端通过 TTS 将大模型回复合成为音频；</li>
+<li>文本和音频通过同一个 SSE 流返回；</li>
+<li>前端用 MediaSource 进行流式播放；</li>
+<li>使用 <code>processId</code> 和 <code>stopAudio</code> 实现打断。</li>
+</ul>
+<hr>
+<h2 id="十六、新手版：用生活例子理解语音模块"><a href="#十六、新手版：用生活例子理解语音模块" class="headerlink" title="十六、新手版：用生活例子理解语音模块"></a>十六、新手版：用生活例子理解语音模块</h2><p>可以把语音聊天想象成一个同声传译助手：</p>
+<ol>
+<li>你开口说话；</li>
+<li>助手判断你是不是正在说话；</li>
+<li>你说完后，助手把语音听写成文字；</li>
+<li>文字交给 AI 思考；</li>
+<li>AI 生成文字回复；</li>
+<li>另一个助手把文字读出来；</li>
+<li>浏览器边收到声音边播放。</li>
+</ol>
+<p>对应到技术：</p>
+<table>
+<thead>
+<tr>
+<th>生活步骤</th>
+<th>技术</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>判断你有没有说话</td>
+<td>VAD</td>
+</tr>
+<tr>
+<td>把语音听写成文字</td>
+<td>ASR</td>
+</tr>
+<tr>
+<td>AI 思考和回答</td>
+<td>LLM</td>
+</tr>
+<tr>
+<td>把文字读出来</td>
+<td>TTS</td>
+</tr>
+<tr>
+<td>浏览器播放声音</td>
+<td>MediaSource</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="十七、跟做步骤：语音输入"><a href="#十七、跟做步骤：语音输入" class="headerlink" title="十七、跟做步骤：语音输入"></a>十七、跟做步骤：语音输入</h2><h3 id="17-1-前端步骤"><a href="#17-1-前端步骤" class="headerlink" title="17.1 前端步骤"></a>17.1 前端步骤</h3><ol>
+<li>安装 <code>@ricky0123/vad-web</code>；</li>
+<li>复制 VAD 所需模型文件到 <code>frontend/public/vad/</code>；</li>
+<li>创建 <code>Microphone.vue</code>；</li>
+<li>在组件中初始化 <code>MicVAD</code>；</li>
+<li>在 <code>onSpeechStart</code> 中显示音浪并打断旧回复；</li>
+<li>在 <code>onSpeechEnd</code> 中获取音频；</li>
+<li>把 Float32 音频转为 PCM16；</li>
+<li>用 <code>FormData</code> 上传到 ASR 接口。</li>
+</ol>
+<h3 id="17-2-后端步骤"><a href="#17-2-后端步骤" class="headerlink" title="17.2 后端步骤"></a>17.2 后端步骤</h3><ol>
+<li>安装 <code>websockets</code>；</li>
+<li>在 <code>.env</code> 中配置 <code>API_KEY</code> 和 <code>WSS_URL</code>；</li>
+<li>创建 <code>ASRView</code>；</li>
+<li>从 <code>request.FILES</code> 获取音频；</li>
+<li>使用 WebSocket 连接 ASR 服务；</li>
+<li>发送 PCM 数据；</li>
+<li>接收识别文本；</li>
+<li>返回给前端。</li>
+</ol>
+<h3 id="17-3-验证方法"><a href="#17-3-验证方法" class="headerlink" title="17.3 验证方法"></a>17.3 验证方法</h3><ol>
+<li>打开聊天框；</li>
+<li>点击麦克风；</li>
+<li>浏览器弹出麦克风权限时点击允许；</li>
+<li>说一句话；</li>
+<li>观察是否出现音浪；</li>
+<li>Network 中是否请求 <code>/api/friend/message/asr/asr/</code>；</li>
+<li>响应中是否有识别文本；</li>
+<li>识别文本是否自动发送给聊天接口。</li>
+</ol>
+<hr>
+<h2 id="十八、跟做步骤：语音回复播放"><a href="#十八、跟做步骤：语音回复播放" class="headerlink" title="十八、跟做步骤：语音回复播放"></a>十八、跟做步骤：语音回复播放</h2><h3 id="18-1-后端步骤"><a href="#18-1-后端步骤" class="headerlink" title="18.1 后端步骤"></a>18.1 后端步骤</h3><ol>
+<li>保留原来的文字聊天 SSE；</li>
+<li>新增 TTS WebSocket 调用；</li>
+<li>大模型生成文字片段时，同时发给 TTS；</li>
+<li>TTS 返回二进制音频；</li>
+<li>后端把音频 base64 编码；</li>
+<li>通过 SSE 返回：</li>
+</ol>
+<div class="code-container" data-rel="Json"><figure class="iseeu highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">{</span><span class="attr">"content"</span><span class="punctuation">:</span> <span class="string">"你好"</span><span class="punctuation">}</span></span><br></pre></td></tr></table></figure></div>
+
+<p>或：</p>
+<div class="code-container" data-rel="Json"><figure class="iseeu highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">{</span><span class="attr">"audio"</span><span class="punctuation">:</span> <span class="string">"base64音频"</span><span class="punctuation">}</span></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="18-2-前端步骤"><a href="#18-2-前端步骤" class="headerlink" title="18.2 前端步骤"></a>18.2 前端步骤</h3><ol>
+<li>初始化 <code>MediaSource</code>；</li>
+<li>创建 <code>Audio</code> 对象；</li>
+<li>收到 <code>data.content</code> 时更新聊天气泡；</li>
+<li>收到 <code>data.audio</code> 时 base64 解码；</li>
+<li>放入音频队列；</li>
+<li>依次写入 <code>SourceBuffer</code>；</li>
+<li>浏览器自动播放。</li>
+</ol>
+<hr>
+<h2 id="十九、新手重点：为什么需要-VAD"><a href="#十九、新手重点：为什么需要-VAD" class="headerlink" title="十九、新手重点：为什么需要 VAD"></a>十九、新手重点：为什么需要 VAD</h2><p>如果没有 VAD，前端不知道：</p>
+<ul>
+<li>用户什么时候开始说话；</li>
+<li>用户什么时候说完；</li>
+<li>哪些是人声；</li>
+<li>哪些是键盘声、环境噪声。</li>
+</ul>
+<p>VAD 的作用就是判断“这一段是不是人声”。</p>
+<p>它可以避免用户需要一直按住按钮，也能自动在说完后上传音频。</p>
+<hr>
+<h2 id="二十、新手重点：为什么-ASR-TTS-用-WebSocket"><a href="#二十、新手重点：为什么-ASR-TTS-用-WebSocket" class="headerlink" title="二十、新手重点：为什么 ASR / TTS 用 WebSocket"></a>二十、新手重点：为什么 ASR / TTS 用 WebSocket</h2><p>语音数据通常比较长，而且适合一边发送一边接收。</p>
+<p>普通 HTTP 像一次性寄包裹：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">把全部音频准备好 → 一次性发送 → 等结果</span><br></pre></td></tr></table></figure></div>
+
+<p>WebSocket 像电话通话：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">一边说 → 对方一边听 → 对方一边返回结果</span><br></pre></td></tr></table></figure></div>
+
+<p>所以实时语音识别和语音合成更适合 WebSocket。</p>
+<hr>
+<h2 id="二十一、新手重点：为什么前端播放要用队列"><a href="#二十一、新手重点：为什么前端播放要用队列" class="headerlink" title="二十一、新手重点：为什么前端播放要用队列"></a>二十一、新手重点：为什么前端播放要用队列</h2><p>浏览器的 <code>SourceBuffer</code> 不能同时写入多个音频片段。</p>
+<p>如果同时 append，可能报错：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SourceBuffer is updating</span><br></pre></td></tr></table></figure></div>
+
+<p>所以需要队列：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">音频片段 1 → 队列</span><br><span class="line">音频片段 2 → 队列</span><br><span class="line">音频片段 3 → 队列</span><br><span class="line"></span><br><span class="line">SourceBuffer 空闲 → 写入片段 1</span><br><span class="line">写完 → 写入片段 2</span><br><span class="line">写完 → 写入片段 3</span><br></pre></td></tr></table></figure></div>
+
+<p>这和排队打饭类似：窗口一次只能服务一个人。</p>
+<hr>
+<h2 id="二十二、常见报错排查"><a href="#二十二、常见报错排查" class="headerlink" title="二十二、常见报错排查"></a>二十二、常见报错排查</h2><h3 id="22-1-浏览器提示没有麦克风权限"><a href="#22-1-浏览器提示没有麦克风权限" class="headerlink" title="22.1 浏览器提示没有麦克风权限"></a>22.1 浏览器提示没有麦克风权限</h3><p>检查：</p>
+<ol>
+<li>是否使用 <code>localhost</code> 或 HTTPS；</li>
+<li>浏览器是否允许当前网站使用麦克风；</li>
+<li>系统隐私设置是否允许浏览器访问麦克风。</li>
+</ol>
+<h3 id="22-2-VAD-模型加载失败"><a href="#22-2-VAD-模型加载失败" class="headerlink" title="22.2 VAD 模型加载失败"></a>22.2 VAD 模型加载失败</h3><p>检查：</p>
+<ol>
+<li><code>frontend/public/vad/</code> 是否有 <code>.onnx</code>、<code>.wasm</code>、<code>.mjs</code> 文件；</li>
+<li><code>baseAssetPath</code> 是否正确；</li>
+<li>浏览器 Network 是否能访问这些文件；</li>
+<li>打包部署后路径是否改成后端静态路径。</li>
+</ol>
+<h3 id="22-3-ASR-一直卡住"><a href="#22-3-ASR-一直卡住" class="headerlink" title="22.3 ASR 一直卡住"></a>22.3 ASR 一直卡住</h3><p>检查：</p>
+<ol>
+<li><code>.env</code> 中 <code>API_KEY</code> 是否正确；</li>
+<li><code>WSS_URL</code> 是否正确；</li>
+<li>是否能访问 <code>wss://</code>；</li>
+<li>是否等待到了 <code>task-started</code>；</li>
+<li>代理或防火墙是否拦截 WebSocket。</li>
+</ol>
+<h3 id="22-4-识别结果为空"><a href="#22-4-识别结果为空" class="headerlink" title="22.4 识别结果为空"></a>22.4 识别结果为空</h3><p>检查：</p>
+<ol>
+<li>麦克风是否真的录到声音；</li>
+<li>PCM 格式是否正确；</li>
+<li>sample_rate 是否与接口要求一致；</li>
+<li>是否在 <code>sentence_end</code> 时才追加文本；</li>
+<li>说话时间是否太短。</li>
+</ol>
+<h3 id="22-5-有文字但没有声音"><a href="#22-5-有文字但没有声音" class="headerlink" title="22.5 有文字但没有声音"></a>22.5 有文字但没有声音</h3><p>检查：</p>
+<ol>
+<li>后端 SSE 是否返回了 <code>audio</code> 字段；</li>
+<li>base64 是否能被前端解码；</li>
+<li><code>MediaSource</code> 是否成功 <code>sourceopen</code>；</li>
+<li><code>addSourceBuffer('audio/mpeg')</code> 是否成功；</li>
+<li>浏览器是否阻止自动播放。</li>
+</ol>
+<h3 id="22-6-新回复和旧回复混在一起"><a href="#22-6-新回复和旧回复混在一起" class="headerlink" title="22.6 新回复和旧回复混在一起"></a>22.6 新回复和旧回复混在一起</h3><p>检查：</p>
+<ol>
+<li>每次发送时是否 <code>++processId</code>；</li>
+<li>SSE 回调里是否判断 <code>curId !== processId</code>；</li>
+<li>开始语音输入时是否触发 <code>emit('stop')</code>；</li>
+<li><code>handleStop</code> 是否调用 <code>stopAudio()</code>。</li>
+</ol>
+<hr>
+<h2 id="二十三、本节复习问题"><a href="#二十三、本节复习问题" class="headerlink" title="二十三、本节复习问题"></a>二十三、本节复习问题</h2><ol>
+<li>VAD、ASR、TTS 分别是什么意思？</li>
+<li>为什么需要把 Float32Array 转成 PCM16？</li>
+<li>为什么上传语音要用 <code>FormData</code>？</li>
+<li>WebSocket 和 SSE 在本项目中分别用在哪里？</li>
+<li>为什么 TTS 音频要 base64 编码后通过 SSE 发送？</li>
+<li>MediaSource 解决了什么问题？</li>
+<li>SourceBuffer 为什么需要队列？</li>
+<li><code>processId</code> 如何实现消息打断？</li>
+<li>为什么要在组件卸载时释放 VAD 和音频资源？</li>
+<li>部署时 VAD 静态资源路径为什么要特别注意？</li>
+</ol>
+<hr>
+<h2 id="二十四、核心接口完整请求-响应示例"><a href="#二十四、核心接口完整请求-响应示例" class="headerlink" title="二十四、核心接口完整请求 / 响应示例"></a>二十四、核心接口完整请求 / 响应示例</h2><h3 id="24-1-ASR-语音识别接口"><a href="#24-1-ASR-语音识别接口" class="headerlink" title="24.1 ASR 语音识别接口"></a>24.1 ASR 语音识别接口</h3><div class="code-container" data-rel="Http"><figure class="iseeu highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">POST /api/friend/message/asr/asr/</span><br><span class="line"><span class="attribute">Authorization</span><span class="punctuation">: </span>Bearer &lt;access_token&gt;</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>multipart/form-data</span><br></pre></td></tr></table></figure></div>
+
+<p>表单字段：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>audio</code></td>
+<td>file</td>
+<td>PCM 或 wav 音频文件</td>
+</tr>
+<tr>
+<td><code>sample_rate</code></td>
+<td>string</td>
+<td>采样率，例如 <code>16000</code></td>
+</tr>
+</tbody></table>
+<p>成功响应：</p>
+<div class="code-container" data-rel="Json"><figure class="iseeu highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">{</span></span><br><span class="line">  <span class="attr">"result"</span><span class="punctuation">:</span> <span class="string">"success"</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">"text"</span><span class="punctuation">:</span> <span class="string">"你好，请介绍一下你自己"</span></span><br><span class="line"><span class="punctuation">}</span></span><br></pre></td></tr></table></figure></div>
+
+<p>失败响应：</p>
+<div class="code-container" data-rel="Json"><figure class="iseeu highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">{</span></span><br><span class="line">  <span class="attr">"result"</span><span class="punctuation">:</span> <span class="string">"语音识别失败"</span></span><br><span class="line"><span class="punctuation">}</span></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="24-2-语音聊天流式接口"><a href="#24-2-语音聊天流式接口" class="headerlink" title="24.2 语音聊天流式接口"></a>24.2 语音聊天流式接口</h3><div class="code-container" data-rel="Http"><figure class="iseeu highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">POST /api/friend/message/voice/chat/</span><br><span class="line"><span class="attribute">Authorization</span><span class="punctuation">: </span>Bearer &lt;access_token&gt;</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>application/json</span><br><span class="line"><span class="attribute">Accept</span><span class="punctuation">: </span>text/event-stream</span><br></pre></td></tr></table></figure></div>
+
+<p>请求体：</p>
+<div class="code-container" data-rel="Json"><figure class="iseeu highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">{</span></span><br><span class="line">  <span class="attr">"friend_id"</span><span class="punctuation">:</span> <span class="number">5</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">"message"</span><span class="punctuation">:</span> <span class="string">"你好，请介绍一下你自己"</span></span><br><span class="line"><span class="punctuation">}</span></span><br></pre></td></tr></table></figure></div>
+
+<p>SSE 响应示例：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">data: {"content": "你好"}</span><br><span class="line"></span><br><span class="line">data: {"content": "，我是你的 AI 助手。"}</span><br><span class="line"></span><br><span class="line">data: {"audio": "SUQzBAAAAAAA..."}</span><br><span class="line"></span><br><span class="line">data: {"audio": "AAAAHGZ0eXBtc..."}</span><br><span class="line"></span><br><span class="line">data: [DONE]</span><br></pre></td></tr></table></figure></div>
+
+<p>说明：</p>
+<ul>
+<li><code>content</code> 用于显示文字；</li>
+<li><code>audio</code> 是 base64 音频片段；</li>
+<li><code>[DONE]</code> 表示本轮回复结束。</li>
+</ul>
+<hr>
+<h2 id="二十五、关键代码逐行解释示例"><a href="#二十五、关键代码逐行解释示例" class="headerlink" title="二十五、关键代码逐行解释示例"></a>二十五、关键代码逐行解释示例</h2><h3 id="25-1-Float32-转-PCM16"><a href="#25-1-Float32-转-PCM16" class="headerlink" title="25.1 Float32 转 PCM16"></a>25.1 Float32 转 PCM16</h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">floatTo16BitPCM</span>(<span class="params">float32Array</span>) {</span><br><span class="line">  <span class="keyword">const</span> buffer = <span class="keyword">new</span> <span class="title class_">ArrayBuffer</span>(float32Array.<span class="property">length</span> * <span class="number">2</span>)</span><br><span class="line">  <span class="keyword">const</span> view = <span class="keyword">new</span> <span class="title class_">DataView</span>(buffer)</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; float32Array.<span class="property">length</span>; i++) {</span><br><span class="line">    <span class="keyword">let</span> sample = <span class="title class_">Math</span>.<span class="title function_">max</span>(-<span class="number">1</span>, <span class="title class_">Math</span>.<span class="title function_">min</span>(<span class="number">1</span>, float32Array[i]))</span><br><span class="line">    view.<span class="title function_">setInt16</span>(i * <span class="number">2</span>, sample &lt; <span class="number">0</span> ? sample * <span class="number">0x8000</span> : sample * <span class="number">0x7fff</span>, <span class="literal">true</span>)</span><br><span class="line">  }</span><br><span class="line">  <span class="keyword">return</span> buffer</span><br><span class="line">}</span><br></pre></td></tr></table></figure></div>
+
+<p>逐行解释：</p>
+<table>
+<thead>
+<tr>
+<th>代码</th>
+<th>新手解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>float32Array.length * 2</code></td>
+<td>PCM16 每个采样点占 2 字节</td>
+</tr>
+<tr>
+<td><code>new ArrayBuffer(...)</code></td>
+<td>创建一块二进制内存</td>
+</tr>
+<tr>
+<td><code>new DataView(buffer)</code></td>
+<td>用 DataView 按字节写入数据</td>
+</tr>
+<tr>
+<td><code>for (...)</code></td>
+<td>遍历每一个音频采样点</td>
+</tr>
+<tr>
+<td><code>Math.max(-1, Math.min(1, ...))</code></td>
+<td>把音频值限制在 -1 到 1 之间，防止溢出</td>
+</tr>
+<tr>
+<td><code>setInt16(...)</code></td>
+<td>写入 16 位整数格式的音频采样</td>
+</tr>
+<tr>
+<td><code>true</code></td>
+<td>使用小端字节序，很多音频接口要求这种格式</td>
+</tr>
+<tr>
+<td><code>return buffer</code></td>
+<td>返回可上传的二进制音频数据</td>
+</tr>
+</tbody></table>
+<h3 id="25-2-音频队列播放"><a href="#25-2-音频队列播放" class="headerlink" title="25.2 音频队列播放"></a>25.2 音频队列播放</h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">appendNextChunk</span>(<span class="params"></span>) {</span><br><span class="line">  <span class="keyword">if</span> (!sourceBuffer || sourceBuffer.<span class="property">updating</span> || audioQueue.<span class="property">length</span> === <span class="number">0</span>) <span class="keyword">return</span></span><br><span class="line">  <span class="keyword">const</span> chunk = audioQueue.<span class="title function_">shift</span>()</span><br><span class="line">  sourceBuffer.<span class="title function_">appendBuffer</span>(chunk)</span><br><span class="line">}</span><br></pre></td></tr></table></figure></div>
+
+<p>逐行解释：</p>
+<table>
+<thead>
+<tr>
+<th>代码</th>
+<th>新手解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>!sourceBuffer</code></td>
+<td>播放器还没准备好就不能写入</td>
+</tr>
+<tr>
+<td><code>sourceBuffer.updating</code></td>
+<td>上一个音频片段还没写完</td>
+</tr>
+<tr>
+<td><code>audioQueue.length === 0</code></td>
+<td>队列里没有待播放音频</td>
+</tr>
+<tr>
+<td><code>return</code></td>
+<td>不满足条件就先退出，避免报错</td>
+</tr>
+<tr>
+<td><code>audioQueue.shift()</code></td>
+<td>取出队列中最早进入的音频片段</td>
+</tr>
+<tr>
+<td><code>appendBuffer(chunk)</code></td>
+<td>把音频片段追加给浏览器播放</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="二十六、Vue-组件数据传递图"><a href="#二十六、Vue-组件数据传递图" class="headerlink" title="二十六、Vue 组件数据传递图"></a>二十六、Vue 组件数据传递图</h2><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">Microphone.vue</span><br><span class="line">  │ VAD 监听用户说话</span><br><span class="line">  ├── onSpeechStart</span><br><span class="line">  │     ↓</span><br><span class="line">  │   emit stop</span><br><span class="line">  │     ↓</span><br><span class="line">  │   ChatField.vue 停止旧回复和旧音频</span><br><span class="line">  │</span><br><span class="line">  └── onSpeechEnd</span><br><span class="line">        ↓</span><br><span class="line">      PCM 音频文件</span><br><span class="line">        ↓</span><br><span class="line">      ASR API</span><br><span class="line">        ↓</span><br><span class="line">      得到识别文本</span><br><span class="line">        ↓</span><br><span class="line">      emit send-message</span><br><span class="line">        ↓</span><br><span class="line">      ChatField.vue</span><br><span class="line">        ↓</span><br><span class="line">      voice stream API</span><br><span class="line">        ↓</span><br><span class="line">      content 更新文字气泡</span><br><span class="line">      audio 放入播放队列</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="二十七、后端语音视图处理流程"><a href="#二十七、后端语音视图处理流程" class="headerlink" title="二十七、后端语音视图处理流程"></a>二十七、后端语音视图处理流程</h2><h3 id="27-1-ASRView-流程"><a href="#27-1-ASRView-流程" class="headerlink" title="27.1 ASRView 流程"></a>27.1 ASRView 流程</h3><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">收到 POST /asr/asr/</span><br><span class="line">  ↓</span><br><span class="line">检查用户是否登录</span><br><span class="line">  ↓</span><br><span class="line">从 request.FILES 读取 audio</span><br><span class="line">  ↓</span><br><span class="line">读取 sample_rate</span><br><span class="line">  ↓</span><br><span class="line">连接 ASR WebSocket 服务</span><br><span class="line">  ↓</span><br><span class="line">发送任务开始消息</span><br><span class="line">  ↓</span><br><span class="line">发送音频二进制数据</span><br><span class="line">  ↓</span><br><span class="line">发送任务结束消息</span><br><span class="line">  ↓</span><br><span class="line">等待识别结果</span><br><span class="line">  ↓</span><br><span class="line">返回 text</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="27-2-语音聊天流程"><a href="#27-2-语音聊天流程" class="headerlink" title="27.2 语音聊天流程"></a>27.2 语音聊天流程</h3><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">收到 POST /voice/chat/</span><br><span class="line">  ↓</span><br><span class="line">复用文字聊天上下文构造</span><br><span class="line">  ↓</span><br><span class="line">大模型生成文本片段</span><br><span class="line">  ↓</span><br><span class="line">文本片段通过 SSE 返回 content</span><br><span class="line">  ↓</span><br><span class="line">同时把文本送入 TTS 队列</span><br><span class="line">  ↓</span><br><span class="line">TTS WebSocket 返回音频二进制</span><br><span class="line">  ↓</span><br><span class="line">后端 base64 编码</span><br><span class="line">  ↓</span><br><span class="line">通过 SSE 返回 audio</span><br><span class="line">  ↓</span><br><span class="line">生成完成后返回 [DONE]</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="二十八、小练习与自测答案"><a href="#二十八、小练习与自测答案" class="headerlink" title="二十八、小练习与自测答案"></a>二十八、小练习与自测答案</h2><h3 id="练习-1"><a href="#练习-1" class="headerlink" title="练习 1"></a>练习 1</h3><p>问题：为什么 VAD 检测到用户开始说话时要停止旧回复？</p>
+<p>答案：语音对话需要支持打断。如果 AI 还在说，用户又开始说话，应该停止旧音频和旧流，避免新旧对话混在一起。</p>
+<h3 id="练习-2"><a href="#练习-2" class="headerlink" title="练习 2"></a>练习 2</h3><p>问题：为什么 TTS 音频不能直接当 JSON 字符串发送？</p>
+<p>答案：音频是二进制数据，不适合直接放进 JSON。通常需要 base64 编码成文本，再放进 SSE 的 JSON 字段中发送。</p>
+<h3 id="练习-3"><a href="#练习-3" class="headerlink" title="练习 3"></a>练习 3</h3><p>问题：为什么 SourceBuffer 需要队列？</p>
+<p>答案：SourceBuffer 同一时间只能写入一个片段。如果多个音频片段同时写入，会出现 <code>SourceBuffer is updating</code> 报错，所以必须排队顺序写入。</p>
+
+		</div>
+
+		
+		<div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+			<div class="article-copyright-info-container">
+    <ul>
+        <li><strong>标题:</strong> 6.语音模块、ASR、TTS 与流式播放</li>
+        <li><strong>作者:</strong> Lionlnuc</li>
+        <li><strong>创建于
+                :</strong> 2026-07-12 00:00:00</li>
+        
+            <li>
+                <strong>更新于
+                    :</strong> 2026-07-12 00:00:00
+            </li>
+        
+        <li>
+            <strong>链接:</strong> https://lionlnuc.github.io/2026/07/12/AgentTalk/6. 语音模块/
+        </li>
+        <li>
+            <strong>
+                版权声明:
+            </strong>
+            
+
+            
+                本文章采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a> 进行许可。
+            
+        </li>
+    </ul>
+</div>
+
+		</div>
+		
+
+		
+		<ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/AgentTalk/">#AgentTalk</a>&nbsp;
+			</li>
+			
+		</ul>
+		
+
+		
+
+		
+		<div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+			
+			<div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="prev" rel="prev" href="/2026/07/12/AgentTalk/%E8%AF%B4%E6%98%8E/">
+					<span class="left arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-left"></i>
+					</span>
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">0.说明</span>
+						<span class="post-nav-item">上一篇</span>
+					</span>
+				</a>
+			</div>
+			
+			
+			<div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="next" rel="next" href="/2026/07/12/AgentTalk/1.%20%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%BC%E8%88%AA%E6%A0%8F/">
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">1.配置环境、创建项目与导航栏</span>
+						<span class="post-nav-item">下一篇</span>
+					</span>
+					<span class="right arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-right"></i>
+					</span>
+				</a>
+			</div>
+			
+		</div>
+		
+
+
+		
+		<div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+			<div class="comments-container mt-10 w-full ">
+    <div id="comment-anchor" class="w-full h-2.5"></div>
+    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
+        评论
+    </div>
+    
+
+        
+            
+    <div id="giscus-container"></div>
+    <script data-swup-reload-script defer>
+        (function() {
+            const containerId = "giscus-container";
+            const mapping = "pathname";
+            const lang = "zh-CN";
+            const inputPosition = "bottom";
+            const reactionsEnabled = "1" === "1";
+            const emitMetadata = "1" === "1";
+            const strict = "0" === "1";
+            const loading = "lazy";
+
+            const getTerm = () => {
+                if (mapping === "pathname") return location.pathname;
+                if (mapping === "url") return location.href;
+                if (mapping === "title") return document.title;
+                if (mapping === "og:title") {
+                    const ogTitle = document.querySelector("meta[property='og:title']");
+                    return ogTitle?.content || document.title;
+                }
+                return "";
+            };
+
+            const sendUpdate = () => {
+                const iframe = document.querySelector("iframe.giscus-frame");
+                if (!iframe) {
+                    return;
+                }
+
+                const setConfig = {
+                    theme: "preferred_color_scheme",
+                    lang,
+                    inputPosition,
+                    reactionsEnabled,
+                    emitMetadata,
+                    strict,
+                };
+
+                if (mapping !== "number") {
+                    const term = getTerm();
+                    if (term) {
+                        setConfig.term = term;
+                    }
+                }
+
+                iframe.contentWindow.postMessage(
+                    { giscus: { setConfig } },
+                    "https://giscus.app",
+                );
+            };
+
+            const loadGiscus = () => {
+                const container = document.getElementById(containerId);
+                if (!container) {
+                    return;
+                }
+
+                const iframe = container.querySelector("iframe.giscus-frame");
+                if (iframe) {
+                    sendUpdate();
+                    return;
+                }
+
+                if (container.dataset.giscusInit === "true") {
+                    return;
+                }
+
+                const giscusConfig = {
+                    src: "https://giscus.app/client.js",
+                    "data-repo": "lionlnuc/lionlnuc.github.io",
+                    "data-repo-id": "R_kgDOQnj-7Q",
+                    "data-category": "Announcements",
+                    "data-category-id": "DIC_kwDOQnj-7c4Cz7IZ",
+                    "data-mapping": mapping,
+                    "data-strict": "0",
+                    "data-reactions-enabled": "1",
+                    "data-emit-metadata": "1",
+                    "data-theme": "preferred_color_scheme",
+                    "data-lang": lang,
+                    "data-input-position": inputPosition,
+                    "data-loading": loading,
+                    crossorigin: "anonymous",
+                    async: true,
+                };
+
+                const giscusScript = document.createElement("script");
+                for (const key in giscusConfig) {
+                    giscusScript.setAttribute(key, giscusConfig[key]);
+                }
+                container.appendChild(giscusScript);
+                container.dataset.giscusInit = "true";
+            };
+
+            const runGiscus = () => {
+                const container = document.getElementById(containerId);
+                if (!container) {
+                    return;
+                }
+
+                if (container.querySelector("iframe.giscus-frame")) {
+                    sendUpdate();
+                    return;
+                }
+
+                loadGiscus();
+            };
+
+            runGiscus();
+        })();
+    </script>
+
+
+        
+    
+</div>
+
+		</div>
+		
+	</div>
+
+	
+	<div class="toc-content-container">
+		<div class="post-toc-wrap">
+	<div class="post-toc">
+		<div class="toc-title">目录</div>
+		<div class="page-title">6.语音模块、ASR、TTS 与流式播放</div>
+		<ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AF%AD%E9%9F%B3%E6%A8%A1%E5%9D%97%E3%80%81ASR%E3%80%81TTS-%E4%B8%8E%E6%B5%81%E5%BC%8F%E6%92%AD%E6%94%BE"><span class="nav-text">语音模块、ASR、TTS 与流式播放</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E7%9B%AE%E6%A0%87"><span class="nav-text">一、目标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E8%AF%AD%E9%9F%B3%E4%BA%A4%E4%BA%92%E6%95%B4%E4%BD%93%E6%B5%81%E7%A8%8B"><span class="nav-text">二、语音交互整体流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E4%B8%89%E4%B8%AA%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5"><span class="nav-text">2.1 三个核心概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E9%A1%B9%E7%9B%AE%E8%AF%AD%E9%9F%B3%E6%B5%81%E7%A8%8B"><span class="nav-text">2.2 项目语音流程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E6%B6%88%E6%81%AF%E6%89%93%E6%96%AD%E6%9C%BA%E5%88%B6"><span class="nav-text">三、消息打断机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E6%89%93%E6%96%AD%EF%BC%9F"><span class="nav-text">3.1 为什么需要打断？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-processId-%E8%AE%BE%E8%AE%A1"><span class="nav-text">3.2 processId 设计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E6%89%93%E6%96%AD%E8%AF%AD%E9%9F%B3%E6%92%AD%E6%94%BE"><span class="nav-text">3.3 打断语音播放</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%89%8D%E7%AB%AF-VAD-%E8%AF%AD%E9%9F%B3%E6%A3%80%E6%B5%8B"><span class="nav-text">四、前端 VAD 语音检测</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E5%AE%89%E8%A3%85%E4%BE%9D%E8%B5%96"><span class="nav-text">4.1 安装依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E6%8B%B7%E8%B4%9D%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90"><span class="nav-text">4.2 拷贝静态资源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-Microphone-vue-%E7%BB%84%E4%BB%B6%E7%BB%93%E6%9E%84"><span class="nav-text">4.3 Microphone.vue 组件结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-%E9%9F%B3%E6%B5%AA%E5%8A%A8%E7%94%BB"><span class="nav-text">4.4 音浪动画</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-%E5%88%9D%E5%A7%8B%E5%8C%96-VAD"><span class="nav-text">4.5 初始化 VAD</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-6-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E9%87%8A%E6%94%BE%E8%B5%84%E6%BA%90"><span class="nav-text">4.6 生命周期释放资源</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E9%9F%B3%E9%A2%91%E6%A0%BC%E5%BC%8F%E8%BD%AC%E6%8D%A2%E4%B8%8E%E4%B8%8A%E4%BC%A0"><span class="nav-text">五、音频格式转换与上传</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-Float32-%E8%BD%AC-PCM16"><span class="nav-text">5.1 Float32 转 PCM16</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-%E4%B8%8A%E4%BC%A0%E5%88%B0%E5%90%8E%E7%AB%AF"><span class="nav-text">5.2 上传到后端</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81InputField-%E4%B8%AD%E5%88%87%E6%8D%A2%E6%96%87%E5%AD%97-%E8%AF%AD%E9%9F%B3%E8%BE%93%E5%85%A5"><span class="nav-text">六、InputField 中切换文字 &#x2F; 语音输入</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-%E7%8A%B6%E6%80%81%E8%AE%BE%E8%AE%A1"><span class="nav-text">6.1 状态设计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-handleSend-%E6%94%AF%E6%8C%81%E8%AF%AD%E9%9F%B3%E6%96%87%E6%9C%AC"><span class="nav-text">6.2 handleSend 支持语音文本</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E3%80%81%E5%90%8E%E7%AB%AF-ASR-%E8%AF%AD%E9%9F%B3%E8%AF%86%E5%88%AB"><span class="nav-text">七、后端 ASR 语音识别</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-%E5%AE%89%E8%A3%85%E4%BE%9D%E8%B5%96"><span class="nav-text">7.1 安装依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-text">7.2 环境变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-3-ASRView"><span class="nav-text">7.3 ASRView</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-4-%E5%8F%91%E9%80%81%E9%9F%B3%E9%A2%91"><span class="nav-text">7.4 发送音频</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-5-%E6%8E%A5%E6%94%B6%E8%AF%86%E5%88%AB%E7%BB%93%E6%9E%9C"><span class="nav-text">7.5 接收识别结果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-6-%E5%B9%B6%E5%8F%91%E6%89%A7%E8%A1%8C%E5%8F%91%E9%80%81%E5%92%8C%E6%8E%A5%E6%94%B6"><span class="nav-text">7.6 并发执行发送和接收</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-7-%E8%B7%AF%E7%94%B1"><span class="nav-text">7.7 路由</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB%E3%80%81%E5%8D%8F%E7%A8%8B%E7%9F%A5%E8%AF%86%E8%A1%A5%E5%85%85"><span class="nav-text">八、协程知识补充</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-%E4%BB%80%E4%B9%88%E6%98%AF%E5%8D%8F%E7%A8%8B%EF%BC%9F"><span class="nav-text">8.1 什么是协程？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-%E5%8D%8F%E7%A8%8B-vs-%E7%BA%BF%E7%A8%8B"><span class="nav-text">8.2 协程 vs 线程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-asyncio-gather"><span class="nav-text">8.3 asyncio.gather</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D%E3%80%81%E5%90%8E%E7%AB%AF-TTS-%E8%AF%AD%E9%9F%B3%E5%90%88%E6%88%90"><span class="nav-text">九、后端 TTS 语音合成</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#9-1-%E4%B8%BA%E4%BB%80%E4%B9%88%E6%9B%B4%E5%A4%8D%E6%9D%82%EF%BC%9F"><span class="nav-text">9.1 为什么更复杂？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-2-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E7%BA%BF%E7%A8%8B-%E9%98%9F%E5%88%97%EF%BC%9F"><span class="nav-text">9.2 为什么需要线程 + 队列？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-3-%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E9%98%9F%E5%88%97"><span class="nav-text">9.3 线程安全队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-4-%E9%9F%B3%E9%A2%91%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81-base64%EF%BC%9F"><span class="nav-text">9.4 音频为什么要 base64？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-5-TTS-%E8%BF%94%E5%9B%9E-SSE"><span class="nav-text">9.5 TTS 返回 SSE</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E3%80%81%E5%89%8D%E7%AB%AF-MediaSource-%E6%92%AD%E6%94%BE%E9%9F%B3%E9%A2%91%E6%B5%81"><span class="nav-text">十、前端 MediaSource 播放音频流</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#10-1-MediaSource-%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-text">10.1 MediaSource 是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-2-%E7%8A%B6%E6%80%81%E5%8F%98%E9%87%8F"><span class="nav-text">10.2 状态变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-3-%E5%88%9D%E5%A7%8B%E5%8C%96%E9%9F%B3%E9%A2%91%E6%B5%81"><span class="nav-text">10.3 初始化音频流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-4-%E5%A4%84%E7%90%86%E9%9F%B3%E9%A2%91%E7%89%87%E6%AE%B5"><span class="nav-text">10.4 处理音频片段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-5-%E5%86%99%E5%85%A5-SourceBuffer"><span class="nav-text">10.5 写入 SourceBuffer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-6-%E5%81%9C%E6%AD%A2%E9%9F%B3%E9%A2%91"><span class="nav-text">10.6 停止音频</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-7-%E7%BB%84%E4%BB%B6%E5%8D%B8%E8%BD%BD%E6%B8%85%E7%90%86"><span class="nav-text">10.7 组件卸载清理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B8%80%E3%80%81%E8%B7%AF%E7%94%B1%E6%B1%87%E6%80%BB"><span class="nav-text">十一、路由汇总</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%BA%8C%E3%80%81%E5%BC%80%E5%8F%91%E4%B8%8E%E9%83%A8%E7%BD%B2%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-text">十二、开发与部署注意事项</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#12-1-%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83-VAD-%E8%B7%AF%E5%BE%84"><span class="nav-text">12.1 开发环境 VAD 路径</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-2-%E6%89%93%E5%8C%85%E5%88%B0%E5%90%8E%E7%AB%AF%E5%90%8E%E7%9A%84-VAD-%E8%B7%AF%E5%BE%84"><span class="nav-text">12.2 打包到后端后的 VAD 路径</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-3-MIME-%E7%B1%BB%E5%9E%8B%E9%85%8D%E7%BD%AE"><span class="nav-text">12.3 MIME 类型配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-4-%E4%BB%A3%E7%90%86%E4%B8%8E%E7%BD%91%E7%BB%9C%E9%97%AE%E9%A2%98"><span class="nav-text">12.4 代理与网络问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B8%89%E3%80%81%E6%98%93%E9%94%99%E7%82%B9%E6%80%BB%E7%BB%93"><span class="nav-text">十三、易错点总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E5%9B%9B%E3%80%81%E7%9F%A5%E8%AF%86%E8%A1%A5%E5%85%85%EF%BC%9A%E7%BA%BF%E7%A8%8B%E3%80%81%E5%8D%8F%E7%A8%8B%E4%B8%8E%E9%98%9F%E5%88%97"><span class="nav-text">十四、知识补充：线程、协程与队列</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#14-1-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%90%8C%E6%97%B6%E7%94%A8%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%8D%8F%E7%A8%8B%EF%BC%9F"><span class="nav-text">14.1 为什么同时用线程和协程？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-2-Queue-%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-text">14.2 Queue 的作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-3-asyncio-Queue-%E4%B8%8E-queue-Queue-%E5%8C%BA%E5%88%AB"><span class="nav-text">14.3 asyncio.Queue 与 queue.Queue 区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%BA%94%E3%80%81%E5%B0%8F%E7%BB%93"><span class="nav-text">十五、小结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E5%85%AD%E3%80%81%E6%96%B0%E6%89%8B%E7%89%88%EF%BC%9A%E7%94%A8%E7%94%9F%E6%B4%BB%E4%BE%8B%E5%AD%90%E7%90%86%E8%A7%A3%E8%AF%AD%E9%9F%B3%E6%A8%A1%E5%9D%97"><span class="nav-text">十六、新手版：用生活例子理解语音模块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B8%83%E3%80%81%E8%B7%9F%E5%81%9A%E6%AD%A5%E9%AA%A4%EF%BC%9A%E8%AF%AD%E9%9F%B3%E8%BE%93%E5%85%A5"><span class="nav-text">十七、跟做步骤：语音输入</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#17-1-%E5%89%8D%E7%AB%AF%E6%AD%A5%E9%AA%A4"><span class="nav-text">17.1 前端步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#17-2-%E5%90%8E%E7%AB%AF%E6%AD%A5%E9%AA%A4"><span class="nav-text">17.2 后端步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#17-3-%E9%AA%8C%E8%AF%81%E6%96%B9%E6%B3%95"><span class="nav-text">17.3 验证方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E5%85%AB%E3%80%81%E8%B7%9F%E5%81%9A%E6%AD%A5%E9%AA%A4%EF%BC%9A%E8%AF%AD%E9%9F%B3%E5%9B%9E%E5%A4%8D%E6%92%AD%E6%94%BE"><span class="nav-text">十八、跟做步骤：语音回复播放</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#18-1-%E5%90%8E%E7%AB%AF%E6%AD%A5%E9%AA%A4"><span class="nav-text">18.1 后端步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#18-2-%E5%89%8D%E7%AB%AF%E6%AD%A5%E9%AA%A4"><span class="nav-text">18.2 前端步骤</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B9%9D%E3%80%81%E6%96%B0%E6%89%8B%E9%87%8D%E7%82%B9%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81-VAD"><span class="nav-text">十九、新手重点：为什么需要 VAD</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8D%81%E3%80%81%E6%96%B0%E6%89%8B%E9%87%8D%E7%82%B9%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88-ASR-TTS-%E7%94%A8-WebSocket"><span class="nav-text">二十、新手重点：为什么 ASR &#x2F; TTS 用 WebSocket</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8D%81%E4%B8%80%E3%80%81%E6%96%B0%E6%89%8B%E9%87%8D%E7%82%B9%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E5%89%8D%E7%AB%AF%E6%92%AD%E6%94%BE%E8%A6%81%E7%94%A8%E9%98%9F%E5%88%97"><span class="nav-text">二十一、新手重点：为什么前端播放要用队列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8D%81%E4%BA%8C%E3%80%81%E5%B8%B8%E8%A7%81%E6%8A%A5%E9%94%99%E6%8E%92%E6%9F%A5"><span class="nav-text">二十二、常见报错排查</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#22-1-%E6%B5%8F%E8%A7%88%E5%99%A8%E6%8F%90%E7%A4%BA%E6%B2%A1%E6%9C%89%E9%BA%A6%E5%85%8B%E9%A3%8E%E6%9D%83%E9%99%90"><span class="nav-text">22.1 浏览器提示没有麦克风权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#22-2-VAD-%E6%A8%A1%E5%9E%8B%E5%8A%A0%E8%BD%BD%E5%A4%B1%E8%B4%A5"><span class="nav-text">22.2 VAD 模型加载失败</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#22-3-ASR-%E4%B8%80%E7%9B%B4%E5%8D%A1%E4%BD%8F"><span class="nav-text">22.3 ASR 一直卡住</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#22-4-%E8%AF%86%E5%88%AB%E7%BB%93%E6%9E%9C%E4%B8%BA%E7%A9%BA"><span class="nav-text">22.4 识别结果为空</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#22-5-%E6%9C%89%E6%96%87%E5%AD%97%E4%BD%86%E6%B2%A1%E6%9C%89%E5%A3%B0%E9%9F%B3"><span class="nav-text">22.5 有文字但没有声音</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#22-6-%E6%96%B0%E5%9B%9E%E5%A4%8D%E5%92%8C%E6%97%A7%E5%9B%9E%E5%A4%8D%E6%B7%B7%E5%9C%A8%E4%B8%80%E8%B5%B7"><span class="nav-text">22.6 新回复和旧回复混在一起</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8D%81%E4%B8%89%E3%80%81%E6%9C%AC%E8%8A%82%E5%A4%8D%E4%B9%A0%E9%97%AE%E9%A2%98"><span class="nav-text">二十三、本节复习问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8D%81%E5%9B%9B%E3%80%81%E6%A0%B8%E5%BF%83%E6%8E%A5%E5%8F%A3%E5%AE%8C%E6%95%B4%E8%AF%B7%E6%B1%82-%E5%93%8D%E5%BA%94%E7%A4%BA%E4%BE%8B"><span class="nav-text">二十四、核心接口完整请求 &#x2F; 响应示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#24-1-ASR-%E8%AF%AD%E9%9F%B3%E8%AF%86%E5%88%AB%E6%8E%A5%E5%8F%A3"><span class="nav-text">24.1 ASR 语音识别接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#24-2-%E8%AF%AD%E9%9F%B3%E8%81%8A%E5%A4%A9%E6%B5%81%E5%BC%8F%E6%8E%A5%E5%8F%A3"><span class="nav-text">24.2 语音聊天流式接口</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8D%81%E4%BA%94%E3%80%81%E5%85%B3%E9%94%AE%E4%BB%A3%E7%A0%81%E9%80%90%E8%A1%8C%E8%A7%A3%E9%87%8A%E7%A4%BA%E4%BE%8B"><span class="nav-text">二十五、关键代码逐行解释示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#25-1-Float32-%E8%BD%AC-PCM16"><span class="nav-text">25.1 Float32 转 PCM16</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#25-2-%E9%9F%B3%E9%A2%91%E9%98%9F%E5%88%97%E6%92%AD%E6%94%BE"><span class="nav-text">25.2 音频队列播放</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8D%81%E5%85%AD%E3%80%81Vue-%E7%BB%84%E4%BB%B6%E6%95%B0%E6%8D%AE%E4%BC%A0%E9%80%92%E5%9B%BE"><span class="nav-text">二十六、Vue 组件数据传递图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8D%81%E4%B8%83%E3%80%81%E5%90%8E%E7%AB%AF%E8%AF%AD%E9%9F%B3%E8%A7%86%E5%9B%BE%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B"><span class="nav-text">二十七、后端语音视图处理流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#27-1-ASRView-%E6%B5%81%E7%A8%8B"><span class="nav-text">27.1 ASRView 流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#27-2-%E8%AF%AD%E9%9F%B3%E8%81%8A%E5%A4%A9%E6%B5%81%E7%A8%8B"><span class="nav-text">27.2 语音聊天流程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8D%81%E5%85%AB%E3%80%81%E5%B0%8F%E7%BB%83%E4%B9%A0%E4%B8%8E%E8%87%AA%E6%B5%8B%E7%AD%94%E6%A1%88"><span class="nav-text">二十八、小练习与自测答案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0-1"><span class="nav-text">练习 1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0-2"><span class="nav-text">练习 2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0-3"><span class="nav-text">练习 3</span></a></li></ol></li></ol></li></ol>
+
+	</div>
+</div>
+	</div>
+	
+</div>
+
+			</div>
+
+			
+		</div>
+
+		<div class="main-content-footer">
+			<footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2025</span>
+              -
+            
+            2026&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">Lionlnuc</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        共撰写了 44 篇文章
+                    </span>
+                    
+                </p>
+            
+        </div>
+        
+            <script data-swup-reload-script src="https://cn.vercount.one/js"></script>
+            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
+                
+                    <span id="busuanzi_container_site_uv" class="lg:!block">
+                        <span class="text-sm">访问人数</span>
+                        <span id="busuanzi_value_site_uv"></span>
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv" class="lg:!block">
+                        <span class="text-sm">总访问量</span>
+                        <span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">由 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a> 驱动</span>
+            <span class="text-sm lg:block">主题&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.9.0</a></span>
+        </div>
+        
+        
+            <div>
+                博客已运行 <span class="odometer" id="runtime_days" ></span> 天 <span class="odometer" id="runtime_hours"></span> 小时 <span class="odometer" id="runtime_minutes"></span> 分钟 <span class="odometer" id="runtime_seconds"></span> 秒
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+        
+    </div>  
+</footer>
+		</div>
+	</div>
+
+	
+	<div class="post-tools">
+		<div class="post-tools-container">
+	<ul class="article-tools-list">
+		<!-- TOC aside toggle -->
+		
+		<li class="right-bottom-tools page-aside-toggle">
+			<i class="fa-regular fa-outdent"></i>
+		</li>
+		
+
+		<!-- go comment -->
+		
+		<li class="go-comment">
+			<i class="fa-regular fa-comments"></i>
+		</li>
+		
+	</ul>
+</div>
+	</div>
+	
+
+	<div class="right-side-tools-container">
+		<div class="side-tools-container">
+	<ul class="hidden-tools-list">
+		<li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-plus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-minus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+			<i class="fa-regular fa-moon"></i>
+		</li>
+
+		<!-- rss -->
+		
+
+		
+
+		<li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+			<i class="fa-regular fa-arrow-down"></i>
+		</li>
+	</ul>
+
+	<ul class="visible-tools-list">
+		<li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+			<i class="fa-regular fa-cog fa-spin"></i>
+		</li>
+		
+		<li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+			<i class="arrow-up fas fa-arrow-up"></i>
+			<span class="percent"></span>
+		</li>
+		
+		
+	</ul>
+</div>
+	</div>
+
+	<div class="image-viewer-container" role="dialog" aria-modal="true" aria-label="图片查看器">
+	<button class="image-viewer-close" type="button" aria-label="关闭">
+		<i class="fa-solid fa-xmark"></i>
+	</button>
+	<button class="image-viewer-prev" type="button" aria-label="上一页">
+		<i class="fa-solid fa-chevron-left"></i>
+	</button>
+	<div class="image-viewer-frame">
+		<img src="" alt="">
+	</div>
+	<div class="image-viewer-exif-panel hidden absolute left-1/2 bottom-20 -translate-x-1/2 w-[min(92vw,420px)] max-h-[60vh] overflow-hidden rounded-2xl bg-background-color-transparent-80 p-4 text-left shadow-redefine-flat backdrop-blur-md" role="dialog" aria-label="EXIF" aria-hidden="true">
+		<div class="flex items-center justify-between mb-3">
+			<span class="text-sm font-semibold text-first-text-color">EXIF</span>
+			<button class="image-viewer-exif-close flex h-8 w-8 items-center justify-center rounded-full bg-background-color-transparent-80 text-first-text-color transition hover:bg-background-color-transparent-40" type="button" aria-label="关闭">
+				<i class="fa-solid fa-xmark text-[0.65rem]"></i>
+			</button>
+		</div>
+		<div class="image-viewer-exif-cards grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[50vh] overflow-y-auto pr-1 scrollbar-hide"></div>
+		<template class="image-viewer-exif-card-template">
+			<div class="rounded-lg bg-background-color-transparent-40 px-3 py-2">
+				<div class="image-viewer-exif-card-header flex items-center gap-2 mb-1">
+					<i class="image-viewer-exif-card-icon fa-solid fa-circle-info text-xs text-third-text-color"></i>
+					<div class="image-viewer-exif-card-title text-xs font-semibold text-first-text-color"></div>
+				</div>
+				<div class="image-viewer-exif-card-items flex flex-col gap-1"></div>
+			</div>
+		</template>
+	</div>
+	<button class="image-viewer-exif-toggle flex items-center gap-2 hidden absolute left-1/2 bottom-6 -translate-x-1/2 rounded-full border border-border-color bg-background-color-transparent-80 px-4 py-2 text-first-text-color backdrop-blur-md transition hover:bg-background-color-transparent-40" type="button" aria-label="EXIF" aria-expanded="false">
+		<i class="fa-solid fa-circle-info text-xs"></i>
+		<span class="text-xs font-semibold uppercase tracking-wider">EXIF</span>
+	</button>
+	<button class="image-viewer-next" type="button" aria-label="下一页">
+		<i class="fa-solid fa-chevron-right"></i>
+	</button>
+</div>
+
+
+	
+	<div class="search-pop-overlay">
+	<div class="popup search-popup">
+		<div class="search-header">
+			<span class="search-input-field-pre">
+				<i class="fa-solid fa-keyboard"></i>
+			</span>
+			<div class="search-input-container">
+				<input autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="站内搜索您需要的内容..." spellcheck="false" type="search" class="search-input">
+			</div>
+			<span class="popup-btn-close">
+				<i class="fa-solid fa-times"></i>
+			</span>
+		</div>
+		<div id="search-result">
+			<div id="no-result">
+				<i class="fa-solid fa-spinner fa-spin-pulse fa-5x fa-fw"></i>
+			</div>
+		</div>
+	</div>
+</div>
+	
+
+</main>
+
+
+
+<script src="/js/build/libs/Swup.min.js"></script>
+
+<script src="/js/build/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/build/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    window.swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+
+    window.dispatchEvent(
+        new CustomEvent("redefine:swup:ready", {
+            detail: {
+                swup: window.swup,
+            },
+        }),
+    );
+</script>
+
+
+
+
+	
+<script src="/js/build/main.js" type="module"></script>
+
+
+
+    
+<script src="/js/build/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+
+
+
+  
+<script src="/js/build/libs/Typed.min.js"></script>
+
+
+
+
+
+
+
+
+    
+<script src="/js/build/libs/minimasonry.min.js" data-swup-reload-script=""></script>
+
+
+
+
+<script src="/js/build/libs/moment-with-locales.min.js" data-swup-reload-script=""></script>
+
+
+
+	
+</body>
+
+</html>

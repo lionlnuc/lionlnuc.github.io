@@ -1,0 +1,1749 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="软件开发,编程,技术学习,工程实践,C++,Java,Hexo,算法">
+    
+    
+    <meta name="author" content="Lionlnuc">
+    
+    <!-- Completely eliminate flash of wrong theme -->
+    <script>
+        (function() {
+            const THEME_KEY = "REDEFINE-THEME-STATUS";
+            const DARK = "dark", LIGHT = "light";
+            
+            // Get preferred theme
+            function getTheme() {
+                try {
+                    const saved = localStorage.getItem(THEME_KEY);
+                    if (saved) {
+                        const { isDark } = JSON.parse(saved);
+                        return isDark ? DARK : LIGHT;
+                    }
+                } catch (e) {}
+                
+                return matchMedia("(prefers-color-scheme: dark)").matches ? DARK : LIGHT;
+            }
+            
+            // Apply theme to document
+            function applyTheme(theme) {
+                const isDark = theme === DARK;
+                const root = document.documentElement;
+                
+                // Set classes for compatibility
+                root.classList.add(theme);
+                root.classList.remove(isDark ? LIGHT : DARK);
+                root.style.colorScheme = theme;
+            }
+            
+            // Initial application
+            const theme = getTheme();
+            applyTheme(theme);
+            
+            // Listen for system preference changes
+            matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ({ matches }) => {
+                // Only update if using system preference (no localStorage entry)
+                if (!localStorage.getItem(THEME_KEY)) {
+                    applyTheme(matches ? DARK : LIGHT);
+                }
+            });
+            
+            // Set body classes ASAP (before DOMContentLoaded)
+            (function() {
+                const addBodyClass = () => {
+                    const b = document.body;
+                    if (!b) return false;
+                    b.classList.add(theme + "-mode");
+                    return true;
+                };
+
+                // Try immediately
+                if (addBodyClass()) return;
+
+                // Observe until body exists
+                const mo = new MutationObserver(() => {
+                    if (addBodyClass()) mo.disconnect();
+                });
+                mo.observe(document.documentElement, { childList: true, subtree: true });
+            })();
+        })();
+    </script>
+    
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="https://lionlnuc.github.io/2026/07/12/agenttalk/1. 配置环境、创建导航栏/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+    
+        
+        <meta name="description" content="记录软件开发、技术学习、工程实践与生活思考的个人博客。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="1.配置环境、创建项目与导航栏">
+<meta property="og:url" content="https://lionlnuc.github.io/2026/07/12/AgentTalk/1.%20%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E3%80%81%E5%88%9B%E5%BB%BA%E5%AF%BC%E8%88%AA%E6%A0%8F/">
+<meta property="og:site_name" content="Lionlnuc - 享受编程，享受生活">
+<meta property="og:description" content="记录软件开发、技术学习、工程实践与生活思考的个人博客。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://lionlnuc.github.io/images/redefine-og.webp">
+<meta property="article:published_time" content="2026-07-11T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-07-11T16:00:00.000Z">
+<meta property="article:author" content="Lionlnuc">
+<meta property="article:tag" content="AgentTalk">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lionlnuc.github.io/images/redefine-og.webp">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/image/logo.png" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/image/logo.png">
+    <meta name="theme-color" content="#83cff9">
+    <link rel="shortcut icon" href="/image/logo.png">
+    <!--- Page Info-->
+    
+    <title>
+        
+            1.配置环境、创建项目与导航栏 | Lionlnuc
+        
+    </title>
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
+
+
+    <!--- Inject Part-->
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/css/build/tailwind.css">
+
+    
+
+    
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
+
+    
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
+
+    <!--- Font Part-->
+    
+    
+    
+    
+    
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"lionlnuc.github.io","root":"/","language":"zh-CN","path":"search.json"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":false,"title_alignment":"left","headings_top_spacing":{"h1":"3.2rem","h2":"2.4rem","h3":"1.9rem","h4":"1.6rem","h5":"1.4rem","h6":"1.3rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#83cff9","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":true,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":false,"custom_message":"Now loading......"},"side_tools":{"gear_rotation":true,"auto_expand":false},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"记录软件开发、技术学习、工程实践与生活思考的个人博客。"},"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/home-banner-light.webp","dark":"/images/home-banner-dark.webp"},"title":"Lionlnuc","subtitle":{"text":["技术学习与工程实践","记录问题、方案与思考","持续构建个人知识体系"],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":85,"backing_speed":24,"starting_delay":1000,"backing_delay":2200,"loop":true,"smart_backspace":true},"text_color":{"light":"#101010","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":true,"style":"default","links":[{"icon":"fa-brands fa-github","url":"https://github.com/lionlnuc","name":"github"},{"icon":"fa-solid fa-code","url":"https://blog.csdn.net/a140781","name":"CSDN"},{"icon":"fa-solid fa-at","url":"you@example.com"},{"icon":"fa-brands fa-telegram","url":null},{"icon":"/images/custom-icon.svg","url":null}],"qrs":[{"icon":"fa-brands fa-weixin","qr":"https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/qrcode_for_gh_94f2768aad8b_258.jpg","name":"weixin"},{"icon":"/images/custom-icon.svg","qr":null}]}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":false,"version":"11.4.1","theme":{"light":"default","dark":"dark"}}},"version":"2.9.0","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"专题":{"path":"/categories","icon":"fa-solid fa-layer-group"},"文章":{"icon":"fa-solid fa-book","submenus":{"归档":"/archives","标签":"/tags","说说":"/shuoshuo"}},"关于":{"path":"/about","icon":"fa-regular fa-user"},"GitHub":{"icon":"fa-brands fa-github","path":"https://github.com/lionlnuc"}},"search":{"enable":true,"preload":false,"path":"search.json","field":"post","content":false,"format":"striptags"}},"page_templates":{"friends_column":2,"tags_style":"blur","masonry":{"batch_size":12,"initial_batch_size":24}},"home":{"sidebar":{"enable":true,"position":"right","first_item":"info","announcement":"记录学习、实践与思考","show_on_mobile":true,"links":{"技术专题":{"path":"/categories","icon":"fa-solid fa-layer-group"},"文章归档":{"path":"/archives","icon":"fa-regular fa-archive"},"标签索引":{"path":"/tags","icon":"fa-regular fa-tags"},"关于本站":{"path":"/about","icon":"fa-regular fa-user"}}},"article_date_format":"auto","excerpt_length":160,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footer":{"runtime":true,"icon":"<i class=\"fa-solid fa-heart fa-beat\" style=\"--fa-animation-duration: 0.5s; color: #f54545\"></i>","start":"2025/12/15 22:45:00","statistics":true,"customize":null,"icp":{"enable":false,"number":null,"url":null}},"footerStart":"2025/12/15 22:45:00","mermaid":{"style":{"light":"default","dark":"dark"}}};
+    window.lang_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+    window.i18n = {"search":"站内搜索您需要的内容...","toc":"目录","prev":"上一页","next":"下一页","prev_posts":"上一篇","next_posts":"下一篇","page":"第 %d 页","recent_posts":"最新文章","share":"分享","powered_by":"由 %s 驱动","theme":"主题","rss_feed":"RSS Feed","category":"分类","categories":"分类","tag":"标签","tags":"标签","post":"文章","posts":"文章","tagcloud":"标签云","comment":"评论","comments":"评论","top":"置顶","sticky":"置顶","go-back-home":"回到首页","masonry_loading":"照片加载中...","image_viewer":"图片查看器","close":"关闭","exif":{"title":"EXIF","cards":{"camera":"相机","lens":"镜头","exposure":"曝光","other":"其他"},"fields":{"make":"品牌","model":"机型","date_taken":"拍摄时间","lens_model":"镜头","focal_length":"焦距","focus_mode":"对焦模式","shutter":"快门","aperture":"光圈","iso":"感光度","exposure_program":"曝光程序","exposure_compensation":"曝光补偿","metering_mode":"测光模式","flash":"闪光灯","white_balance":"白平衡","latitude":"纬度","longitude":"经度","altitude":"海拔"},"status":{"loading":"加载中...","no_exif":"无 EXIF 信息","library_missing":"EXIF 库未加载","image_source_missing":"图片地址不可用","unavailable":"EXIF 不可用（可能被 CORS 阻止或缺少元数据）","flag_unavailable":"EXIF 不可用"}},"home":"首页","archive":"归档","archives":"归档","about":"关于","links":"链接","link":"链接","friends":"友情链接","friend":"友情链接","timeline":"时间轴","shuoshuo":"说说","bookmarks":"书签","site_uv":"访问人数","site_pv":"总访问量","read_more":"阅读全文","wordcount":"字","min2read":"分钟","changelog":"更新日志","status":"状态","runtime":"博客已运行","days":"天","hours":"小时","minutes":"分钟","seconds":"秒","optimized_by":"并由 Evan 进行优化","rights":"版权所有","site_posts":"共撰写了 %s 篇文章","site_wordcount":"共 %s 字","copyright":{"title":"标题","author":"作者","link":"链接","create_time":"创建于","update_time":"更新于","license_title":"版权声明","license_content":"本文章采用 %s 进行许可。","all_rights_reserved":"版权所有 &#169 %s，禁止转载。","public_domain":"本文为公有领域作品，可自由转载、引用。"},"ago":{"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"},"create_time":"创建","update_time":"更新","expired":"这篇文章最后更新于 %s 天前，内容可能已经过时。"};
+    window.data = {"masonry":true};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 8.1.2"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+<body>
+	<div class="progress-bar-container">
+	
+	<span class="scroll-progress-bar"></span>
+	
+
+	
+	<span class="pjax-progress-bar"></span>
+	<!--        <span class="swup-progress-icon">-->
+	<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+	<!--        </span>-->
+	
+</div>
+
+<main class="page-container" id="swup">
+
+	
+
+	<div class="main-content-container flex flex-col justify-between min-h-dvh">
+		<div class="main-content-header">
+			<header class="navbar-container px-6 md:px-12">
+    <div class="navbar-content transition-navbar ">
+        <div class="left">
+            
+                <a class="logo-image h-8 w-8 sm:w-10 sm:h-10 mr-3" href="/">
+                    <img src="/image/logo.png" class="w-full h-full rounded-xs">
+                </a>
+            
+            <a class="logo-title" href="/">
+                
+                Lionlnuc
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    首页
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/categories"
+                                        >
+                                    <i class="fa-solid fa-layer-group fa-fw"></i>
+                                    专题
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="has-dropdown"
+                                   href="#"
+                                        onClick=&#34;return false;&#34;>
+                                    <i class="fa-solid fa-book fa-fw"></i>
+                                    文章
+                                    <i class="fa-solid fa-chevron-down fa-fw"></i>
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                                    <ul class="sub-menu">
+                                        
+                                            <li>
+                                                <a href="/archives">
+                                                    归档
+                                                </a>
+                                            </li>
+                                        
+                                            <li>
+                                                <a href="/tags">
+                                                    标签
+                                                </a>
+                                            </li>
+                                        
+                                            <li>
+                                                <a href="/shuoshuo">
+                                                    说说
+                                                </a>
+                                            </li>
+                                        
+                                    </ul>
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/about"
+                                        >
+                                    <i class="fa-regular fa-user fa-fw"></i>
+                                    关于
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   target="_blank" rel="noopener" href="https://github.com/lionlnuc"
+                                        >
+                                    <i class="fa-brands fa-github fa-fw"></i>
+                                    GITHUB
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                        <li class="navbar-item search search-popup-trigger">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-dvh w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                        >
+                            <span>
+                                首页
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/categories"
+                        >
+                            <span>
+                                专题
+                            </span>
+                            
+                                <i class="fa-solid fa-layer-group fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item-sub text-base my-1.5 flex flex-col w-full">
+                        
+                        <div class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary cursor-pointer text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                             navbar-data-toggle="submenu-文章"
+                        >
+                            <span>
+                                文章
+                            </span>
+                            
+                                <i class="fa-solid fa-chevron-right fa-sm fa-fw transition-all"></i>
+                            
+                        </div>
+                        
+
+                        
+                            <div class="flex-col items-start px-2 py-2 hidden" data-target="submenu-文章">
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           href="/archives">归档</a>
+                                    </div>
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           href="/tags">标签</a>
+                                    </div>
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           href="/shuoshuo">说说</a>
+                                    </div>
+                                
+                            </div>
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/about"
+                        >
+                            <span>
+                                关于
+                            </span>
+                            
+                                <i class="fa-regular fa-user fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           target="_blank" rel="noopener" href="https://github.com/lionlnuc"
+                        >
+                            <span>
+                                GITHUB
+                            </span>
+                            
+                                <i class="fa-brands fa-github fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+                
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/categories"
+                        >
+                            <span>技术专题</span>
+                            <i class="fa-solid fa-layer-group fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/archives"
+                        >
+                            <span>文章归档</span>
+                            <i class="fa-regular fa-archive fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/tags"
+                        >
+                            <span>标签索引</span>
+                            <i class="fa-regular fa-tags fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/about"
+                        >
+                            <span>关于本站</span>
+                            <i class="fa-regular fa-user fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">8</div>
+        <div class="label text-third-text-color text-sm">标签</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">3</div>
+        <div class="label text-third-text-color text-sm">专题</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">44</div>
+        <div class="label text-third-text-color text-sm">文章</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+		</div>
+
+		<div class="main-content-body transition-fade-up">
+			
+
+			<div class="main-content">
+				<div class="post-page-container flex relative justify-between box-border w-full h-full">
+	<div class="article-content-container">
+
+		<div class="article-title relative w-full">
+			
+			<div class="w-full flex items-center pt-6 justify-start">
+				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">1.配置环境、创建项目与导航栏</h1>
+			</div>
+			
+		</div>
+
+		
+		<div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+			<div class="avatar w-[46px] h-[46px] shrink-0 rounded-medium border border-border-color p-px">
+				<img src="/image/avatar.png">
+			</div>
+			<div class="info flex flex-col justify-between">
+				<div class="author flex items-center">
+					<span class="name text-default-text-color text-lg font-semibold">Lionlnuc</span>
+					
+					<span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv4</span>
+					
+				</div>
+				<div class="meta-info">
+					<div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2026-07-12</span>
+        <span class="mobile">2026-07-12</span>
+        <span class="hover-info">创建</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2026-07-12</span>
+            <span class="mobile">2026-07-12</span>
+            <span class="hover-info">更新</span>
+        </span>
+    
+
+    
+        <span class="article-categories article-meta-item">
+            <i class="fa-regular fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/AgentTalk/">AgentTalk</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/AgentTalk/">AgentTalk</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+				</div>
+			</div>
+		</div>
+		
+
+		
+
+
+		<div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+			<h1 id="配置环境、创建项目与导航栏"><a href="#配置环境、创建项目与导航栏" class="headerlink" title="配置环境、创建项目与导航栏"></a>配置环境、创建项目与导航栏</h1><h2 id="一、目标"><a href="#一、目标" class="headerlink" title="一、目标"></a>一、目标</h2><p>完成项目从 0 到 1 的搭建：</p>
+<ul>
+<li>配置 Python、Node.js、Git、IDE 等开发环境；</li>
+<li>创建 Django 后端项目与 Vue 3 前端项目；</li>
+<li>配置 DRF、JWT、CORS、静态文件和媒体文件；</li>
+<li>使用 Tailwind CSS + DaisyUI 搭建基础导航栏；</li>
+<li>理解开发环境与生产部署环境的区别；</li>
+<li>完成前端打包到 Django 后端的基础整合。</li>
+</ul>
+<p><u>本节是整个 AgentTalk 项目的地基，后续登录、角色、聊天、语音模块都建立在这里的前后端工程结构之上。</u></p>
+<hr>
+<h2 id="二、开发环境配置"><a href="#二、开发环境配置" class="headerlink" title="二、开发环境配置"></a>二、开发环境配置</h2><h3 id="2-1-Python-与虚拟环境"><a href="#2-1-Python-与虚拟环境" class="headerlink" title="2.1 Python 与虚拟环境"></a>2.1 Python 与虚拟环境</h3><p>后端使用 Django，因此需要安装 Python，并建议使用虚拟环境隔离依赖。</p>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">python -m venv .venv</span><br><span class="line">.venv\Scripts\activate</span><br></pre></td></tr></table></figure></div>
+
+<p>Linux / macOS：</p>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">python -m venv .venv</span><br><span class="line">source .venv/bin/activate</span><br></pre></td></tr></table></figure></div>
+
+<p>虚拟环境的作用：</p>
+<ul>
+<li>每个项目拥有独立依赖；</li>
+<li>避免全局 Python 包版本冲突；</li>
+<li>方便通过 <code>requirements.txt</code> 复现环境。</li>
+</ul>
+<h3 id="2-2-Node-js-与-npm"><a href="#2-2-Node-js-与-npm" class="headerlink" title="2.2 Node.js 与 npm"></a>2.2 Node.js 与 npm</h3><p>前端使用 Vue 3 + Vite，需要 Node.js 提供构建工具运行环境。</p>
+<p>安装地址：<a class="link" target="_blank" rel="noopener" href="https://nodejs.org/">https://nodejs.org/<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></p>
+<p>安装时建议勾选 <strong>Add to PATH</strong>。</p>
+<p>更新 npm：</p>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g npm@latest</span><br></pre></td></tr></table></figure></div>
+
+<p>Node.js 在本项目中的作用：</p>
+<ol>
+<li>运行 Vite 开发服务器；</li>
+<li>管理 Vue、Pinia、DaisyUI 等前端依赖；</li>
+<li>执行 <code>npm run build</code>，将 Vue 源码打包成浏览器可运行的静态文件。</li>
+</ol>
+<h3 id="2-3-Git-与-SSH"><a href="#2-3-Git-与-SSH" class="headerlink" title="2.3 Git 与 SSH"></a>2.3 Git 与 SSH</h3><p>安装 Git：<a class="link" target="_blank" rel="noopener" href="https://gitforwindows.org/">https://gitforwindows.org/<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></p>
+<p>生成 SSH Key：</p>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen</span><br></pre></td></tr></table></figure></div>
+
+<p>常用 Git 命令：</p>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">git status</span><br><span class="line">git add .</span><br><span class="line">git commit -m "提交说明"</span><br><span class="line">git push</span><br><span class="line">git pull</span><br><span class="line">git clone &lt;repo-url&gt;</span><br></pre></td></tr></table></figure></div>
+
+<h4 id="重点理解"><a href="#重点理解" class="headerlink" title="重点理解"></a>重点理解</h4><ul>
+<li><code>git status</code>：查看工作区与暂存区状态；</li>
+<li><code>git add</code>：将修改加入暂存区；</li>
+<li><code>git commit</code>：生成本地提交记录；</li>
+<li><code>git push</code>：推送到远程仓库；</li>
+<li><code>.gitignore</code>：忽略不应该提交的文件，如虚拟环境、数据库、环境变量、打包产物。</li>
+</ul>
+<h3 id="2-4-PyCharm-IDE-配置"><a href="#2-4-PyCharm-IDE-配置" class="headerlink" title="2.4 PyCharm / IDE 配置"></a>2.4 PyCharm / IDE 配置</h3><p>如果使用 PyCharm：</p>
+<ol>
+<li>安装中文插件：<code>Settings -&gt; Plugins -&gt; Marketplace</code>；</li>
+<li>开启 Django 支持：<code>Settings -&gt; Languages &amp; Frameworks -&gt; Django</code>；</li>
+<li>配置 Django project root、settings、manage.py；</li>
+<li>将 <code>backend</code> 目录标记为 Sources Root，避免无法识别 <code>web</code> 模块。</li>
+</ol>
+<hr>
+<h2 id="三、创建-Django-后端"><a href="#三、创建-Django-后端" class="headerlink" title="三、创建 Django 后端"></a>三、创建 Django 后端</h2><h3 id="3-1-创建项目与应用"><a href="#3-1-创建项目与应用" class="headerlink" title="3.1 创建项目与应用"></a>3.1 创建项目与应用</h3><div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">django-admin startproject backend</span><br><span class="line">cd backend</span><br><span class="line">django-admin startapp web</span><br><span class="line">python manage.py migrate</span><br><span class="line">python manage.py createsuperuser</span><br><span class="line">python manage.py runserver</span><br></pre></td></tr></table></figure></div>
+
+<p>目录含义：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">backend/</span><br><span class="line">├── backend/          # Django 项目配置包</span><br><span class="line">│   ├── settings.py   # 全局配置</span><br><span class="line">│   ├── urls.py       # 根路由</span><br><span class="line">│   ├── wsgi.py       # WSGI 部署入口</span><br><span class="line">│   └── asgi.py       # ASGI 部署入口</span><br><span class="line">├── web/              # 业务应用</span><br><span class="line">│   ├── models.py     # 默认模型文件，后续可拆成 models/ 目录</span><br><span class="line">│   ├── views.py      # 默认视图文件，后续可拆成 views/ 目录</span><br><span class="line">│   └── urls.py       # web 应用子路由，需自行创建</span><br><span class="line">└── manage.py         # Django 管理脚本</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="3-2-安装后端依赖"><a href="#3-2-安装后端依赖" class="headerlink" title="3.2 安装后端依赖"></a>3.2 安装后端依赖</h3><div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">pip install django</span><br><span class="line">pip install djangorestframework</span><br><span class="line">pip install djangorestframework-simplejwt</span><br><span class="line">pip install django-cors-headers</span><br><span class="line">pip install pillow</span><br></pre></td></tr></table></figure></div>
+
+<p>依赖说明：</p>
+<table>
+<thead>
+<tr>
+<th>包</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>django</code></td>
+<td>后端 Web 框架</td>
+</tr>
+<tr>
+<td><code>djangorestframework</code></td>
+<td>编写 REST API</td>
+</tr>
+<tr>
+<td><code>djangorestframework-simplejwt</code></td>
+<td>JWT 登录认证</td>
+</tr>
+<tr>
+<td><code>django-cors-headers</code></td>
+<td>处理跨域</td>
+</tr>
+<tr>
+<td><code>pillow</code></td>
+<td>处理图片上传字段</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="四、配置-Django-settings-py"><a href="#四、配置-Django-settings-py" class="headerlink" title="四、配置 Django settings.py"></a>四、配置 Django settings.py</h2><h3 id="4-1-注册应用"><a href="#4-1-注册应用" class="headerlink" title="4.1 注册应用"></a>4.1 注册应用</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">INSTALLED_APPS = [</span><br><span class="line">    <span class="string">'django.contrib.admin'</span>,</span><br><span class="line">    <span class="string">'django.contrib.auth'</span>,</span><br><span class="line">    <span class="string">'django.contrib.contenttypes'</span>,</span><br><span class="line">    <span class="string">'django.contrib.sessions'</span>,</span><br><span class="line">    <span class="string">'django.contrib.messages'</span>,</span><br><span class="line">    <span class="string">'django.contrib.staticfiles'</span>,</span><br><span class="line"></span><br><span class="line">    <span class="string">'rest_framework'</span>,</span><br><span class="line">    <span class="string">'corsheaders'</span>,</span><br><span class="line">    <span class="string">'web'</span>,</span><br><span class="line">]</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="4-2-跨域中间件"><a href="#4-2-跨域中间件" class="headerlink" title="4.2 跨域中间件"></a>4.2 跨域中间件</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">MIDDLEWARE = [</span><br><span class="line">    <span class="string">'corsheaders.middleware.CorsMiddleware'</span>,</span><br><span class="line">    <span class="string">'django.middleware.security.SecurityMiddleware'</span>,</span><br><span class="line">    <span class="string">'django.contrib.sessions.middleware.SessionMiddleware'</span>,</span><br><span class="line">    <span class="string">'django.middleware.common.CommonMiddleware'</span>,</span><br><span class="line">    <span class="string">'django.middleware.csrf.CsrfViewMiddleware'</span>,</span><br><span class="line">    <span class="string">'django.contrib.auth.middleware.AuthenticationMiddleware'</span>,</span><br><span class="line">    <span class="string">'django.contrib.messages.middleware.MessageMiddleware'</span>,</span><br><span class="line">    <span class="string">'django.middleware.clickjacking.XFrameOptionsMiddleware'</span>,</span><br><span class="line">]</span><br></pre></td></tr></table></figure></div>
+
+<p><code>CorsMiddleware</code> 应尽量放在靠前位置。</p>
+<h3 id="4-3-时区"><a href="#4-3-时区" class="headerlink" title="4.3 时区"></a>4.3 时区</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">TIME_ZONE = <span class="string">'Asia/Shanghai'</span></span><br><span class="line">USE_TZ = <span class="literal">True</span></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="4-4-静态文件与媒体文件"><a href="#4-4-静态文件与媒体文件" class="headerlink" title="4.4 静态文件与媒体文件"></a>4.4 静态文件与媒体文件</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">STATIC_URL = <span class="string">'static/'</span></span><br><span class="line"></span><br><span class="line">STATICFILES_DIRS = [</span><br><span class="line">    BASE_DIR / <span class="string">'static'</span>,</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">MEDIA_URL = <span class="string">'/media/'</span></span><br><span class="line">MEDIA_ROOT = BASE_DIR / <span class="string">'media'</span></span><br></pre></td></tr></table></figure></div>
+
+<h4 id="static-与-media-区别"><a href="#static-与-media-区别" class="headerlink" title="static 与 media 区别"></a>static 与 media 区别</h4><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>含义</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>static</code></td>
+<td>开发者提供的静态资源</td>
+<td>JS、CSS、前端打包文件</td>
+</tr>
+<tr>
+<td><code>media</code></td>
+<td>用户上传的动态文件</td>
+<td>头像、角色背景图</td>
+</tr>
+</tbody></table>
+<h3 id="4-5-JWT-配置"><a href="#4-5-JWT-配置" class="headerlink" title="4.5 JWT 配置"></a>4.5 JWT 配置</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> timedelta</span><br><span class="line"></span><br><span class="line">REST_FRAMEWORK = {</span><br><span class="line">    <span class="string">'DEFAULT_AUTHENTICATION_CLASSES'</span>: (</span><br><span class="line">        <span class="string">'rest_framework_simplejwt.authentication.JWTAuthentication'</span>,</span><br><span class="line">    ),</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">SIMPLE_JWT = {</span><br><span class="line">    <span class="string">'ACCESS_TOKEN_LIFETIME'</span>: timedelta(hours=<span class="number">2</span>),</span><br><span class="line">    <span class="string">'REFRESH_TOKEN_LIFETIME'</span>: timedelta(days=<span class="number">7</span>),</span><br><span class="line">    <span class="string">'ROTATE_REFRESH_TOKENS'</span>: <span class="literal">True</span>,</span><br><span class="line">    <span class="string">'BLACKLIST_AFTER_ROTATION'</span>: <span class="literal">True</span>,</span><br><span class="line">    <span class="string">'AUTH_HEADER_TYPES'</span>: (<span class="string">'Bearer'</span>,),</span><br><span class="line">}</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="4-6-CORS-配置"><a href="#4-6-CORS-配置" class="headerlink" title="4.6 CORS 配置"></a>4.6 CORS 配置</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">CORS_ALLOW_CREDENTIALS = <span class="literal">True</span></span><br><span class="line"></span><br><span class="line">CORS_ALLOWED_ORIGINS = [</span><br><span class="line">    <span class="string">'http://localhost:5173'</span>,</span><br><span class="line">    <span class="string">'http://127.0.0.1:5173'</span>,</span><br><span class="line">]</span><br></pre></td></tr></table></figure></div>
+
+<p><code>CORS_ALLOW_CREDENTIALS = True</code> 用于允许跨域请求携带 Cookie。</p>
+<hr>
+<h2 id="五、配置后端路由与前端入口"><a href="#五、配置后端路由与前端入口" class="headerlink" title="五、配置后端路由与前端入口"></a>五、配置后端路由与前端入口</h2><h3 id="5-1-项目根路由"><a href="#5-1-项目根路由" class="headerlink" title="5.1 项目根路由"></a>5.1 项目根路由</h3><p><code>backend/backend/urls.py</code>：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.contrib <span class="keyword">import</span> admin</span><br><span class="line"><span class="keyword">from</span> django.urls <span class="keyword">import</span> path, include</span><br><span class="line"><span class="keyword">from</span> django.conf <span class="keyword">import</span> settings</span><br><span class="line"><span class="keyword">from</span> django.conf.urls.static <span class="keyword">import</span> static</span><br><span class="line"></span><br><span class="line">urlpatterns = [</span><br><span class="line">    path(<span class="string">'admin/'</span>, admin.site.urls),</span><br><span class="line">    path(<span class="string">''</span>, include(<span class="string">'web.urls'</span>)),</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> settings.DEBUG:</span><br><span class="line">    urlpatterns += static(<span class="string">'/media/'</span>, document_root=settings.MEDIA_ROOT)</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="5-2-web-子路由"><a href="#5-2-web-子路由" class="headerlink" title="5.2 web 子路由"></a>5.2 web 子路由</h3><p><code>backend/web/urls.py</code>：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.urls <span class="keyword">import</span> path, re_path</span><br><span class="line"><span class="keyword">from</span> web.views.index <span class="keyword">import</span> index</span><br><span class="line"></span><br><span class="line">urlpatterns = [</span><br><span class="line">    path(<span class="string">''</span>, index),</span><br><span class="line">    re_path(<span class="string">r'^(?!media/|static/|assets/).*$'</span>, index),</span><br><span class="line">]</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="5-3-前端-History-模式刷新问题"><a href="#5-3-前端-History-模式刷新问题" class="headerlink" title="5.3 前端 History 模式刷新问题"></a>5.3 前端 History 模式刷新问题</h3><p>Vue Router 使用 <code>createWebHistory()</code> 时，浏览器访问 <code>/friend</code>、<code>/create</code> 等路径会先请求后端。</p>
+<p>如果后端没有对应路由，会出现 404。因此需要：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">re_path(<span class="string">r'^(?!media/|static/|assets/).*$'</span>, index)</span><br></pre></td></tr></table></figure></div>
+
+<p>含义：</p>
+<ul>
+<li>排除媒体和静态资源路径；</li>
+<li>其他路径都返回同一个 <code>index.html</code>；</li>
+<li>真正的页面匹配交给 Vue Router 完成。</li>
+</ul>
+<hr>
+<h2 id="六、创建-Vue-3-前端"><a href="#六、创建-Vue-3-前端" class="headerlink" title="六、创建 Vue 3 前端"></a>六、创建 Vue 3 前端</h2><h3 id="6-1-创建项目"><a href="#6-1-创建项目" class="headerlink" title="6.1 创建项目"></a>6.1 创建项目</h3><div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm create vue@latest</span><br><span class="line">cd frontend</span><br><span class="line">npm install</span><br></pre></td></tr></table></figure></div>
+
+<p>推荐选择：</p>
+<ul>
+<li>Vue Router；</li>
+<li>Pinia；</li>
+<li>ESLint / Prettier 可按需要选择。</li>
+</ul>
+<h3 id="6-2-安装-Tailwind-CSS-与-DaisyUI"><a href="#6-2-安装-Tailwind-CSS-与-DaisyUI" class="headerlink" title="6.2 安装 Tailwind CSS 与 DaisyUI"></a>6.2 安装 Tailwind CSS 与 DaisyUI</h3><div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install -D tailwindcss @tailwindcss/vite</span><br><span class="line">npm install -D daisyui</span><br></pre></td></tr></table></figure></div>
+
+<p>在 <code>frontend/src/assets/main.css</code> 中：</p>
+<div class="code-container" data-rel="Css"><figure class="iseeu highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@import</span> <span class="string">"tailwindcss"</span>;</span><br><span class="line"><span class="keyword">@plugin</span> <span class="string">"daisyui"</span>;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="6-3-配置-Vite-打包输出"><a href="#6-3-配置-Vite-打包输出" class="headerlink" title="6.3 配置 Vite 打包输出"></a>6.3 配置 Vite 打包输出</h3><p><code>frontend/vite.config.js</code>：</p>
+<div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> { fileURLToPath, <span class="variable constant_">URL</span> } <span class="keyword">from</span> <span class="string">'node:url'</span></span><br><span class="line"><span class="keyword">import</span> { defineConfig } <span class="keyword">from</span> <span class="string">'vite'</span></span><br><span class="line"><span class="keyword">import</span> vue <span class="keyword">from</span> <span class="string">'@vitejs/plugin-vue'</span></span><br><span class="line"><span class="keyword">import</span> tailwindcss <span class="keyword">from</span> <span class="string">'@tailwindcss/vite'</span></span><br><span class="line"><span class="keyword">import</span> path <span class="keyword">from</span> <span class="string">'path'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title function_">defineConfig</span>({</span><br><span class="line">  <span class="attr">plugins</span>: [<span class="title function_">vue</span>(), <span class="title function_">tailwindcss</span>()],</span><br><span class="line">  <span class="attr">build</span>: {</span><br><span class="line">    <span class="attr">outDir</span>: path.<span class="title function_">resolve</span>(__dirname, <span class="string">'../backend/static/frontend'</span>),</span><br><span class="line">    <span class="attr">emptyOutDir</span>: <span class="literal">true</span>,</span><br><span class="line">  },</span><br><span class="line">  <span class="attr">resolve</span>: {</span><br><span class="line">    <span class="attr">alias</span>: {</span><br><span class="line">      <span class="string">'@'</span>: <span class="title function_">fileURLToPath</span>(<span class="keyword">new</span> <span class="title function_">URL</span>(<span class="string">'./src'</span>, <span class="keyword">import</span>.<span class="property">meta</span>.<span class="property">url</span>)),</span><br><span class="line">    },</span><br><span class="line">  },</span><br><span class="line">})</span><br></pre></td></tr></table></figure></div>
+
+<p>这样执行：</p>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm run build</span><br></pre></td></tr></table></figure></div>
+
+<p>前端产物会输出到 Django 的 <code>backend/static/frontend</code>。</p>
+<hr>
+<h2 id="七、前端基础结构"><a href="#七、前端基础结构" class="headerlink" title="七、前端基础结构"></a>七、前端基础结构</h2><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">frontend/src/</span><br><span class="line">├── App.vue                 # 根组件</span><br><span class="line">├── main.js                 # 入口文件</span><br><span class="line">├── router/index.js         # 路由配置</span><br><span class="line">├── stores/                 # Pinia 状态</span><br><span class="line">├── components/             # 公共组件</span><br><span class="line">│   └── navbar/             # 导航栏组件</span><br><span class="line">└── views/                  # 页面组件</span><br><span class="line">    ├── homepage/</span><br><span class="line">    ├── friend/</span><br><span class="line">    ├── create/</span><br><span class="line">    ├── user/account/</span><br><span class="line">    ├── user/profile/</span><br><span class="line">    └── error/</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="7-1-App-vue"><a href="#7-1-App-vue" class="headerlink" title="7.1 App.vue"></a>7.1 App.vue</h3><div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;script setup&gt;</span><br><span class="line">import NavBar from '@/components/navbar/NavBar.vue'</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;NavBar&gt;</span><br><span class="line">    &lt;RouterView /&gt;</span><br><span class="line">  &lt;/NavBar&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre></td></tr></table></figure></div>
+
+<p><code>RouterView</code> 是页面出口，当前路由匹配到的组件会渲染在这里。</p>
+<hr>
+<h2 id="八、Vue-Router-路由配置"><a href="#八、Vue-Router-路由配置" class="headerlink" title="八、Vue Router 路由配置"></a>八、Vue Router 路由配置</h2><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> { createRouter, createWebHistory } <span class="keyword">from</span> <span class="string">'vue-router'</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">HomepageIndex</span> <span class="keyword">from</span> <span class="string">'@/views/homepage/HomepageIndex.vue'</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">FriendIndex</span> <span class="keyword">from</span> <span class="string">'@/views/friend/FriendIndex.vue'</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">CreateIndex</span> <span class="keyword">from</span> <span class="string">'@/views/create/CreateIndex.vue'</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">LoginIndex</span> <span class="keyword">from</span> <span class="string">'@/views/user/account/LoginIndex.vue'</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">RegisterIndex</span> <span class="keyword">from</span> <span class="string">'@/views/user/account/RegisterIndex.vue'</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">ProfileIndex</span> <span class="keyword">from</span> <span class="string">'@/views/user/profile/ProfileIndex.vue'</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">NotFoundIndex</span> <span class="keyword">from</span> <span class="string">'@/views/error/NotFoundIndex.vue'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> router = <span class="title function_">createRouter</span>({</span><br><span class="line">  <span class="attr">history</span>: <span class="title function_">createWebHistory</span>(<span class="keyword">import</span>.<span class="property">meta</span>.<span class="property">env</span>.<span class="property">BASE_URL</span>),</span><br><span class="line">  <span class="attr">routes</span>: [</span><br><span class="line">    { <span class="attr">path</span>: <span class="string">'/'</span>, <span class="attr">component</span>: <span class="title class_">HomepageIndex</span>, <span class="attr">name</span>: <span class="string">'homepage-index'</span> },</span><br><span class="line">    { <span class="attr">path</span>: <span class="string">'/friend'</span>, <span class="attr">component</span>: <span class="title class_">FriendIndex</span>, <span class="attr">name</span>: <span class="string">'friend-index'</span> },</span><br><span class="line">    { <span class="attr">path</span>: <span class="string">'/create'</span>, <span class="attr">component</span>: <span class="title class_">CreateIndex</span>, <span class="attr">name</span>: <span class="string">'create-index'</span> },</span><br><span class="line">    { <span class="attr">path</span>: <span class="string">'/login'</span>, <span class="attr">component</span>: <span class="title class_">LoginIndex</span>, <span class="attr">name</span>: <span class="string">'login-index'</span> },</span><br><span class="line">    { <span class="attr">path</span>: <span class="string">'/register'</span>, <span class="attr">component</span>: <span class="title class_">RegisterIndex</span>, <span class="attr">name</span>: <span class="string">'register-index'</span> },</span><br><span class="line">    { <span class="attr">path</span>: <span class="string">'/user/profile'</span>, <span class="attr">component</span>: <span class="title class_">ProfileIndex</span>, <span class="attr">name</span>: <span class="string">'user-profile-index'</span> },</span><br><span class="line">    { <span class="attr">path</span>: <span class="string">'/:pathMatch(.*)*'</span>, <span class="attr">component</span>: <span class="title class_">NotFoundIndex</span>, <span class="attr">name</span>: <span class="string">'not-found'</span> },</span><br><span class="line">  ],</span><br><span class="line">})</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> router</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="8-1-404-路由易错点"><a href="#8-1-404-路由易错点" class="headerlink" title="8.1 404 路由易错点"></a>8.1 404 路由易错点</h3><p>正确写法：</p>
+<div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">{ <span class="attr">path</span>: <span class="string">'/:pathMatch(.*)*'</span>, <span class="attr">component</span>: <span class="title class_">NotFoundIndex</span> }</span><br></pre></td></tr></table></figure></div>
+
+<p>错误写法：</p>
+<div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">{ <span class="attr">path</span>: <span class="string">'/:pathMatch(*)*'</span>, <span class="attr">component</span>: <span class="title class_">NotFoundIndex</span> }</span><br></pre></td></tr></table></figure></div>
+
+<p>错误原因：<code>(*)</code> 不是合法正则，会导致路由文件解析失败，前端白屏。</p>
+<hr>
+<h2 id="九、导航栏组件设计"><a href="#九、导航栏组件设计" class="headerlink" title="九、导航栏组件设计"></a>九、导航栏组件设计</h2><h3 id="9-1-导航栏功能"><a href="#9-1-导航栏功能" class="headerlink" title="9.1 导航栏功能"></a>9.1 导航栏功能</h3><p>导航栏包含：</p>
+<ul>
+<li>左侧菜单按钮；</li>
+<li>项目标题；</li>
+<li>搜索框；</li>
+<li>登录 / 注册 / 用户头像菜单；</li>
+<li>侧边栏路由入口：首页、好友、创作。</li>
+</ul>
+<h3 id="9-2-RouterLink"><a href="#9-2-RouterLink" class="headerlink" title="9.2 RouterLink"></a>9.2 RouterLink</h3><p><code>RouterLink</code> 用于前端无刷新跳转：</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;RouterLink :to="{ name: 'homepage-index' }" active-class="menu-focus"&gt;</span><br><span class="line">  首页</span><br><span class="line">&lt;/RouterLink&gt;</span><br></pre></td></tr></table></figure></div>
+
+<p>重点：</p>
+<ul>
+<li><code>to</code> 指定跳转目标；</li>
+<li><code>name</code> 必须和路由表中一致；</li>
+<li><code>active-class</code> 用于当前页面高亮。</li>
+</ul>
+<h3 id="9-3-Tailwind-DaisyUI-常用类"><a href="#9-3-Tailwind-DaisyUI-常用类" class="headerlink" title="9.3 Tailwind / DaisyUI 常用类"></a>9.3 Tailwind / DaisyUI 常用类</h3><table>
+<thead>
+<tr>
+<th>类</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>flex</code></td>
+<td>弹性布局</td>
+</tr>
+<tr>
+<td><code>justify-center</code></td>
+<td>主轴居中</td>
+</tr>
+<tr>
+<td><code>items-center</code></td>
+<td>交叉轴居中</td>
+</tr>
+<tr>
+<td><code>w-60</code></td>
+<td>宽度，Tailwind 中 1 单位通常为 0.25rem</td>
+</tr>
+<tr>
+<td><code>px-2</code></td>
+<td>x 方向内边距</td>
+</tr>
+<tr>
+<td><code>mx-2</code></td>
+<td>x 方向外边距</td>
+</tr>
+<tr>
+<td><code>btn</code></td>
+<td>DaisyUI 按钮</td>
+</tr>
+<tr>
+<td><code>navbar</code></td>
+<td>DaisyUI 导航栏</td>
+</tr>
+<tr>
+<td><code>drawer</code></td>
+<td>DaisyUI 抽屉侧边栏</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="十、前后端整合流程"><a href="#十、前后端整合流程" class="headerlink" title="十、前后端整合流程"></a>十、前后端整合流程</h2><h3 id="10-1-开发环境"><a href="#10-1-开发环境" class="headerlink" title="10.1 开发环境"></a>10.1 开发环境</h3><p>开发时通常启动两个服务：</p>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">后端</span></span><br><span class="line">cd backend</span><br><span class="line">python manage.py runserver</span><br></pre></td></tr></table></figure></div>
+
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">前端</span></span><br><span class="line">cd frontend</span><br><span class="line">npm run dev</span><br></pre></td></tr></table></figure></div>
+
+<p>访问：</p>
+<ul>
+<li>前端：<code>http://localhost:5173</code></li>
+<li>后端：<code>http://127.0.0.1:8000</code></li>
+</ul>
+<p>此时前后端通过 CORS 通信。</p>
+<h3 id="10-2-生产-打包环境"><a href="#10-2-生产-打包环境" class="headerlink" title="10.2 生产 / 打包环境"></a>10.2 生产 / 打包环境</h3><div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd frontend</span><br><span class="line">npm run build</span><br></pre></td></tr></table></figure></div>
+
+<p>构建后：</p>
+<ol>
+<li>Vue 源码被编译成 JS、CSS、图片等静态资源；</li>
+<li>静态资源输出到 Django 的 <code>static/frontend</code>；</li>
+<li>Django 返回 <code>index.html</code>；</li>
+<li>浏览器加载静态资源并启动 Vue 应用。</li>
+</ol>
+<h3 id="10-3-完整访问生命周期"><a href="#10-3-完整访问生命周期" class="headerlink" title="10.3 完整访问生命周期"></a>10.3 完整访问生命周期</h3><ol>
+<li>用户访问 <code>http://127.0.0.1:8000/</code>；</li>
+<li>Django 路由匹配根路径，返回 <code>index.html</code>；</li>
+<li>浏览器解析 HTML，请求 JS / CSS 静态资源；</li>
+<li>Vue 应用启动，接管页面渲染；</li>
+<li>用户操作页面时，Vue 调用 Django API 获取数据；</li>
+<li>Django 查询数据库或调用大模型服务，返回 JSON / SSE 数据。</li>
+</ol>
+<hr>
+<h2 id="十一、Git-忽略文件建议"><a href="#十一、Git-忽略文件建议" class="headerlink" title="十一、Git 忽略文件建议"></a>十一、Git 忽略文件建议</h2><div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">__pycache__/</span><br><span class="line">*.py[cod]</span><br><span class="line">.venv/</span><br><span class="line">.env</span><br><span class="line">*.env</span><br><span class="line">node_modules/</span><br><span class="line">dist/</span><br><span class="line">.idea/</span><br><span class="line">.vscode/</span><br><span class="line">db.sqlite3</span><br><span class="line">media/</span><br><span class="line">static/frontend/</span><br><span class="line">frontend/public/vad/</span><br></pre></td></tr></table></figure></div>
+
+<p>不要提交：</p>
+<ul>
+<li>API Key；</li>
+<li>本地数据库；</li>
+<li>用户上传文件；</li>
+<li>虚拟环境；</li>
+<li><code>node_modules</code>；</li>
+<li>大体积模型文件。</li>
+</ul>
+<hr>
+<h2 id="十二、本节易错点"><a href="#十二、本节易错点" class="headerlink" title="十二、本节易错点"></a>十二、本节易错点</h2><h3 id="12-1-项目路径不要包含中文"><a href="#12-1-项目路径不要包含中文" class="headerlink" title="12.1 项目路径不要包含中文"></a>12.1 项目路径不要包含中文</h3><p>部分 Python 包或前端工具在中文路径下可能出现编码或路径解析问题。</p>
+<h3 id="12-2-CORS-与-Cookie"><a href="#12-2-CORS-与-Cookie" class="headerlink" title="12.2 CORS 与 Cookie"></a>12.2 CORS 与 Cookie</h3><p>如果前端需要携带 Cookie：</p>
+<p>前端：</p>
+<div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">axios.<span class="title function_">create</span>({</span><br><span class="line">  <span class="attr">withCredentials</span>: <span class="literal">true</span>,</span><br><span class="line">})</span><br></pre></td></tr></table></figure></div>
+
+<p>后端：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CORS_ALLOW_CREDENTIALS = <span class="literal">True</span></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="12-3-static-和-media-不要混淆"><a href="#12-3-static-和-media-不要混淆" class="headerlink" title="12.3 static 和 media 不要混淆"></a>12.3 static 和 media 不要混淆</h3><ul>
+<li>前端打包产物属于 <code>static</code>；</li>
+<li>用户头像、角色图属于 <code>media</code>。</li>
+</ul>
+<h3 id="12-4-前端路由刷新-404"><a href="#12-4-前端路由刷新-404" class="headerlink" title="12.4 前端路由刷新 404"></a>12.4 前端路由刷新 404</h3><p>需要 Django 添加兜底：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">re_path(<span class="string">r'^(?!media/|static/|assets/).*$'</span>, index)</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="12-5-路由名称要统一"><a href="#12-5-路由名称要统一" class="headerlink" title="12.5 路由名称要统一"></a>12.5 路由名称要统一</h3><p><code>RouterLink</code> 中的 <code>name</code> 必须和 <code>router/index.js</code> 中完全一致，否则点击后无法跳转。</p>
+<hr>
+<h2 id="十三、小结"><a href="#十三、小结" class="headerlink" title="十三、小结"></a>十三、小结</h2><p>本节完成了项目基础骨架：</p>
+<ul>
+<li>Django 提供后端 API、数据库、静态资源服务；</li>
+<li>Vue 负责 SPA 页面和用户交互；</li>
+<li>Vite 负责开发热更新与生产打包；</li>
+<li>Tailwind CSS + DaisyUI 提供 UI 能力；</li>
+<li>Vue Router 负责前端页面切换；</li>
+<li>Django 的兜底路由解决 History 模式刷新问题。</li>
+</ul>
+<p>后续所有模块都围绕这套结构继续扩展：登录模块负责用户身份，角色模块负责内容生产，信息流负责展示，聊天模块负责 AI 交互，语音模块负责自然交互体验。</p>
+<hr>
+<h2 id="十四、新手跟做路线"><a href="#十四、新手跟做路线" class="headerlink" title="十四、新手跟做路线"></a>十四、新手跟做路线</h2><p>如果你是第一次做这种项目，可以按下面顺序操作，不要一开始就关注所有配置细节。</p>
+<h3 id="14-1-第一步：确认后端能跑"><a href="#14-1-第一步：确认后端能跑" class="headerlink" title="14.1 第一步：确认后端能跑"></a>14.1 第一步：确认后端能跑</h3><p>进入后端目录：</p>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd backend</span><br><span class="line">python manage.py runserver</span><br></pre></td></tr></table></figure></div>
+
+<p>看到类似下面内容就说明 Django 启动成功：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Starting development server at http://127.0.0.1:8000/</span><br></pre></td></tr></table></figure></div>
+
+<p>浏览器打开：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1:8000/</span><br></pre></td></tr></table></figure></div>
+
+<p>如果能看到页面或前端入口，说明后端服务正常。</p>
+<h3 id="14-2-第二步：确认前端能跑"><a href="#14-2-第二步：确认前端能跑" class="headerlink" title="14.2 第二步：确认前端能跑"></a>14.2 第二步：确认前端能跑</h3><p>进入前端目录：</p>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd frontend</span><br><span class="line">npm install</span><br><span class="line">npm run dev</span><br></pre></td></tr></table></figure></div>
+
+<p>浏览器打开：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:5173/</span><br></pre></td></tr></table></figure></div>
+
+<p>如果页面可以显示，并且修改 Vue 文件后页面自动刷新，说明 Vite 开发服务器正常。</p>
+<h3 id="14-3-第三步：确认前后端能通信"><a href="#14-3-第三步：确认前后端能通信" class="headerlink" title="14.3 第三步：确认前后端能通信"></a>14.3 第三步：确认前后端能通信</h3><p>在浏览器按 <code>F12</code> 打开开发者工具，切换到 <code>Network</code>。</p>
+<p>刷新页面后观察：</p>
+<ul>
+<li>是否有请求发往 <code>http://127.0.0.1:8000</code>；</li>
+<li>状态码是否为 <code>200</code>；</li>
+<li>如果是 <code>404</code>，优先检查后端路由；</li>
+<li>如果是 CORS 错误，优先检查 <code>django-cors-headers</code> 配置。</li>
+</ul>
+<hr>
+<h2 id="十五、新手常见问题排查"><a href="#十五、新手常见问题排查" class="headerlink" title="十五、新手常见问题排查"></a>十五、新手常见问题排查</h2><h3 id="15-1-运行-python-manage-py-runserver-报错"><a href="#15-1-运行-python-manage-py-runserver-报错" class="headerlink" title="15.1 运行 python manage.py runserver 报错"></a>15.1 运行 python manage.py runserver 报错</h3><p>常见原因：</p>
+<ol>
+<li>没进入 <code>backend</code> 目录；</li>
+<li>虚拟环境没激活；</li>
+<li>依赖没安装；</li>
+<li><code>settings.py</code> 配置写错；</li>
+<li>数据库迁移没执行。</li>
+</ol>
+<p>排查顺序：</p>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">python --version</span><br><span class="line">pip list</span><br><span class="line">python manage.py check</span><br><span class="line">python manage.py migrate</span><br><span class="line">python manage.py runserver</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="15-2-npm-run-dev-报错"><a href="#15-2-npm-run-dev-报错" class="headerlink" title="15.2 npm run dev 报错"></a>15.2 npm run dev 报错</h3><p>常见原因：</p>
+<ol>
+<li>没安装 Node.js；</li>
+<li>没执行 <code>npm install</code>；</li>
+<li><code>node_modules</code> 缺失；</li>
+<li>端口被占用；</li>
+<li><code>package.json</code> 依赖版本冲突。</li>
+</ol>
+<p>排查：</p>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">node -v</span><br><span class="line">npm -v</span><br><span class="line">npm install</span><br><span class="line">npm run dev</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="15-3-页面白屏"><a href="#15-3-页面白屏" class="headerlink" title="15.3 页面白屏"></a>15.3 页面白屏</h3><p>检查顺序：</p>
+<ol>
+<li>浏览器 Console 是否有红色报错；</li>
+<li>路由配置是否写错；</li>
+<li>组件导入路径是否大小写一致；</li>
+<li><code>App.vue</code> 是否正确包含 <code>RouterView</code>；</li>
+<li>后端返回的 <code>index.html</code> 是否加载到了 JS 文件。</li>
+</ol>
+<h3 id="15-4-访问前端路由刷新-404"><a href="#15-4-访问前端路由刷新-404" class="headerlink" title="15.4 访问前端路由刷新 404"></a>15.4 访问前端路由刷新 404</h3><p>例如刷新：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1:8000/user/profile/</span><br></pre></td></tr></table></figure></div>
+
+<p>如果后端返回 404，说明 Django 没有把这个路径交给 Vue，需要检查：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">re_path(<span class="string">r'^(?!media/|static/|assets/).*$'</span>, index)</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="十六、本节复习问题"><a href="#十六、本节复习问题" class="headerlink" title="十六、本节复习问题"></a>十六、本节复习问题</h2><ol>
+<li><code>backend</code> 和 <code>frontend</code> 分别负责什么？</li>
+<li><code>static</code> 和 <code>media</code> 有什么区别？</li>
+<li>为什么 Vue Router 的 History 模式刷新时需要 Django 兜底路由？</li>
+<li><code>npm run dev</code> 和 <code>npm run build</code> 有什么区别？</li>
+<li>为什么不能把 <code>.env</code>、<code>node_modules</code>、用户上传文件提交到 Git？</li>
+<li><code>RouterLink</code> 和普通 <code>&lt;a&gt;</code> 标签有什么区别？</li>
+<li>为什么项目要使用组件化开发？</li>
+</ol>
+<hr>
+<h2 id="十七、核心页面请求-响应示例"><a href="#十七、核心页面请求-响应示例" class="headerlink" title="十七、核心页面请求 / 响应示例"></a>十七、核心页面请求 / 响应示例</h2><p>基础环境这一节还没有复杂业务接口，但有两个非常重要的访问路径。</p>
+<h3 id="17-1-访问首页入口"><a href="#17-1-访问首页入口" class="headerlink" title="17.1 访问首页入口"></a>17.1 访问首页入口</h3><div class="code-container" data-rel="Http"><figure class="iseeu highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET /</span><br></pre></td></tr></table></figure></div>
+
+<p>成功响应通常是 HTML：</p>
+<div class="code-container" data-rel="Html"><figure class="iseeu highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"app"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"module"</span> <span class="attr">src</span>=<span class="string">"/src/main.js"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure></div>
+
+<p>它的作用是把浏览器交给 Vue 接管。</p>
+<h3 id="17-2-访问静态资源"><a href="#17-2-访问静态资源" class="headerlink" title="17.2 访问静态资源"></a>17.2 访问静态资源</h3><div class="code-container" data-rel="Http"><figure class="iseeu highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GET /assets/index.js</span><br><span class="line">GET /assets/index.css</span><br></pre></td></tr></table></figure></div>
+
+<p>成功响应：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JavaScript 或 CSS 文件内容</span><br></pre></td></tr></table></figure></div>
+
+<p>如果这里 404，页面通常会白屏。</p>
+<h3 id="17-3-访问用户上传资源"><a href="#17-3-访问用户上传资源" class="headerlink" title="17.3 访问用户上传资源"></a>17.3 访问用户上传资源</h3><div class="code-container" data-rel="Http"><figure class="iseeu highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET /media/user/photo/alice.png</span><br></pre></td></tr></table></figure></div>
+
+<p>成功响应：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">图片二进制内容</span><br></pre></td></tr></table></figure></div>
+
+<p>浏览器会把它显示成图片。</p>
+<hr>
+<h2 id="十八、关键代码逐行解释示例"><a href="#十八、关键代码逐行解释示例" class="headerlink" title="十八、关键代码逐行解释示例"></a>十八、关键代码逐行解释示例</h2><h3 id="18-1-Vue-应用入口"><a href="#18-1-Vue-应用入口" class="headerlink" title="18.1 Vue 应用入口"></a>18.1 Vue 应用入口</h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> { createApp } <span class="keyword">from</span> <span class="string">'vue'</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">App</span> <span class="keyword">from</span> <span class="string">'./App.vue'</span></span><br><span class="line"><span class="keyword">import</span> router <span class="keyword">from</span> <span class="string">'./router'</span></span><br><span class="line"></span><br><span class="line"><span class="title function_">createApp</span>(<span class="title class_">App</span>).<span class="title function_">use</span>(router).<span class="title function_">mount</span>(<span class="string">'#app'</span>)</span><br></pre></td></tr></table></figure></div>
+
+<p>逐行解释：</p>
+<table>
+<thead>
+<tr>
+<th>代码</th>
+<th>新手解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>import { createApp } from 'vue'</code></td>
+<td>从 Vue 中导入创建应用的方法</td>
+</tr>
+<tr>
+<td><code>import App from './App.vue'</code></td>
+<td>导入根组件，整个页面从这里开始</td>
+</tr>
+<tr>
+<td><code>import router from './router'</code></td>
+<td>导入前端路由配置</td>
+</tr>
+<tr>
+<td><code>createApp(App)</code></td>
+<td>创建一个 Vue 应用实例</td>
+</tr>
+<tr>
+<td><code>.use(router)</code></td>
+<td>给 Vue 应用安装路由能力</td>
+</tr>
+<tr>
+<td><code>.mount('#app')</code></td>
+<td>把 Vue 应用挂载到 HTML 中 id 为 app 的元素上</td>
+</tr>
+</tbody></table>
+<h3 id="18-2-Django-兜底路由"><a href="#18-2-Django-兜底路由" class="headerlink" title="18.2 Django 兜底路由"></a>18.2 Django 兜底路由</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">re_path(<span class="string">r'^(?!media/|static/|assets/).*$'</span>, index)</span><br></pre></td></tr></table></figure></div>
+
+<p>逐段解释：</p>
+<table>
+<thead>
+<tr>
+<th>代码</th>
+<th>新手解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>re_path</code></td>
+<td>使用正则表达式匹配 URL</td>
+</tr>
+<tr>
+<td><code>^(?!...)</code></td>
+<td>负向排除，表示不要匹配某些开头</td>
+</tr>
+<tr>
+<td><code>media/</code></td>
+<td>排除用户上传文件路径</td>
+</tr>
+<tr>
+<td><code>static/</code></td>
+<td>排除后端静态文件路径</td>
+</tr>
+<tr>
+<td><code>assets/</code></td>
+<td>排除前端打包资源路径</td>
+</tr>
+<tr>
+<td><code>.*$</code></td>
+<td>匹配其他所有路径</td>
+</tr>
+<tr>
+<td><code>index</code></td>
+<td>返回前端入口页面，让 Vue Router 接管</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="十九、Vue-组件数据传递图"><a href="#十九、Vue-组件数据传递图" class="headerlink" title="十九、Vue 组件数据传递图"></a>十九、Vue 组件数据传递图</h2><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">main.js</span><br><span class="line">  ↓ 创建 Vue 应用</span><br><span class="line">App.vue</span><br><span class="line">  ↓ 放置 RouterView</span><br><span class="line">router/index.js</span><br><span class="line">  ↓ 根据 URL 决定显示哪个页面</span><br><span class="line">NavBar.vue</span><br><span class="line">  ↓ 点击 RouterLink</span><br><span class="line">HomePage.vue / FriendPage.vue / ProfilePage.vue</span><br></pre></td></tr></table></figure></div>
+
+<p>导航栏状态变化：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Pinia user store</span><br><span class="line">  ↓ 提供登录状态</span><br><span class="line">NavBar.vue</span><br><span class="line">  ├── 未登录：显示登录 / 注册按钮</span><br><span class="line">  └── 已登录：显示头像 / 用户菜单</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="二十、后端入口视图处理流程"><a href="#二十、后端入口视图处理流程" class="headerlink" title="二十、后端入口视图处理流程"></a>二十、后端入口视图处理流程</h2><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">浏览器访问 / 或 /friend/ 等前端路由</span><br><span class="line">  ↓</span><br><span class="line">Django URL 匹配</span><br><span class="line">  ↓</span><br><span class="line">如果是 /media/、/static/、/assets/，返回对应资源</span><br><span class="line">  ↓</span><br><span class="line">如果不是资源路径，进入兜底路由</span><br><span class="line">  ↓</span><br><span class="line">index 视图返回 index.html</span><br><span class="line">  ↓</span><br><span class="line">浏览器加载 JS 和 CSS</span><br><span class="line">  ↓</span><br><span class="line">Vue Router 根据当前 URL 渲染对应页面</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="二十一、小练习与自测答案"><a href="#二十一、小练习与自测答案" class="headerlink" title="二十一、小练习与自测答案"></a>二十一、小练习与自测答案</h2><h3 id="练习-1"><a href="#练习-1" class="headerlink" title="练习 1"></a>练习 1</h3><p>问题：为什么刷新 <code>/friend/</code> 页面时不能直接让 Django 查找一个后端页面？</p>
+<p>答案：<code>/friend/</code> 是 Vue Router 的前端路由，不是 Django 业务接口。刷新时 Django 需要返回同一个 <code>index.html</code>，再由 Vue 根据 URL 渲染好友页面。</p>
+<h3 id="练习-2"><a href="#练习-2" class="headerlink" title="练习 2"></a>练习 2</h3><p>问题：为什么兜底路由要排除 <code>/media/</code> 和 <code>/assets/</code>？</p>
+<p>答案：这些路径是真实资源路径。如果不排除，浏览器请求图片或 JS 文件时会拿到 <code>index.html</code>，导致图片无法显示或页面白屏。</p>
+<h3 id="练习-3"><a href="#练习-3" class="headerlink" title="练习 3"></a>练习 3</h3><p>问题：为什么导航栏适合做成公共组件？</p>
+<p>答案：导航栏在多个页面都会出现。做成组件后，只维护一份代码，所有页面都能复用。</p>
+
+		</div>
+
+		
+		<div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+			<div class="article-copyright-info-container">
+    <ul>
+        <li><strong>标题:</strong> 1.配置环境、创建项目与导航栏</li>
+        <li><strong>作者:</strong> Lionlnuc</li>
+        <li><strong>创建于
+                :</strong> 2026-07-12 00:00:00</li>
+        
+            <li>
+                <strong>更新于
+                    :</strong> 2026-07-12 00:00:00
+            </li>
+        
+        <li>
+            <strong>链接:</strong> https://lionlnuc.github.io/2026/07/12/AgentTalk/1. 配置环境、创建导航栏/
+        </li>
+        <li>
+            <strong>
+                版权声明:
+            </strong>
+            
+
+            
+                本文章采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a> 进行许可。
+            
+        </li>
+    </ul>
+</div>
+
+		</div>
+		
+
+		
+		<ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/AgentTalk/">#AgentTalk</a>&nbsp;
+			</li>
+			
+		</ul>
+		
+
+		
+
+		
+		<div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+			
+			<div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="prev" rel="prev" href="/2026/07/12/AgentTalk/6.%20%E8%AF%AD%E9%9F%B3%E6%A8%A1%E5%9D%97/">
+					<span class="left arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-left"></i>
+					</span>
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">6.语音模块、ASR、TTS 与流式播放</span>
+						<span class="post-nav-item">上一篇</span>
+					</span>
+				</a>
+			</div>
+			
+			
+			<div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="next" rel="next" href="/2026/04/12/%E7%89%9B%E5%AE%A2%E5%91%A8%E8%B5%9B%20Round%20139/">
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">牛客周赛Round 139</span>
+						<span class="post-nav-item">下一篇</span>
+					</span>
+					<span class="right arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-right"></i>
+					</span>
+				</a>
+			</div>
+			
+		</div>
+		
+
+
+		
+		<div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+			<div class="comments-container mt-10 w-full ">
+    <div id="comment-anchor" class="w-full h-2.5"></div>
+    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
+        评论
+    </div>
+    
+
+        
+            
+    <div id="giscus-container"></div>
+    <script data-swup-reload-script defer>
+        (function() {
+            const containerId = "giscus-container";
+            const mapping = "pathname";
+            const lang = "zh-CN";
+            const inputPosition = "bottom";
+            const reactionsEnabled = "1" === "1";
+            const emitMetadata = "1" === "1";
+            const strict = "0" === "1";
+            const loading = "lazy";
+
+            const getTerm = () => {
+                if (mapping === "pathname") return location.pathname;
+                if (mapping === "url") return location.href;
+                if (mapping === "title") return document.title;
+                if (mapping === "og:title") {
+                    const ogTitle = document.querySelector("meta[property='og:title']");
+                    return ogTitle?.content || document.title;
+                }
+                return "";
+            };
+
+            const sendUpdate = () => {
+                const iframe = document.querySelector("iframe.giscus-frame");
+                if (!iframe) {
+                    return;
+                }
+
+                const setConfig = {
+                    theme: "preferred_color_scheme",
+                    lang,
+                    inputPosition,
+                    reactionsEnabled,
+                    emitMetadata,
+                    strict,
+                };
+
+                if (mapping !== "number") {
+                    const term = getTerm();
+                    if (term) {
+                        setConfig.term = term;
+                    }
+                }
+
+                iframe.contentWindow.postMessage(
+                    { giscus: { setConfig } },
+                    "https://giscus.app",
+                );
+            };
+
+            const loadGiscus = () => {
+                const container = document.getElementById(containerId);
+                if (!container) {
+                    return;
+                }
+
+                const iframe = container.querySelector("iframe.giscus-frame");
+                if (iframe) {
+                    sendUpdate();
+                    return;
+                }
+
+                if (container.dataset.giscusInit === "true") {
+                    return;
+                }
+
+                const giscusConfig = {
+                    src: "https://giscus.app/client.js",
+                    "data-repo": "lionlnuc/lionlnuc.github.io",
+                    "data-repo-id": "R_kgDOQnj-7Q",
+                    "data-category": "Announcements",
+                    "data-category-id": "DIC_kwDOQnj-7c4Cz7IZ",
+                    "data-mapping": mapping,
+                    "data-strict": "0",
+                    "data-reactions-enabled": "1",
+                    "data-emit-metadata": "1",
+                    "data-theme": "preferred_color_scheme",
+                    "data-lang": lang,
+                    "data-input-position": inputPosition,
+                    "data-loading": loading,
+                    crossorigin: "anonymous",
+                    async: true,
+                };
+
+                const giscusScript = document.createElement("script");
+                for (const key in giscusConfig) {
+                    giscusScript.setAttribute(key, giscusConfig[key]);
+                }
+                container.appendChild(giscusScript);
+                container.dataset.giscusInit = "true";
+            };
+
+            const runGiscus = () => {
+                const container = document.getElementById(containerId);
+                if (!container) {
+                    return;
+                }
+
+                if (container.querySelector("iframe.giscus-frame")) {
+                    sendUpdate();
+                    return;
+                }
+
+                loadGiscus();
+            };
+
+            runGiscus();
+        })();
+    </script>
+
+
+        
+    
+</div>
+
+		</div>
+		
+	</div>
+
+	
+	<div class="toc-content-container">
+		<div class="post-toc-wrap">
+	<div class="post-toc">
+		<div class="toc-title">目录</div>
+		<div class="page-title">1.配置环境、创建项目与导航栏</div>
+		<ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E3%80%81%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE%E4%B8%8E%E5%AF%BC%E8%88%AA%E6%A0%8F"><span class="nav-text">配置环境、创建项目与导航栏</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E7%9B%AE%E6%A0%87"><span class="nav-text">一、目标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="nav-text">二、开发环境配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-Python-%E4%B8%8E%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83"><span class="nav-text">2.1 Python 与虚拟环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-Node-js-%E4%B8%8E-npm"><span class="nav-text">2.2 Node.js 与 npm</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-Git-%E4%B8%8E-SSH"><span class="nav-text">2.3 Git 与 SSH</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-PyCharm-IDE-%E9%85%8D%E7%BD%AE"><span class="nav-text">2.4 PyCharm &#x2F; IDE 配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%88%9B%E5%BB%BA-Django-%E5%90%8E%E7%AB%AF"><span class="nav-text">三、创建 Django 后端</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE%E4%B8%8E%E5%BA%94%E7%94%A8"><span class="nav-text">3.1 创建项目与应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E5%AE%89%E8%A3%85%E5%90%8E%E7%AB%AF%E4%BE%9D%E8%B5%96"><span class="nav-text">3.2 安装后端依赖</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E9%85%8D%E7%BD%AE-Django-settings-py"><span class="nav-text">四、配置 Django settings.py</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E6%B3%A8%E5%86%8C%E5%BA%94%E7%94%A8"><span class="nav-text">4.1 注册应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E8%B7%A8%E5%9F%9F%E4%B8%AD%E9%97%B4%E4%BB%B6"><span class="nav-text">4.2 跨域中间件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E6%97%B6%E5%8C%BA"><span class="nav-text">4.3 时区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-%E9%9D%99%E6%80%81%E6%96%87%E4%BB%B6%E4%B8%8E%E5%AA%92%E4%BD%93%E6%96%87%E4%BB%B6"><span class="nav-text">4.4 静态文件与媒体文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-JWT-%E9%85%8D%E7%BD%AE"><span class="nav-text">4.5 JWT 配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-6-CORS-%E9%85%8D%E7%BD%AE"><span class="nav-text">4.6 CORS 配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E9%85%8D%E7%BD%AE%E5%90%8E%E7%AB%AF%E8%B7%AF%E7%94%B1%E4%B8%8E%E5%89%8D%E7%AB%AF%E5%85%A5%E5%8F%A3"><span class="nav-text">五、配置后端路由与前端入口</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%E9%A1%B9%E7%9B%AE%E6%A0%B9%E8%B7%AF%E7%94%B1"><span class="nav-text">5.1 项目根路由</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-web-%E5%AD%90%E8%B7%AF%E7%94%B1"><span class="nav-text">5.2 web 子路由</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-%E5%89%8D%E7%AB%AF-History-%E6%A8%A1%E5%BC%8F%E5%88%B7%E6%96%B0%E9%97%AE%E9%A2%98"><span class="nav-text">5.3 前端 History 模式刷新问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E5%88%9B%E5%BB%BA-Vue-3-%E5%89%8D%E7%AB%AF"><span class="nav-text">六、创建 Vue 3 前端</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE"><span class="nav-text">6.1 创建项目</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-%E5%AE%89%E8%A3%85-Tailwind-CSS-%E4%B8%8E-DaisyUI"><span class="nav-text">6.2 安装 Tailwind CSS 与 DaisyUI</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-%E9%85%8D%E7%BD%AE-Vite-%E6%89%93%E5%8C%85%E8%BE%93%E5%87%BA"><span class="nav-text">6.3 配置 Vite 打包输出</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E3%80%81%E5%89%8D%E7%AB%AF%E5%9F%BA%E7%A1%80%E7%BB%93%E6%9E%84"><span class="nav-text">七、前端基础结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-App-vue"><span class="nav-text">7.1 App.vue</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB%E3%80%81Vue-Router-%E8%B7%AF%E7%94%B1%E9%85%8D%E7%BD%AE"><span class="nav-text">八、Vue Router 路由配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-404-%E8%B7%AF%E7%94%B1%E6%98%93%E9%94%99%E7%82%B9"><span class="nav-text">8.1 404 路由易错点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D%E3%80%81%E5%AF%BC%E8%88%AA%E6%A0%8F%E7%BB%84%E4%BB%B6%E8%AE%BE%E8%AE%A1"><span class="nav-text">九、导航栏组件设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#9-1-%E5%AF%BC%E8%88%AA%E6%A0%8F%E5%8A%9F%E8%83%BD"><span class="nav-text">9.1 导航栏功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-2-RouterLink"><span class="nav-text">9.2 RouterLink</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-3-Tailwind-DaisyUI-%E5%B8%B8%E7%94%A8%E7%B1%BB"><span class="nav-text">9.3 Tailwind &#x2F; DaisyUI 常用类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E3%80%81%E5%89%8D%E5%90%8E%E7%AB%AF%E6%95%B4%E5%90%88%E6%B5%81%E7%A8%8B"><span class="nav-text">十、前后端整合流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#10-1-%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83"><span class="nav-text">10.1 开发环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-2-%E7%94%9F%E4%BA%A7-%E6%89%93%E5%8C%85%E7%8E%AF%E5%A2%83"><span class="nav-text">10.2 生产 &#x2F; 打包环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-3-%E5%AE%8C%E6%95%B4%E8%AE%BF%E9%97%AE%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="nav-text">10.3 完整访问生命周期</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B8%80%E3%80%81Git-%E5%BF%BD%E7%95%A5%E6%96%87%E4%BB%B6%E5%BB%BA%E8%AE%AE"><span class="nav-text">十一、Git 忽略文件建议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%BA%8C%E3%80%81%E6%9C%AC%E8%8A%82%E6%98%93%E9%94%99%E7%82%B9"><span class="nav-text">十二、本节易错点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#12-1-%E9%A1%B9%E7%9B%AE%E8%B7%AF%E5%BE%84%E4%B8%8D%E8%A6%81%E5%8C%85%E5%90%AB%E4%B8%AD%E6%96%87"><span class="nav-text">12.1 项目路径不要包含中文</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-2-CORS-%E4%B8%8E-Cookie"><span class="nav-text">12.2 CORS 与 Cookie</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-3-static-%E5%92%8C-media-%E4%B8%8D%E8%A6%81%E6%B7%B7%E6%B7%86"><span class="nav-text">12.3 static 和 media 不要混淆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-4-%E5%89%8D%E7%AB%AF%E8%B7%AF%E7%94%B1%E5%88%B7%E6%96%B0-404"><span class="nav-text">12.4 前端路由刷新 404</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-5-%E8%B7%AF%E7%94%B1%E5%90%8D%E7%A7%B0%E8%A6%81%E7%BB%9F%E4%B8%80"><span class="nav-text">12.5 路由名称要统一</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B8%89%E3%80%81%E5%B0%8F%E7%BB%93"><span class="nav-text">十三、小结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E5%9B%9B%E3%80%81%E6%96%B0%E6%89%8B%E8%B7%9F%E5%81%9A%E8%B7%AF%E7%BA%BF"><span class="nav-text">十四、新手跟做路线</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#14-1-%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9A%E7%A1%AE%E8%AE%A4%E5%90%8E%E7%AB%AF%E8%83%BD%E8%B7%91"><span class="nav-text">14.1 第一步：确认后端能跑</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-2-%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9A%E7%A1%AE%E8%AE%A4%E5%89%8D%E7%AB%AF%E8%83%BD%E8%B7%91"><span class="nav-text">14.2 第二步：确认前端能跑</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-3-%E7%AC%AC%E4%B8%89%E6%AD%A5%EF%BC%9A%E7%A1%AE%E8%AE%A4%E5%89%8D%E5%90%8E%E7%AB%AF%E8%83%BD%E9%80%9A%E4%BF%A1"><span class="nav-text">14.3 第三步：确认前后端能通信</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%BA%94%E3%80%81%E6%96%B0%E6%89%8B%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5"><span class="nav-text">十五、新手常见问题排查</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#15-1-%E8%BF%90%E8%A1%8C-python-manage-py-runserver-%E6%8A%A5%E9%94%99"><span class="nav-text">15.1 运行 python manage.py runserver 报错</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-2-npm-run-dev-%E6%8A%A5%E9%94%99"><span class="nav-text">15.2 npm run dev 报错</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-3-%E9%A1%B5%E9%9D%A2%E7%99%BD%E5%B1%8F"><span class="nav-text">15.3 页面白屏</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-4-%E8%AE%BF%E9%97%AE%E5%89%8D%E7%AB%AF%E8%B7%AF%E7%94%B1%E5%88%B7%E6%96%B0-404"><span class="nav-text">15.4 访问前端路由刷新 404</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E5%85%AD%E3%80%81%E6%9C%AC%E8%8A%82%E5%A4%8D%E4%B9%A0%E9%97%AE%E9%A2%98"><span class="nav-text">十六、本节复习问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B8%83%E3%80%81%E6%A0%B8%E5%BF%83%E9%A1%B5%E9%9D%A2%E8%AF%B7%E6%B1%82-%E5%93%8D%E5%BA%94%E7%A4%BA%E4%BE%8B"><span class="nav-text">十七、核心页面请求 &#x2F; 响应示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#17-1-%E8%AE%BF%E9%97%AE%E9%A6%96%E9%A1%B5%E5%85%A5%E5%8F%A3"><span class="nav-text">17.1 访问首页入口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#17-2-%E8%AE%BF%E9%97%AE%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90"><span class="nav-text">17.2 访问静态资源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#17-3-%E8%AE%BF%E9%97%AE%E7%94%A8%E6%88%B7%E4%B8%8A%E4%BC%A0%E8%B5%84%E6%BA%90"><span class="nav-text">17.3 访问用户上传资源</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E5%85%AB%E3%80%81%E5%85%B3%E9%94%AE%E4%BB%A3%E7%A0%81%E9%80%90%E8%A1%8C%E8%A7%A3%E9%87%8A%E7%A4%BA%E4%BE%8B"><span class="nav-text">十八、关键代码逐行解释示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#18-1-Vue-%E5%BA%94%E7%94%A8%E5%85%A5%E5%8F%A3"><span class="nav-text">18.1 Vue 应用入口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#18-2-Django-%E5%85%9C%E5%BA%95%E8%B7%AF%E7%94%B1"><span class="nav-text">18.2 Django 兜底路由</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B9%9D%E3%80%81Vue-%E7%BB%84%E4%BB%B6%E6%95%B0%E6%8D%AE%E4%BC%A0%E9%80%92%E5%9B%BE"><span class="nav-text">十九、Vue 组件数据传递图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8D%81%E3%80%81%E5%90%8E%E7%AB%AF%E5%85%A5%E5%8F%A3%E8%A7%86%E5%9B%BE%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B"><span class="nav-text">二十、后端入口视图处理流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8D%81%E4%B8%80%E3%80%81%E5%B0%8F%E7%BB%83%E4%B9%A0%E4%B8%8E%E8%87%AA%E6%B5%8B%E7%AD%94%E6%A1%88"><span class="nav-text">二十一、小练习与自测答案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0-1"><span class="nav-text">练习 1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0-2"><span class="nav-text">练习 2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0-3"><span class="nav-text">练习 3</span></a></li></ol></li></ol></li></ol>
+
+	</div>
+</div>
+	</div>
+	
+</div>
+
+			</div>
+
+			
+		</div>
+
+		<div class="main-content-footer">
+			<footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2025</span>
+              -
+            
+            2026&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">Lionlnuc</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        共撰写了 44 篇文章
+                    </span>
+                    
+                </p>
+            
+        </div>
+        
+            <script data-swup-reload-script src="https://cn.vercount.one/js"></script>
+            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
+                
+                    <span id="busuanzi_container_site_uv" class="lg:!block">
+                        <span class="text-sm">访问人数</span>
+                        <span id="busuanzi_value_site_uv"></span>
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv" class="lg:!block">
+                        <span class="text-sm">总访问量</span>
+                        <span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">由 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a> 驱动</span>
+            <span class="text-sm lg:block">主题&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.9.0</a></span>
+        </div>
+        
+        
+            <div>
+                博客已运行 <span class="odometer" id="runtime_days" ></span> 天 <span class="odometer" id="runtime_hours"></span> 小时 <span class="odometer" id="runtime_minutes"></span> 分钟 <span class="odometer" id="runtime_seconds"></span> 秒
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+        
+    </div>  
+</footer>
+		</div>
+	</div>
+
+	
+	<div class="post-tools">
+		<div class="post-tools-container">
+	<ul class="article-tools-list">
+		<!-- TOC aside toggle -->
+		
+		<li class="right-bottom-tools page-aside-toggle">
+			<i class="fa-regular fa-outdent"></i>
+		</li>
+		
+
+		<!-- go comment -->
+		
+		<li class="go-comment">
+			<i class="fa-regular fa-comments"></i>
+		</li>
+		
+	</ul>
+</div>
+	</div>
+	
+
+	<div class="right-side-tools-container">
+		<div class="side-tools-container">
+	<ul class="hidden-tools-list">
+		<li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-plus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-minus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+			<i class="fa-regular fa-moon"></i>
+		</li>
+
+		<!-- rss -->
+		
+
+		
+
+		<li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+			<i class="fa-regular fa-arrow-down"></i>
+		</li>
+	</ul>
+
+	<ul class="visible-tools-list">
+		<li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+			<i class="fa-regular fa-cog fa-spin"></i>
+		</li>
+		
+		<li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+			<i class="arrow-up fas fa-arrow-up"></i>
+			<span class="percent"></span>
+		</li>
+		
+		
+	</ul>
+</div>
+	</div>
+
+	<div class="image-viewer-container" role="dialog" aria-modal="true" aria-label="图片查看器">
+	<button class="image-viewer-close" type="button" aria-label="关闭">
+		<i class="fa-solid fa-xmark"></i>
+	</button>
+	<button class="image-viewer-prev" type="button" aria-label="上一页">
+		<i class="fa-solid fa-chevron-left"></i>
+	</button>
+	<div class="image-viewer-frame">
+		<img src="" alt="">
+	</div>
+	<div class="image-viewer-exif-panel hidden absolute left-1/2 bottom-20 -translate-x-1/2 w-[min(92vw,420px)] max-h-[60vh] overflow-hidden rounded-2xl bg-background-color-transparent-80 p-4 text-left shadow-redefine-flat backdrop-blur-md" role="dialog" aria-label="EXIF" aria-hidden="true">
+		<div class="flex items-center justify-between mb-3">
+			<span class="text-sm font-semibold text-first-text-color">EXIF</span>
+			<button class="image-viewer-exif-close flex h-8 w-8 items-center justify-center rounded-full bg-background-color-transparent-80 text-first-text-color transition hover:bg-background-color-transparent-40" type="button" aria-label="关闭">
+				<i class="fa-solid fa-xmark text-[0.65rem]"></i>
+			</button>
+		</div>
+		<div class="image-viewer-exif-cards grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[50vh] overflow-y-auto pr-1 scrollbar-hide"></div>
+		<template class="image-viewer-exif-card-template">
+			<div class="rounded-lg bg-background-color-transparent-40 px-3 py-2">
+				<div class="image-viewer-exif-card-header flex items-center gap-2 mb-1">
+					<i class="image-viewer-exif-card-icon fa-solid fa-circle-info text-xs text-third-text-color"></i>
+					<div class="image-viewer-exif-card-title text-xs font-semibold text-first-text-color"></div>
+				</div>
+				<div class="image-viewer-exif-card-items flex flex-col gap-1"></div>
+			</div>
+		</template>
+	</div>
+	<button class="image-viewer-exif-toggle flex items-center gap-2 hidden absolute left-1/2 bottom-6 -translate-x-1/2 rounded-full border border-border-color bg-background-color-transparent-80 px-4 py-2 text-first-text-color backdrop-blur-md transition hover:bg-background-color-transparent-40" type="button" aria-label="EXIF" aria-expanded="false">
+		<i class="fa-solid fa-circle-info text-xs"></i>
+		<span class="text-xs font-semibold uppercase tracking-wider">EXIF</span>
+	</button>
+	<button class="image-viewer-next" type="button" aria-label="下一页">
+		<i class="fa-solid fa-chevron-right"></i>
+	</button>
+</div>
+
+
+	
+	<div class="search-pop-overlay">
+	<div class="popup search-popup">
+		<div class="search-header">
+			<span class="search-input-field-pre">
+				<i class="fa-solid fa-keyboard"></i>
+			</span>
+			<div class="search-input-container">
+				<input autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="站内搜索您需要的内容..." spellcheck="false" type="search" class="search-input">
+			</div>
+			<span class="popup-btn-close">
+				<i class="fa-solid fa-times"></i>
+			</span>
+		</div>
+		<div id="search-result">
+			<div id="no-result">
+				<i class="fa-solid fa-spinner fa-spin-pulse fa-5x fa-fw"></i>
+			</div>
+		</div>
+	</div>
+</div>
+	
+
+</main>
+
+
+
+<script src="/js/build/libs/Swup.min.js"></script>
+
+<script src="/js/build/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/build/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    window.swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+
+    window.dispatchEvent(
+        new CustomEvent("redefine:swup:ready", {
+            detail: {
+                swup: window.swup,
+            },
+        }),
+    );
+</script>
+
+
+
+
+	
+<script src="/js/build/main.js" type="module"></script>
+
+
+
+    
+<script src="/js/build/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+
+
+
+  
+<script src="/js/build/libs/Typed.min.js"></script>
+
+
+
+
+
+
+
+
+    
+<script src="/js/build/libs/minimasonry.min.js" data-swup-reload-script=""></script>
+
+
+
+
+<script src="/js/build/libs/moment-with-locales.min.js" data-swup-reload-script=""></script>
+
+
+
+	
+</body>
+
+</html>

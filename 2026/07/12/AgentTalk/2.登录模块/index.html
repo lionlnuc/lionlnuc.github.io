@@ -1,0 +1,1652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="软件开发,编程,技术学习,工程实践,C++,Java,Hexo,算法">
+    
+    
+    <meta name="author" content="Lionlnuc">
+    
+    <!-- Completely eliminate flash of wrong theme -->
+    <script>
+        (function() {
+            const THEME_KEY = "REDEFINE-THEME-STATUS";
+            const DARK = "dark", LIGHT = "light";
+            
+            // Get preferred theme
+            function getTheme() {
+                try {
+                    const saved = localStorage.getItem(THEME_KEY);
+                    if (saved) {
+                        const { isDark } = JSON.parse(saved);
+                        return isDark ? DARK : LIGHT;
+                    }
+                } catch (e) {}
+                
+                return matchMedia("(prefers-color-scheme: dark)").matches ? DARK : LIGHT;
+            }
+            
+            // Apply theme to document
+            function applyTheme(theme) {
+                const isDark = theme === DARK;
+                const root = document.documentElement;
+                
+                // Set classes for compatibility
+                root.classList.add(theme);
+                root.classList.remove(isDark ? LIGHT : DARK);
+                root.style.colorScheme = theme;
+            }
+            
+            // Initial application
+            const theme = getTheme();
+            applyTheme(theme);
+            
+            // Listen for system preference changes
+            matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ({ matches }) => {
+                // Only update if using system preference (no localStorage entry)
+                if (!localStorage.getItem(THEME_KEY)) {
+                    applyTheme(matches ? DARK : LIGHT);
+                }
+            });
+            
+            // Set body classes ASAP (before DOMContentLoaded)
+            (function() {
+                const addBodyClass = () => {
+                    const b = document.body;
+                    if (!b) return false;
+                    b.classList.add(theme + "-mode");
+                    return true;
+                };
+
+                // Try immediately
+                if (addBodyClass()) return;
+
+                // Observe until body exists
+                const mo = new MutationObserver(() => {
+                    if (addBodyClass()) mo.disconnect();
+                });
+                mo.observe(document.documentElement, { childList: true, subtree: true });
+            })();
+        })();
+    </script>
+    
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="https://lionlnuc.github.io/2026/07/12/agenttalk/2.登录模块/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+    
+        
+        <meta name="description" content="记录软件开发、技术学习、工程实践与生活思考的个人博客。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2.登录模块与前后端认证体系">
+<meta property="og:url" content="https://lionlnuc.github.io/2026/07/12/AgentTalk/2.%E7%99%BB%E5%BD%95%E6%A8%A1%E5%9D%97/">
+<meta property="og:site_name" content="Lionlnuc - 享受编程，享受生活">
+<meta property="og:description" content="记录软件开发、技术学习、工程实践与生活思考的个人博客。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://lionlnuc.github.io/images/redefine-og.webp">
+<meta property="article:published_time" content="2026-07-11T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-07-11T16:00:00.000Z">
+<meta property="article:author" content="Lionlnuc">
+<meta property="article:tag" content="AgentTalk">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lionlnuc.github.io/images/redefine-og.webp">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/image/logo.png" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/image/logo.png">
+    <meta name="theme-color" content="#83cff9">
+    <link rel="shortcut icon" href="/image/logo.png">
+    <!--- Page Info-->
+    
+    <title>
+        
+            2.登录模块与前后端认证体系 | Lionlnuc
+        
+    </title>
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
+
+
+    <!--- Inject Part-->
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/css/build/tailwind.css">
+
+    
+
+    
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
+
+    
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
+
+    <!--- Font Part-->
+    
+    
+    
+    
+    
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"lionlnuc.github.io","root":"/","language":"zh-CN","path":"search.json"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":false,"title_alignment":"left","headings_top_spacing":{"h1":"3.2rem","h2":"2.4rem","h3":"1.9rem","h4":"1.6rem","h5":"1.4rem","h6":"1.3rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#83cff9","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":true,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":false,"custom_message":"Now loading......"},"side_tools":{"gear_rotation":true,"auto_expand":false},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"记录软件开发、技术学习、工程实践与生活思考的个人博客。"},"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/home-banner-light.webp","dark":"/images/home-banner-dark.webp"},"title":"Lionlnuc","subtitle":{"text":["技术学习与工程实践","记录问题、方案与思考","持续构建个人知识体系"],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":85,"backing_speed":24,"starting_delay":1000,"backing_delay":2200,"loop":true,"smart_backspace":true},"text_color":{"light":"#101010","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":true,"style":"default","links":[{"icon":"fa-brands fa-github","url":"https://github.com/lionlnuc","name":"github"},{"icon":"fa-solid fa-code","url":"https://blog.csdn.net/a140781","name":"CSDN"},{"icon":"fa-solid fa-at","url":"you@example.com"},{"icon":"fa-brands fa-telegram","url":null},{"icon":"/images/custom-icon.svg","url":null}],"qrs":[{"icon":"fa-brands fa-weixin","qr":"https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/qrcode_for_gh_94f2768aad8b_258.jpg","name":"weixin"},{"icon":"/images/custom-icon.svg","qr":null}]}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":false,"version":"11.4.1","theme":{"light":"default","dark":"dark"}}},"version":"2.9.0","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"专题":{"path":"/categories","icon":"fa-solid fa-layer-group"},"文章":{"icon":"fa-solid fa-book","submenus":{"归档":"/archives","标签":"/tags","说说":"/shuoshuo"}},"关于":{"path":"/about","icon":"fa-regular fa-user"},"GitHub":{"icon":"fa-brands fa-github","path":"https://github.com/lionlnuc"}},"search":{"enable":true,"preload":false,"path":"search.json","field":"post","content":false,"format":"striptags"}},"page_templates":{"friends_column":2,"tags_style":"blur","masonry":{"batch_size":12,"initial_batch_size":24}},"home":{"sidebar":{"enable":true,"position":"right","first_item":"info","announcement":"记录学习、实践与思考","show_on_mobile":true,"links":{"技术专题":{"path":"/categories","icon":"fa-solid fa-layer-group"},"文章归档":{"path":"/archives","icon":"fa-regular fa-archive"},"标签索引":{"path":"/tags","icon":"fa-regular fa-tags"},"关于本站":{"path":"/about","icon":"fa-regular fa-user"}}},"article_date_format":"auto","excerpt_length":160,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footer":{"runtime":true,"icon":"<i class=\"fa-solid fa-heart fa-beat\" style=\"--fa-animation-duration: 0.5s; color: #f54545\"></i>","start":"2025/12/15 22:45:00","statistics":true,"customize":null,"icp":{"enable":false,"number":null,"url":null}},"footerStart":"2025/12/15 22:45:00","mermaid":{"style":{"light":"default","dark":"dark"}}};
+    window.lang_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+    window.i18n = {"search":"站内搜索您需要的内容...","toc":"目录","prev":"上一页","next":"下一页","prev_posts":"上一篇","next_posts":"下一篇","page":"第 %d 页","recent_posts":"最新文章","share":"分享","powered_by":"由 %s 驱动","theme":"主题","rss_feed":"RSS Feed","category":"分类","categories":"分类","tag":"标签","tags":"标签","post":"文章","posts":"文章","tagcloud":"标签云","comment":"评论","comments":"评论","top":"置顶","sticky":"置顶","go-back-home":"回到首页","masonry_loading":"照片加载中...","image_viewer":"图片查看器","close":"关闭","exif":{"title":"EXIF","cards":{"camera":"相机","lens":"镜头","exposure":"曝光","other":"其他"},"fields":{"make":"品牌","model":"机型","date_taken":"拍摄时间","lens_model":"镜头","focal_length":"焦距","focus_mode":"对焦模式","shutter":"快门","aperture":"光圈","iso":"感光度","exposure_program":"曝光程序","exposure_compensation":"曝光补偿","metering_mode":"测光模式","flash":"闪光灯","white_balance":"白平衡","latitude":"纬度","longitude":"经度","altitude":"海拔"},"status":{"loading":"加载中...","no_exif":"无 EXIF 信息","library_missing":"EXIF 库未加载","image_source_missing":"图片地址不可用","unavailable":"EXIF 不可用（可能被 CORS 阻止或缺少元数据）","flag_unavailable":"EXIF 不可用"}},"home":"首页","archive":"归档","archives":"归档","about":"关于","links":"链接","link":"链接","friends":"友情链接","friend":"友情链接","timeline":"时间轴","shuoshuo":"说说","bookmarks":"书签","site_uv":"访问人数","site_pv":"总访问量","read_more":"阅读全文","wordcount":"字","min2read":"分钟","changelog":"更新日志","status":"状态","runtime":"博客已运行","days":"天","hours":"小时","minutes":"分钟","seconds":"秒","optimized_by":"并由 Evan 进行优化","rights":"版权所有","site_posts":"共撰写了 %s 篇文章","site_wordcount":"共 %s 字","copyright":{"title":"标题","author":"作者","link":"链接","create_time":"创建于","update_time":"更新于","license_title":"版权声明","license_content":"本文章采用 %s 进行许可。","all_rights_reserved":"版权所有 &#169 %s，禁止转载。","public_domain":"本文为公有领域作品，可自由转载、引用。"},"ago":{"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"},"create_time":"创建","update_time":"更新","expired":"这篇文章最后更新于 %s 天前，内容可能已经过时。"};
+    window.data = {"masonry":true};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 8.1.2"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+<body>
+	<div class="progress-bar-container">
+	
+	<span class="scroll-progress-bar"></span>
+	
+
+	
+	<span class="pjax-progress-bar"></span>
+	<!--        <span class="swup-progress-icon">-->
+	<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+	<!--        </span>-->
+	
+</div>
+
+<main class="page-container" id="swup">
+
+	
+
+	<div class="main-content-container flex flex-col justify-between min-h-dvh">
+		<div class="main-content-header">
+			<header class="navbar-container px-6 md:px-12">
+    <div class="navbar-content transition-navbar ">
+        <div class="left">
+            
+                <a class="logo-image h-8 w-8 sm:w-10 sm:h-10 mr-3" href="/">
+                    <img src="/image/logo.png" class="w-full h-full rounded-xs">
+                </a>
+            
+            <a class="logo-title" href="/">
+                
+                Lionlnuc
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    首页
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/categories"
+                                        >
+                                    <i class="fa-solid fa-layer-group fa-fw"></i>
+                                    专题
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="has-dropdown"
+                                   href="#"
+                                        onClick=&#34;return false;&#34;>
+                                    <i class="fa-solid fa-book fa-fw"></i>
+                                    文章
+                                    <i class="fa-solid fa-chevron-down fa-fw"></i>
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                                    <ul class="sub-menu">
+                                        
+                                            <li>
+                                                <a href="/archives">
+                                                    归档
+                                                </a>
+                                            </li>
+                                        
+                                            <li>
+                                                <a href="/tags">
+                                                    标签
+                                                </a>
+                                            </li>
+                                        
+                                            <li>
+                                                <a href="/shuoshuo">
+                                                    说说
+                                                </a>
+                                            </li>
+                                        
+                                    </ul>
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/about"
+                                        >
+                                    <i class="fa-regular fa-user fa-fw"></i>
+                                    关于
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   target="_blank" rel="noopener" href="https://github.com/lionlnuc"
+                                        >
+                                    <i class="fa-brands fa-github fa-fw"></i>
+                                    GITHUB
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                        <li class="navbar-item search search-popup-trigger">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-dvh w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                        >
+                            <span>
+                                首页
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/categories"
+                        >
+                            <span>
+                                专题
+                            </span>
+                            
+                                <i class="fa-solid fa-layer-group fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item-sub text-base my-1.5 flex flex-col w-full">
+                        
+                        <div class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary cursor-pointer text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                             navbar-data-toggle="submenu-文章"
+                        >
+                            <span>
+                                文章
+                            </span>
+                            
+                                <i class="fa-solid fa-chevron-right fa-sm fa-fw transition-all"></i>
+                            
+                        </div>
+                        
+
+                        
+                            <div class="flex-col items-start px-2 py-2 hidden" data-target="submenu-文章">
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           href="/archives">归档</a>
+                                    </div>
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           href="/tags">标签</a>
+                                    </div>
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           href="/shuoshuo">说说</a>
+                                    </div>
+                                
+                            </div>
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/about"
+                        >
+                            <span>
+                                关于
+                            </span>
+                            
+                                <i class="fa-regular fa-user fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           target="_blank" rel="noopener" href="https://github.com/lionlnuc"
+                        >
+                            <span>
+                                GITHUB
+                            </span>
+                            
+                                <i class="fa-brands fa-github fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+                
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/categories"
+                        >
+                            <span>技术专题</span>
+                            <i class="fa-solid fa-layer-group fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/archives"
+                        >
+                            <span>文章归档</span>
+                            <i class="fa-regular fa-archive fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/tags"
+                        >
+                            <span>标签索引</span>
+                            <i class="fa-regular fa-tags fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/about"
+                        >
+                            <span>关于本站</span>
+                            <i class="fa-regular fa-user fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">8</div>
+        <div class="label text-third-text-color text-sm">标签</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">3</div>
+        <div class="label text-third-text-color text-sm">专题</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">44</div>
+        <div class="label text-third-text-color text-sm">文章</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+		</div>
+
+		<div class="main-content-body transition-fade-up">
+			
+
+			<div class="main-content">
+				<div class="post-page-container flex relative justify-between box-border w-full h-full">
+	<div class="article-content-container">
+
+		<div class="article-title relative w-full">
+			
+			<div class="w-full flex items-center pt-6 justify-start">
+				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">2.登录模块与前后端认证体系</h1>
+			</div>
+			
+		</div>
+
+		
+		<div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+			<div class="avatar w-[46px] h-[46px] shrink-0 rounded-medium border border-border-color p-px">
+				<img src="/image/avatar.png">
+			</div>
+			<div class="info flex flex-col justify-between">
+				<div class="author flex items-center">
+					<span class="name text-default-text-color text-lg font-semibold">Lionlnuc</span>
+					
+					<span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv4</span>
+					
+				</div>
+				<div class="meta-info">
+					<div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2026-07-12</span>
+        <span class="mobile">2026-07-12</span>
+        <span class="hover-info">创建</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2026-07-12</span>
+            <span class="mobile">2026-07-12</span>
+            <span class="hover-info">更新</span>
+        </span>
+    
+
+    
+        <span class="article-categories article-meta-item">
+            <i class="fa-regular fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/AgentTalk/">AgentTalk</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/AgentTalk/">AgentTalk</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+				</div>
+			</div>
+		</div>
+		
+
+		
+
+
+		<div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+			<h1 id="登录模块与前后端认证体系"><a href="#登录模块与前后端认证体系" class="headerlink" title="登录模块与前后端认证体系"></a>登录模块与前后端认证体系</h1><h2 id="一、目标"><a href="#一、目标" class="headerlink" title="一、目标"></a>一、目标</h2><p>在项目基础结构上实现完整的用户认证流程，包括：</p>
+<ul>
+<li>用户注册；</li>
+<li>用户登录；</li>
+<li>用户退出；</li>
+<li>Access Token 与 Refresh Token 双 Token 机制；</li>
+<li>刷新页面后的登录状态恢复；</li>
+<li>Axios 自动携带 Token；</li>
+<li>401 自动刷新 Token；</li>
+<li>Vue Router 路由守卫；</li>
+<li>导航栏根据登录状态动态显示。</li>
+</ul>
+<p><u>登录模块是后续创建角色、编辑资料、聊天、语音等所有需要用户身份的功能基础。</u></p>
+<hr>
+<h2 id="二、认证模块总体架构"><a href="#二、认证模块总体架构" class="headerlink" title="二、认证模块总体架构"></a>二、认证模块总体架构</h2><h3 id="2-1-数据流概览"><a href="#2-1-数据流概览" class="headerlink" title="2.1 数据流概览"></a>2.1 数据流概览</h3><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">用户输入账号密码</span><br><span class="line">    ↓</span><br><span class="line">Vue 登录/注册页面</span><br><span class="line">    ↓</span><br><span class="line">Axios 调用 Django API</span><br><span class="line">    ↓</span><br><span class="line">Django authenticate / create_user</span><br><span class="line">    ↓</span><br><span class="line">生成 Refresh Token 和 Access Token</span><br><span class="line">    ↓</span><br><span class="line">Access Token 返回给前端内存保存</span><br><span class="line">Refresh Token 写入 HttpOnly Cookie</span><br><span class="line">    ↓</span><br><span class="line">前端 Pinia 更新用户状态</span><br><span class="line">    ↓</span><br><span class="line">导航栏、路由守卫、页面权限随状态变化</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="2-2-双-Token-设计"><a href="#2-2-双-Token-设计" class="headerlink" title="2.2 双 Token 设计"></a>2.2 双 Token 设计</h3><table>
+<thead>
+<tr>
+<th>Token</th>
+<th>保存位置</th>
+<th>生命周期</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Access Token</td>
+<td>前端内存 / Pinia</td>
+<td>较短，例如 2 小时</td>
+<td>每次 API 请求认证</td>
+</tr>
+<tr>
+<td>Refresh Token</td>
+<td>HttpOnly Cookie</td>
+<td>较长，例如 7 天</td>
+<td>Access Token 过期后刷新</td>
+</tr>
+</tbody></table>
+<h4 id="为什么不用一个-Token？"><a href="#为什么不用一个-Token？" class="headerlink" title="为什么不用一个 Token？"></a>为什么不用一个 Token？</h4><p>如果只用长期 Token，一旦泄露风险较大。双 Token 的好处是：</p>
+<ul>
+<li>Access Token 短期有效，即使泄露影响有限；</li>
+<li>Refresh Token 放在 <code>HttpOnly Cookie</code>，JavaScript 不能读取，降低 XSS 风险；</li>
+<li>页面刷新后 Pinia 状态丢失，但 Cookie 还在，可以自动恢复登录状态。</li>
+</ul>
+<hr>
+<h2 id="三、后端用户数据模型"><a href="#三、后端用户数据模型" class="headerlink" title="三、后端用户数据模型"></a>三、后端用户数据模型</h2><h3 id="3-1-Django-内置-User"><a href="#3-1-Django-内置-User" class="headerlink" title="3.1 Django 内置 User"></a>3.1 Django 内置 User</h3><p>Django 自带 <code>User</code> 模型，包含：</p>
+<ul>
+<li><code>username</code>；</li>
+<li><code>password</code>；</li>
+<li><code>email</code>；</li>
+<li><code>is_staff</code>；</li>
+<li><code>is_superuser</code> 等。</li>
+</ul>
+<p>本项目使用内置 <code>User</code> 处理登录认证。</p>
+<h3 id="3-2-UserProfile-扩展模型"><a href="#3-2-UserProfile-扩展模型" class="headerlink" title="3.2 UserProfile 扩展模型"></a>3.2 UserProfile 扩展模型</h3><p>为了保存头像、简介等业务字段，需要创建 <code>UserProfile</code>。</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> uuid</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> django.contrib.auth.models <span class="keyword">import</span> User</span><br><span class="line"><span class="keyword">from</span> django.db <span class="keyword">import</span> models</span><br><span class="line"><span class="keyword">from</span> django.utils.timezone <span class="keyword">import</span> now, localtime</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">photo_upload_to</span>(<span class="params">instance, filename</span>):</span><br><span class="line">    ext = filename.split(<span class="string">'.'</span>)[-<span class="number">1</span>]</span><br><span class="line">    filename = <span class="string">f'<span class="subst">{uuid.uuid4().<span class="built_in">hex</span>[:<span class="number">10</span>]}</span>.<span class="subst">{ext}</span>'</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">f'user/photos/<span class="subst">{instance.user_id}</span>/<span class="subst">{filename}</span>'</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">UserProfile</span>(models.Model):</span><br><span class="line">    user = models.OneToOneField(User, on_delete=models.CASCADE)</span><br><span class="line">    photo = models.ImageField(default=<span class="string">'user/photos/default.png'</span>, upload_to=photo_upload_to)</span><br><span class="line">    profile = models.TextField(default=<span class="string">'谢谢你的关注'</span>, max_length=<span class="number">500</span>)</span><br><span class="line">    create_time = models.DateTimeField(default=now)</span><br><span class="line">    update_time = models.DateTimeField(default=now)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__str__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">f"<span class="subst">{self.user.username}</span> - <span class="subst">{localtime(self.create_time).strftime(<span class="string">'%Y-%m-%d %H:%M:%S'</span>)}</span>"</span></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="3-3-OneToOneField-的作用"><a href="#3-3-OneToOneField-的作用" class="headerlink" title="3.3 OneToOneField 的作用"></a>3.3 OneToOneField 的作用</h3><p><code>UserProfile</code> 与 <code>User</code> 是一对一关系：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">User 1  ─────  1 UserProfile</span><br></pre></td></tr></table></figure></div>
+
+<p>这样既能复用 Django 自带认证系统，又能扩展项目业务字段。</p>
+<h3 id="3-4-注册到-Admin"><a href="#3-4-注册到-Admin" class="headerlink" title="3.4 注册到 Admin"></a>3.4 注册到 Admin</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.contrib <span class="keyword">import</span> admin</span><br><span class="line"><span class="keyword">from</span> web.models.user <span class="keyword">import</span> UserProfile</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@admin.register(<span class="params">UserProfile</span>)</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">UserProfileAdmin</span>(admin.ModelAdmin):</span><br><span class="line">    raw_id_fields = (<span class="string">'user'</span>,)</span><br></pre></td></tr></table></figure></div>
+
+<p><code>raw_id_fields</code> 的作用：</p>
+<ul>
+<li>外键或一对一字段显示为 ID 输入框；</li>
+<li>避免用户数量大时后台下拉框加载过慢；</li>
+<li>提升 Django Admin 管理性能。</li>
+</ul>
+<hr>
+<h2 id="四、数据库迁移"><a href="#四、数据库迁移" class="headerlink" title="四、数据库迁移"></a>四、数据库迁移</h2><p>修改模型后执行：</p>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd backend</span><br><span class="line">python manage.py makemigrations</span><br><span class="line">python manage.py migrate</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="4-1-makemigrations"><a href="#4-1-makemigrations" class="headerlink" title="4.1 makemigrations"></a>4.1 makemigrations</h3><p>生成迁移文件，不直接修改数据库。</p>
+<h3 id="4-2-migrate"><a href="#4-2-migrate" class="headerlink" title="4.2 migrate"></a>4.2 migrate</h3><p>将迁移文件真正应用到数据库，创建或修改表结构。</p>
+<h3 id="4-3-标准流程"><a href="#4-3-标准流程" class="headerlink" title="4.3 标准流程"></a>4.3 标准流程</h3><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">修改 models.py</span><br><span class="line">    ↓</span><br><span class="line">python manage.py makemigrations</span><br><span class="line">    ↓</span><br><span class="line">检查 migrations 文件</span><br><span class="line">    ↓</span><br><span class="line">python manage.py migrate</span><br><span class="line">    ↓</span><br><span class="line">数据库结构更新完成</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="五、后端账号-API"><a href="#五、后端账号-API" class="headerlink" title="五、后端账号 API"></a>五、后端账号 API</h2><h3 id="5-1-注册接口"><a href="#5-1-注册接口" class="headerlink" title="5.1 注册接口"></a>5.1 注册接口</h3><p>功能：</p>
+<ol>
+<li>获取用户名、密码；</li>
+<li>校验非空；</li>
+<li>检查用户名是否已存在；</li>
+<li>创建 <code>User</code>；</li>
+<li>创建 <code>UserProfile</code>；</li>
+<li>生成 JWT；</li>
+<li>返回用户信息。</li>
+</ol>
+<p>关键逻辑：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.contrib.auth.models <span class="keyword">import</span> User</span><br><span class="line"><span class="keyword">from</span> rest_framework.views <span class="keyword">import</span> APIView</span><br><span class="line"><span class="keyword">from</span> rest_framework.response <span class="keyword">import</span> Response</span><br><span class="line"><span class="keyword">from</span> rest_framework_simplejwt.tokens <span class="keyword">import</span> RefreshToken</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> web.models.user <span class="keyword">import</span> UserProfile</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">RegisterView</span>(<span class="title class_ inherited__">APIView</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">post</span>(<span class="params">self, request</span>):</span><br><span class="line">        username = request.data.get(<span class="string">'username'</span>, <span class="string">''</span>).strip()</span><br><span class="line">        password = request.data.get(<span class="string">'password'</span>, <span class="string">''</span>).strip()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> username <span class="keyword">or</span> <span class="keyword">not</span> password:</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">'result'</span>: <span class="string">'用户名和密码不能为空'</span>})</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> User.objects.<span class="built_in">filter</span>(username=username).exists():</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">'result'</span>: <span class="string">'用户名已存在'</span>})</span><br><span class="line"></span><br><span class="line">        user = User.objects.create_user(username=username, password=password)</span><br><span class="line">        user_profile = UserProfile.objects.create(user=user)</span><br><span class="line">        refresh = RefreshToken.for_user(user)</span><br><span class="line"></span><br><span class="line">        response = Response({</span><br><span class="line">            <span class="string">'result'</span>: <span class="string">'success'</span>,</span><br><span class="line">            <span class="string">'access'</span>: <span class="built_in">str</span>(refresh.access_token),</span><br><span class="line">            <span class="string">'user_id'</span>: user.<span class="built_in">id</span>,</span><br><span class="line">            <span class="string">'username'</span>: user.username,</span><br><span class="line">            <span class="string">'photo'</span>: user_profile.photo.url,</span><br><span class="line">            <span class="string">'profile'</span>: user_profile.profile,</span><br><span class="line">        })</span><br><span class="line">        response.set_cookie(</span><br><span class="line">            key=<span class="string">'refresh_token'</span>,</span><br><span class="line">            value=<span class="built_in">str</span>(refresh),</span><br><span class="line">            httponly=<span class="literal">True</span>,</span><br><span class="line">            samesite=<span class="string">'Lax'</span>,</span><br><span class="line">            max_age=<span class="number">86400</span> * <span class="number">7</span>,</span><br><span class="line">        )</span><br><span class="line">        <span class="keyword">return</span> response</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="5-2-用户名重复检查易错点"><a href="#5-2-用户名重复检查易错点" class="headerlink" title="5.2 用户名重复检查易错点"></a>5.2 用户名重复检查易错点</h3><p>错误写法：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">User.objects.get(username=username).exists()</span><br></pre></td></tr></table></figure></div>
+
+<p>原因：</p>
+<ul>
+<li><code>get()</code> 返回一个对象，或者抛异常；</li>
+<li>对象没有 <code>.exists()</code> 方法。</li>
+</ul>
+<p>正确写法：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">User.objects.<span class="built_in">filter</span>(username=username).exists()</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="5-3-登录接口"><a href="#5-3-登录接口" class="headerlink" title="5.3 登录接口"></a>5.3 登录接口</h3><p>功能：</p>
+<ol>
+<li>获取用户名和密码；</li>
+<li>使用 <code>authenticate</code> 校验；</li>
+<li>查询 <code>UserProfile</code>；</li>
+<li>生成 Token；</li>
+<li>返回用户信息。</li>
+</ol>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.contrib.auth <span class="keyword">import</span> authenticate</span><br><span class="line"><span class="keyword">from</span> rest_framework.views <span class="keyword">import</span> APIView</span><br><span class="line"><span class="keyword">from</span> rest_framework.response <span class="keyword">import</span> Response</span><br><span class="line"><span class="keyword">from</span> rest_framework_simplejwt.tokens <span class="keyword">import</span> RefreshToken</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> web.models.user <span class="keyword">import</span> UserProfile</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LoginView</span>(<span class="title class_ inherited__">APIView</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">post</span>(<span class="params">self, request</span>):</span><br><span class="line">        username = request.data.get(<span class="string">'username'</span>, <span class="string">''</span>).strip()</span><br><span class="line">        password = request.data.get(<span class="string">'password'</span>, <span class="string">''</span>).strip()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> username <span class="keyword">or</span> <span class="keyword">not</span> password:</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">'result'</span>: <span class="string">'用户名和密码不能为空'</span>})</span><br><span class="line"></span><br><span class="line">        user = authenticate(username=username, password=password)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> user:</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">'result'</span>: <span class="string">'用户名或密码错误'</span>})</span><br><span class="line"></span><br><span class="line">        user_profile = UserProfile.objects.get(user=user)</span><br><span class="line">        refresh = RefreshToken.for_user(user)</span><br><span class="line"></span><br><span class="line">        response = Response({</span><br><span class="line">            <span class="string">'result'</span>: <span class="string">'success'</span>,</span><br><span class="line">            <span class="string">'access'</span>: <span class="built_in">str</span>(refresh.access_token),</span><br><span class="line">            <span class="string">'user_id'</span>: user.<span class="built_in">id</span>,</span><br><span class="line">            <span class="string">'username'</span>: user.username,</span><br><span class="line">            <span class="string">'photo'</span>: user_profile.photo.url,</span><br><span class="line">            <span class="string">'profile'</span>: user_profile.profile,</span><br><span class="line">        })</span><br><span class="line">        response.set_cookie(</span><br><span class="line">            key=<span class="string">'refresh_token'</span>,</span><br><span class="line">            value=<span class="built_in">str</span>(refresh),</span><br><span class="line">            httponly=<span class="literal">True</span>,</span><br><span class="line">            samesite=<span class="string">'Lax'</span>,</span><br><span class="line">            max_age=<span class="number">86400</span> * <span class="number">7</span>,</span><br><span class="line">        )</span><br><span class="line">        <span class="keyword">return</span> response</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="5-4-退出登录接口"><a href="#5-4-退出登录接口" class="headerlink" title="5.4 退出登录接口"></a>5.4 退出登录接口</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> rest_framework.views <span class="keyword">import</span> APIView</span><br><span class="line"><span class="keyword">from</span> rest_framework.response <span class="keyword">import</span> Response</span><br><span class="line"><span class="keyword">from</span> rest_framework.permissions <span class="keyword">import</span> IsAuthenticated</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LogoutView</span>(<span class="title class_ inherited__">APIView</span>):</span><br><span class="line">    permission_classes = [IsAuthenticated]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">post</span>(<span class="params">self, request</span>):</span><br><span class="line">        response = Response({<span class="string">'result'</span>: <span class="string">'success'</span>})</span><br><span class="line">        response.delete_cookie(<span class="string">'refresh_token'</span>)</span><br><span class="line">        <span class="keyword">return</span> response</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="5-5-刷新-Token-接口"><a href="#5-5-刷新-Token-接口" class="headerlink" title="5.5 刷新 Token 接口"></a>5.5 刷新 Token 接口</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.conf <span class="keyword">import</span> settings</span><br><span class="line"><span class="keyword">from</span> rest_framework <span class="keyword">import</span> status</span><br><span class="line"><span class="keyword">from</span> rest_framework.views <span class="keyword">import</span> APIView</span><br><span class="line"><span class="keyword">from</span> rest_framework.response <span class="keyword">import</span> Response</span><br><span class="line"><span class="keyword">from</span> rest_framework_simplejwt.tokens <span class="keyword">import</span> RefreshToken</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">RefreshTokenView</span>(<span class="title class_ inherited__">APIView</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">post</span>(<span class="params">self, request</span>):</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            refresh_token = request.COOKIES.get(<span class="string">'refresh_token'</span>)</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> refresh_token:</span><br><span class="line">                <span class="keyword">return</span> Response({<span class="string">'result'</span>: <span class="string">'refresh token 不存在'</span>}, status=status.HTTP_401_UNAUTHORIZED)</span><br><span class="line"></span><br><span class="line">            refresh = RefreshToken(refresh_token)</span><br><span class="line">            response = Response({</span><br><span class="line">                <span class="string">'result'</span>: <span class="string">'success'</span>,</span><br><span class="line">                <span class="string">'access'</span>: <span class="built_in">str</span>(refresh.access_token),</span><br><span class="line">            })</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> settings.SIMPLE_JWT.get(<span class="string">'ROTATE_REFRESH_TOKENS'</span>):</span><br><span class="line">                refresh.set_jti()</span><br><span class="line">                refresh.set_exp()</span><br><span class="line">                response.set_cookie(</span><br><span class="line">                    key=<span class="string">'refresh_token'</span>,</span><br><span class="line">                    value=<span class="built_in">str</span>(refresh),</span><br><span class="line">                    httponly=<span class="literal">True</span>,</span><br><span class="line">                    samesite=<span class="string">'Lax'</span>,</span><br><span class="line">                    max_age=<span class="number">86400</span> * <span class="number">7</span>,</span><br><span class="line">                )</span><br><span class="line">            <span class="keyword">return</span> response</span><br><span class="line">        <span class="keyword">except</span> Exception:</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">'result'</span>: <span class="string">'refresh token 已过期'</span>}, status=status.HTTP_401_UNAUTHORIZED)</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="5-6-获取用户信息接口"><a href="#5-6-获取用户信息接口" class="headerlink" title="5.6 获取用户信息接口"></a>5.6 获取用户信息接口</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> rest_framework.views <span class="keyword">import</span> APIView</span><br><span class="line"><span class="keyword">from</span> rest_framework.response <span class="keyword">import</span> Response</span><br><span class="line"><span class="keyword">from</span> rest_framework.permissions <span class="keyword">import</span> IsAuthenticated</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> web.models.user <span class="keyword">import</span> UserProfile</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">GetUserInfoView</span>(<span class="title class_ inherited__">APIView</span>):</span><br><span class="line">    permission_classes = [IsAuthenticated]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get</span>(<span class="params">self, request</span>):</span><br><span class="line">        user = request.user</span><br><span class="line">        user_profile = UserProfile.objects.get(user=user)</span><br><span class="line">        <span class="keyword">return</span> Response({</span><br><span class="line">            <span class="string">'result'</span>: <span class="string">'success'</span>,</span><br><span class="line">            <span class="string">'user_id'</span>: user.<span class="built_in">id</span>,</span><br><span class="line">            <span class="string">'username'</span>: user.username,</span><br><span class="line">            <span class="string">'photo'</span>: user_profile.photo.url,</span><br><span class="line">            <span class="string">'profile'</span>: user_profile.profile,</span><br><span class="line">        })</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="六、后端路由配置"><a href="#六、后端路由配置" class="headerlink" title="六、后端路由配置"></a>六、后端路由配置</h2><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.urls <span class="keyword">import</span> path, re_path</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> web.views.index <span class="keyword">import</span> index</span><br><span class="line"><span class="keyword">from</span> web.views.user.account.login <span class="keyword">import</span> LoginView</span><br><span class="line"><span class="keyword">from</span> web.views.user.account.logout <span class="keyword">import</span> LogoutView</span><br><span class="line"><span class="keyword">from</span> web.views.user.account.register <span class="keyword">import</span> RegisterView</span><br><span class="line"><span class="keyword">from</span> web.views.user.account.refresh_token <span class="keyword">import</span> RefreshTokenView</span><br><span class="line"><span class="keyword">from</span> web.views.user.account.get_user_info <span class="keyword">import</span> GetUserInfoView</span><br><span class="line"></span><br><span class="line">urlpatterns = [</span><br><span class="line">    path(<span class="string">'api/user/account/login/'</span>, LoginView.as_view()),</span><br><span class="line">    path(<span class="string">'api/user/account/logout/'</span>, LogoutView.as_view()),</span><br><span class="line">    path(<span class="string">'api/user/account/register/'</span>, RegisterView.as_view()),</span><br><span class="line">    path(<span class="string">'api/user/account/refresh_token/'</span>, RefreshTokenView.as_view()),</span><br><span class="line">    path(<span class="string">'api/user/account/get_user_info/'</span>, GetUserInfoView.as_view()),</span><br><span class="line">    path(<span class="string">''</span>, index),</span><br><span class="line">    re_path(<span class="string">r'^(?!media/|static/|assets/).*$'</span>, index),</span><br><span class="line">]</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="七、前端-Pinia-用户状态"><a href="#七、前端-Pinia-用户状态" class="headerlink" title="七、前端 Pinia 用户状态"></a>七、前端 Pinia 用户状态</h2><p><code>frontend/src/stores/user.js</code>：</p>
+<div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> { defineStore } <span class="keyword">from</span> <span class="string">'pinia'</span></span><br><span class="line"><span class="keyword">import</span> { ref } <span class="keyword">from</span> <span class="string">'vue'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> useUserStore = <span class="title function_">defineStore</span>(<span class="string">'user'</span>, <span class="function">() =&gt;</span> {</span><br><span class="line">  <span class="keyword">const</span> id = <span class="title function_">ref</span>(<span class="number">0</span>)</span><br><span class="line">  <span class="keyword">const</span> username = <span class="title function_">ref</span>(<span class="string">''</span>)</span><br><span class="line">  <span class="keyword">const</span> photo = <span class="title function_">ref</span>(<span class="string">''</span>)</span><br><span class="line">  <span class="keyword">const</span> profile = <span class="title function_">ref</span>(<span class="string">''</span>)</span><br><span class="line">  <span class="keyword">const</span> accessToken = <span class="title function_">ref</span>(<span class="string">''</span>)</span><br><span class="line">  <span class="keyword">const</span> hasPulledUserInfo = <span class="title function_">ref</span>(<span class="literal">false</span>)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">function</span> <span class="title function_">isLogin</span>(<span class="params"></span>) {</span><br><span class="line">    <span class="keyword">return</span> !!accessToken.<span class="property">value</span></span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  <span class="keyword">function</span> <span class="title function_">setAccessToken</span>(<span class="params">token</span>) {</span><br><span class="line">    accessToken.<span class="property">value</span> = token</span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  <span class="keyword">function</span> <span class="title function_">setUserInfo</span>(<span class="params">data</span>) {</span><br><span class="line">    id.<span class="property">value</span> = data.<span class="property">user_id</span></span><br><span class="line">    username.<span class="property">value</span> = data.<span class="property">username</span></span><br><span class="line">    photo.<span class="property">value</span> = data.<span class="property">photo</span></span><br><span class="line">    profile.<span class="property">value</span> = data.<span class="property">profile</span></span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  <span class="keyword">function</span> <span class="title function_">logout</span>(<span class="params"></span>) {</span><br><span class="line">    id.<span class="property">value</span> = <span class="number">0</span></span><br><span class="line">    username.<span class="property">value</span> = <span class="string">''</span></span><br><span class="line">    photo.<span class="property">value</span> = <span class="string">''</span></span><br><span class="line">    profile.<span class="property">value</span> = <span class="string">''</span></span><br><span class="line">    accessToken.<span class="property">value</span> = <span class="string">''</span></span><br><span class="line">    hasPulledUserInfo.<span class="property">value</span> = <span class="literal">false</span></span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  <span class="keyword">function</span> <span class="title function_">setHasPulledUserInfo</span>(<span class="params">value</span>) {</span><br><span class="line">    hasPulledUserInfo.<span class="property">value</span> = value</span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> {</span><br><span class="line">    id,</span><br><span class="line">    username,</span><br><span class="line">    photo,</span><br><span class="line">    profile,</span><br><span class="line">    accessToken,</span><br><span class="line">    hasPulledUserInfo,</span><br><span class="line">    isLogin,</span><br><span class="line">    setAccessToken,</span><br><span class="line">    setUserInfo,</span><br><span class="line">    logout,</span><br><span class="line">    setHasPulledUserInfo,</span><br><span class="line">  }</span><br><span class="line">})</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="7-1-为什么需要-hasPulledUserInfo？"><a href="#7-1-为什么需要-hasPulledUserInfo？" class="headerlink" title="7.1 为什么需要 hasPulledUserInfo？"></a>7.1 为什么需要 hasPulledUserInfo？</h3><p>页面刷新后：</p>
+<ul>
+<li>Pinia 中 <code>accessToken</code> 会变成空；</li>
+<li>但 Cookie 中的 <code>refresh_token</code> 仍在；</li>
+<li>前端还没请求完用户信息时，不能立刻判断用户未登录。</li>
+</ul>
+<p><code>hasPulledUserInfo</code> 表示：前端已经尝试过从后端恢复登录状态。</p>
+<hr>
+<h2 id="八、Axios-请求封装"><a href="#八、Axios-请求封装" class="headerlink" title="八、Axios 请求封装"></a>八、Axios 请求封装</h2><p><code>frontend/src/js/http/api.js</code>：</p>
+<div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> axios <span class="keyword">from</span> <span class="string">'axios'</span></span><br><span class="line"><span class="keyword">import</span> { useUserStore } <span class="keyword">from</span> <span class="string">'@/stores/user.js'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="variable constant_">BASE_URL</span> = <span class="string">'http://127.0.0.1:8000'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> api = axios.<span class="title function_">create</span>({</span><br><span class="line">  <span class="attr">baseURL</span>: <span class="variable constant_">BASE_URL</span>,</span><br><span class="line">  <span class="attr">withCredentials</span>: <span class="literal">true</span>,</span><br><span class="line">})</span><br><span class="line"></span><br><span class="line">api.<span class="property">interceptors</span>.<span class="property">request</span>.<span class="title function_">use</span>(<span class="function"><span class="params">config</span> =&gt;</span> {</span><br><span class="line">  <span class="keyword">const</span> user = <span class="title function_">useUserStore</span>()</span><br><span class="line">  <span class="keyword">if</span> (user.<span class="property">accessToken</span>) {</span><br><span class="line">    config.<span class="property">headers</span>.<span class="property">Authorization</span> = <span class="string">`Bearer <span class="subst">${user.accessToken}</span>`</span></span><br><span class="line">  }</span><br><span class="line">  <span class="keyword">return</span> config</span><br><span class="line">})</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> isRefreshing = <span class="literal">false</span></span><br><span class="line"><span class="keyword">let</span> refreshSubscribers = []</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">subscribeTokenRefresh</span>(<span class="params">callback</span>) {</span><br><span class="line">  refreshSubscribers.<span class="title function_">push</span>(callback)</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">onRefreshed</span>(<span class="params">token</span>) {</span><br><span class="line">  refreshSubscribers.<span class="title function_">forEach</span>(<span class="function"><span class="params">callback</span> =&gt;</span> <span class="title function_">callback</span>(token))</span><br><span class="line">  refreshSubscribers = []</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">onRefreshFailed</span>(<span class="params">error</span>) {</span><br><span class="line">  refreshSubscribers.<span class="title function_">forEach</span>(<span class="function"><span class="params">callback</span> =&gt;</span> <span class="title function_">callback</span>(<span class="literal">null</span>, error))</span><br><span class="line">  refreshSubscribers = []</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">api.<span class="property">interceptors</span>.<span class="property">response</span>.<span class="title function_">use</span>(</span><br><span class="line">  <span class="function"><span class="params">response</span> =&gt;</span> response,</span><br><span class="line">  <span class="keyword">async</span> error =&gt; {</span><br><span class="line">    <span class="keyword">const</span> user = <span class="title function_">useUserStore</span>()</span><br><span class="line">    <span class="keyword">const</span> originalRequest = error?.<span class="property">config</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!originalRequest) <span class="keyword">return</span> <span class="title class_">Promise</span>.<span class="title function_">reject</span>(error)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (error.<span class="property">response</span>?.<span class="property">status</span> === <span class="number">401</span> &amp;&amp; !originalRequest.<span class="property">_retry</span>) {</span><br><span class="line">      originalRequest.<span class="property">_retry</span> = <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> {</span><br><span class="line">        <span class="title function_">subscribeTokenRefresh</span>(<span class="function">(<span class="params">token, err</span>) =&gt;</span> {</span><br><span class="line">          <span class="keyword">if</span> (err) {</span><br><span class="line">            <span class="title function_">reject</span>(err)</span><br><span class="line">          } <span class="keyword">else</span> {</span><br><span class="line">            originalRequest.<span class="property">headers</span>.<span class="property">Authorization</span> = <span class="string">`Bearer <span class="subst">${token}</span>`</span></span><br><span class="line">            <span class="title function_">resolve</span>(<span class="title function_">api</span>(originalRequest))</span><br><span class="line">          }</span><br><span class="line">        })</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!isRefreshing) {</span><br><span class="line">          isRefreshing = <span class="literal">true</span></span><br><span class="line">          axios.<span class="title function_">post</span>(<span class="string">`<span class="subst">${BASE_URL}</span>/api/user/account/refresh_token/`</span>, {}, { <span class="attr">withCredentials</span>: <span class="literal">true</span> })</span><br><span class="line">            .<span class="title function_">then</span>(<span class="function"><span class="params">res</span> =&gt;</span> {</span><br><span class="line">              user.<span class="title function_">setAccessToken</span>(res.<span class="property">data</span>.<span class="property">access</span>)</span><br><span class="line">              <span class="title function_">onRefreshed</span>(res.<span class="property">data</span>.<span class="property">access</span>)</span><br><span class="line">            })</span><br><span class="line">            .<span class="title function_">catch</span>(<span class="function"><span class="params">err</span> =&gt;</span> {</span><br><span class="line">              user.<span class="title function_">logout</span>()</span><br><span class="line">              <span class="title function_">onRefreshFailed</span>(err)</span><br><span class="line">              <span class="title function_">reject</span>(err)</span><br><span class="line">            })</span><br><span class="line">            .<span class="title function_">finally</span>(<span class="function">() =&gt;</span> {</span><br><span class="line">              isRefreshing = <span class="literal">false</span></span><br><span class="line">            })</span><br><span class="line">        }</span><br><span class="line">      })</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="title class_">Promise</span>.<span class="title function_">reject</span>(error)</span><br><span class="line">  }</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> api</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="8-1-拦截器流程"><a href="#8-1-拦截器流程" class="headerlink" title="8.1 拦截器流程"></a>8.1 拦截器流程</h3><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">发送请求</span><br><span class="line">    ↓</span><br><span class="line">请求拦截器附加 Authorization: Bearer accessToken</span><br><span class="line">    ↓</span><br><span class="line">后端校验 Token</span><br><span class="line">    ↓</span><br><span class="line">如果返回 401</span><br><span class="line">    ↓</span><br><span class="line">响应拦截器调用 refresh_token</span><br><span class="line">    ↓</span><br><span class="line">刷新成功：重发原请求</span><br><span class="line">刷新失败：清空用户状态</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="8-2-多个请求同时-401-的处理"><a href="#8-2-多个请求同时-401-的处理" class="headerlink" title="8.2 多个请求同时 401 的处理"></a>8.2 多个请求同时 401 的处理</h3><p><code>isRefreshing + refreshSubscribers</code> 用于避免并发刷新多次 Token。</p>
+<p>流程：</p>
+<ol>
+<li>第一个 401 请求触发刷新；</li>
+<li>其他 401 请求加入等待队列；</li>
+<li>新 Token 返回后，统一重发队列中的请求。</li>
+</ol>
+<hr>
+<h2 id="九、登录页面"><a href="#九、登录页面" class="headerlink" title="九、登录页面"></a>九、登录页面</h2><div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">&lt;script setup&gt;</span><br><span class="line">import { ref } from 'vue'</span><br><span class="line">import { useRouter } from 'vue-router'</span><br><span class="line">import { useUserStore } from '@/stores/user.js'</span><br><span class="line">import api from '@/js/http/api.js'</span><br><span class="line"></span><br><span class="line">const username = ref('')</span><br><span class="line">const password = ref('')</span><br><span class="line">const errorMessage = ref('')</span><br><span class="line">const router = useRouter()</span><br><span class="line">const user = useUserStore()</span><br><span class="line"></span><br><span class="line">async function handleLogin() {</span><br><span class="line">  errorMessage.value = ''</span><br><span class="line"></span><br><span class="line">  if (!username.value.trim()) {</span><br><span class="line">    errorMessage.value = '用户名不能为空'</span><br><span class="line">    return</span><br><span class="line">  }</span><br><span class="line">  if (!password.value.trim()) {</span><br><span class="line">    errorMessage.value = '密码不能为空'</span><br><span class="line">    return</span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  const res = await api.post('/api/user/account/login/', {</span><br><span class="line">    username: username.value,</span><br><span class="line">    password: password.value,</span><br><span class="line">  })</span><br><span class="line"></span><br><span class="line">  const data = res.data</span><br><span class="line">  if (data.result === 'success') {</span><br><span class="line">    user.setAccessToken(data.access)</span><br><span class="line">    user.setUserInfo(data)</span><br><span class="line">    await router.push({ name: 'homepage-index' })</span><br><span class="line">  } else {</span><br><span class="line">    errorMessage.value = data.result</span><br><span class="line">  }</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div class="flex justify-center mt-30"&gt;</span><br><span class="line">    &lt;form @submit.prevent="handleLogin" class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4"&gt;</span><br><span class="line">      &lt;label class="label"&gt;用户名&lt;/label&gt;</span><br><span class="line">      &lt;input v-model="username" type="text" class="input" placeholder="用户名" /&gt;</span><br><span class="line"></span><br><span class="line">      &lt;label class="label"&gt;密码&lt;/label&gt;</span><br><span class="line">      &lt;input v-model="password" type="password" class="input" placeholder="密码" /&gt;</span><br><span class="line"></span><br><span class="line">      &lt;p v-if="errorMessage" class="font-bold text-red-500 text-base"&gt;{{ errorMessage }}&lt;/p&gt;</span><br><span class="line"></span><br><span class="line">      &lt;button class="btn btn-neutral mt-4"&gt;登录&lt;/button&gt;</span><br><span class="line">      &lt;div class="flex justify-end"&gt;</span><br><span class="line">        &lt;RouterLink :to="{ name: 'register-index' }" class="btn btn-sm btn-ghost text-gray-500 mt-2"&gt;</span><br><span class="line">          注册</span><br><span class="line">        &lt;/RouterLink&gt;</span><br><span class="line">      &lt;/div&gt;</span><br><span class="line">    &lt;/form&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="十、注册页面"><a href="#十、注册页面" class="headerlink" title="十、注册页面"></a>十、注册页面</h2><p>注册页比登录页多一个确认密码字段。</p>
+<p>校验：</p>
+<ul>
+<li>用户名不能为空；</li>
+<li>密码不能为空；</li>
+<li>两次密码一致；</li>
+<li>密码长度建议不少于 6 位。</li>
+</ul>
+<p>成功后与登录相同：保存 Token 和用户信息，然后跳转首页。</p>
+<hr>
+<h2 id="十一、导航栏登录状态"><a href="#十一、导航栏登录状态" class="headerlink" title="十一、导航栏登录状态"></a>十一、导航栏登录状态</h2><p>导航栏根据用户状态动态渲染：</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;RouterLink</span><br><span class="line">  v-if="user.hasPulledUserInfo &amp;&amp; !user.isLogin()"</span><br><span class="line">  :to="{ name: 'login-index' }"</span><br><span class="line">  class="btn btn-ghost text-lg"</span><br><span class="line">&gt;</span><br><span class="line">  登录</span><br><span class="line">&lt;/RouterLink&gt;</span><br><span class="line"></span><br><span class="line">&lt;UserMenu v-else-if="user.isLogin()" /&gt;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="11-1-避免刷新闪烁"><a href="#11-1-避免刷新闪烁" class="headerlink" title="11.1 避免刷新闪烁"></a>11.1 避免刷新闪烁</h3><p>如果不判断 <code>hasPulledUserInfo</code>，页面刷新瞬间可能先显示“登录”，随后又变成头像，视觉上会闪烁。</p>
+<hr>
+<h2 id="十二、用户菜单与退出登录"><a href="#十二、用户菜单与退出登录" class="headerlink" title="十二、用户菜单与退出登录"></a>十二、用户菜单与退出登录</h2><div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;script setup&gt;</span><br><span class="line">import { useRouter } from 'vue-router'</span><br><span class="line">import { useUserStore } from '@/stores/user.js'</span><br><span class="line">import api from '@/js/http/api.js'</span><br><span class="line"></span><br><span class="line">const user = useUserStore()</span><br><span class="line">const router = useRouter()</span><br><span class="line"></span><br><span class="line">function closeMenu() {</span><br><span class="line">  const element = document.activeElement</span><br><span class="line">  if (element &amp;&amp; element instanceof HTMLElement) element.blur()</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">async function handleLogout() {</span><br><span class="line">  const res = await api.post('/api/user/account/logout/')</span><br><span class="line">  if (res.data.result === 'success') {</span><br><span class="line">    user.logout()</span><br><span class="line">    await router.push({ name: 'homepage-index' })</span><br><span class="line">  }</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure></div>
+
+<p>重点：</p>
+<ul>
+<li>点击退出时调用后端删除 Cookie；</li>
+<li>前端调用 <code>user.logout()</code> 清空状态；</li>
+<li>下拉菜单点击后通过 <code>blur()</code> 自动关闭。</li>
+</ul>
+<hr>
+<h2 id="十三、路由守卫"><a href="#十三、路由守卫" class="headerlink" title="十三、路由守卫"></a>十三、路由守卫</h2><h3 id="13-1-路由-meta"><a href="#13-1-路由-meta" class="headerlink" title="13.1 路由 meta"></a>13.1 路由 meta</h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">{</span><br><span class="line">  <span class="attr">path</span>: <span class="string">'/friend'</span>,</span><br><span class="line">  <span class="attr">component</span>: <span class="title class_">FriendIndex</span>,</span><br><span class="line">  <span class="attr">name</span>: <span class="string">'friend-index'</span>,</span><br><span class="line">  <span class="attr">meta</span>: { <span class="attr">needLogin</span>: <span class="literal">true</span> },</span><br><span class="line">}</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="13-2-beforeEach-守卫"><a href="#13-2-beforeEach-守卫" class="headerlink" title="13.2 beforeEach 守卫"></a>13.2 beforeEach 守卫</h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">router.<span class="title function_">beforeEach</span>(<span class="function">(<span class="params">to, <span class="keyword">from</span>, next</span>) =&gt;</span> {</span><br><span class="line">  <span class="keyword">const</span> user = <span class="title function_">useUserStore</span>()</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (!user.<span class="property">hasPulledUserInfo</span>) {</span><br><span class="line">    <span class="keyword">return</span> <span class="title function_">next</span>()</span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (to.<span class="property">meta</span>.<span class="property">needLogin</span> &amp;&amp; !user.<span class="title function_">isLogin</span>()) {</span><br><span class="line">    <span class="keyword">return</span> <span class="title function_">next</span>({ <span class="attr">name</span>: <span class="string">'login-index'</span>, <span class="attr">query</span>: { <span class="attr">redirect</span>: to.<span class="property">fullPath</span> } })</span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (user.<span class="title function_">isLogin</span>() &amp;&amp; (to.<span class="property">name</span> === <span class="string">'login-index'</span> || to.<span class="property">name</span> === <span class="string">'register-index'</span>)) {</span><br><span class="line">    <span class="keyword">return</span> <span class="title function_">next</span>({ <span class="attr">name</span>: <span class="string">'homepage-index'</span> })</span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="title function_">next</span>()</span><br><span class="line">})</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="13-3-为什么先判断-hasPulledUserInfo？"><a href="#13-3-为什么先判断-hasPulledUserInfo？" class="headerlink" title="13.3 为什么先判断 hasPulledUserInfo？"></a>13.3 为什么先判断 hasPulledUserInfo？</h3><p>页面刚刷新时，用户信息还没恢复，如果马上根据 <code>isLogin()</code> 判断，会把本来已登录的用户错误踢到登录页。</p>
+<hr>
+<h2 id="十四、App-vue-中恢复登录状态"><a href="#十四、App-vue-中恢复登录状态" class="headerlink" title="十四、App.vue 中恢复登录状态"></a>十四、App.vue 中恢复登录状态</h2><div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">&lt;script setup&gt;</span><br><span class="line">import { onMounted } from 'vue'</span><br><span class="line">import { useRoute, useRouter } from 'vue-router'</span><br><span class="line">import { useUserStore } from '@/stores/user.js'</span><br><span class="line">import api from '@/js/http/api.js'</span><br><span class="line">import NavBar from '@/components/navbar/NavBar.vue'</span><br><span class="line"></span><br><span class="line">const user = useUserStore()</span><br><span class="line">const route = useRoute()</span><br><span class="line">const router = useRouter()</span><br><span class="line"></span><br><span class="line">onMounted(async () =&gt; {</span><br><span class="line">  try {</span><br><span class="line">    const res = await api.get('/api/user/account/get_user_info/')</span><br><span class="line">    const data = res.data</span><br><span class="line">    if (data.result === 'success') {</span><br><span class="line">      user.setUserInfo(data)</span><br><span class="line">    }</span><br><span class="line">  } catch (error) {</span><br><span class="line">    console.error(error)</span><br><span class="line">  } finally {</span><br><span class="line">    user.setHasPulledUserInfo(true)</span><br><span class="line"></span><br><span class="line">    if (route.meta.needLogin &amp;&amp; !user.isLogin()) {</span><br><span class="line">      await router.replace({ name: 'login-index' })</span><br><span class="line">    }</span><br><span class="line">  }</span><br><span class="line">})</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;NavBar&gt;</span><br><span class="line">    &lt;RouterView /&gt;</span><br><span class="line">  &lt;/NavBar&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="14-1-页面刷新恢复流程"><a href="#14-1-页面刷新恢复流程" class="headerlink" title="14.1 页面刷新恢复流程"></a>14.1 页面刷新恢复流程</h3><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">刷新页面</span><br><span class="line">    ↓</span><br><span class="line">Pinia accessToken 丢失</span><br><span class="line">    ↓</span><br><span class="line">App.vue 请求 get_user_info</span><br><span class="line">    ↓</span><br><span class="line">请求无 accessToken，后端返回 401</span><br><span class="line">    ↓</span><br><span class="line">Axios 响应拦截器调用 refresh_token</span><br><span class="line">    ↓</span><br><span class="line">Cookie 中 refresh_token 有效</span><br><span class="line">    ↓</span><br><span class="line">获得新 accessToken</span><br><span class="line">    ↓</span><br><span class="line">重发 get_user_info</span><br><span class="line">    ↓</span><br><span class="line">恢复用户信息</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="十五、前端路由命名建议"><a href="#十五、前端路由命名建议" class="headerlink" title="十五、前端路由命名建议"></a>十五、前端路由命名建议</h2><p>建议统一命名规则，避免混乱：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">homepage-index</span><br><span class="line">friend-index</span><br><span class="line">create-index</span><br><span class="line">login-index</span><br><span class="line">register-index</span><br><span class="line">user-space-index</span><br><span class="line">user-profile-index</span><br><span class="line">not-found</span><br></pre></td></tr></table></figure></div>
+
+<p><u>如果项目中历史代码出现 <code>home-index</code>、<code>user-account-login-index</code> 等不同命名，复习时要注意以实际路由表为准。</u></p>
+<hr>
+<h2 id="十六、常见问题与易错点"><a href="#十六、常见问题与易错点" class="headerlink" title="十六、常见问题与易错点"></a>十六、常见问题与易错点</h2><h3 id="16-1-Cookie-设置-secure"><a href="#16-1-Cookie-设置-secure" class="headerlink" title="16.1 Cookie 设置 secure"></a>16.1 Cookie 设置 secure</h3><p>开发环境一般不是 HTTPS：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">secure=<span class="literal">False</span></span><br></pre></td></tr></table></figure></div>
+
+<p>生产环境必须使用 HTTPS 时：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">secure=<span class="literal">True</span></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="16-2-withCredentials-必须开启"><a href="#16-2-withCredentials-必须开启" class="headerlink" title="16.2 withCredentials 必须开启"></a>16.2 withCredentials 必须开启</h3><p>如果前端要携带 Cookie：</p>
+<div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">withCredentials</span>: <span class="literal">true</span></span><br></pre></td></tr></table></figure></div>
+
+<p>后端也要：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CORS_ALLOW_CREDENTIALS = <span class="literal">True</span></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="16-3-Authorization-格式"><a href="#16-3-Authorization-格式" class="headerlink" title="16.3 Authorization 格式"></a>16.3 Authorization 格式</h3><p>必须是：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Authorization: Bearer &lt;access_token&gt;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="16-4-refresh-token-拼写"><a href="#16-4-refresh-token-拼写" class="headerlink" title="16.4 refresh_token 拼写"></a>16.4 refresh_token 拼写</h3><p>接口路径要统一，例如：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/api/user/account/refresh_token/</span><br></pre></td></tr></table></figure></div>
+
+<p>不要写成 <code>refersh_token</code>。</p>
+<h3 id="16-5-图片字段返回-URL"><a href="#16-5-图片字段返回-URL" class="headerlink" title="16.5 图片字段返回 URL"></a>16.5 图片字段返回 URL</h3><p>后端返回图片时要使用：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">user_profile.photo.url</span><br></pre></td></tr></table></figure></div>
+
+<p>不要直接返回 <code>user_profile.photo</code>。</p>
+<h3 id="16-6-捕获异常不要吞掉问题"><a href="#16-6-捕获异常不要吞掉问题" class="headerlink" title="16.6 捕获异常不要吞掉问题"></a>16.6 捕获异常不要吞掉问题</h3><p>开发阶段不建议写裸 <code>except:</code> 后完全不打印错误，否则难以调试。更好的方式是记录日志。</p>
+<hr>
+<h2 id="十七、小结"><a href="#十七、小结" class="headerlink" title="十七、小结"></a>十七、小结</h2><p>本节建立了完整认证闭环：</p>
+<ol>
+<li>后端使用 Django <code>User</code> + <code>UserProfile</code> 管理账号和资料；</li>
+<li>登录 / 注册后生成 JWT；</li>
+<li>Access Token 放前端内存，Refresh Token 放 HttpOnly Cookie；</li>
+<li>Axios 自动携带 Token，并在 401 时自动刷新；</li>
+<li>Pinia 保存用户信息；</li>
+<li>App.vue 刷新后自动恢复用户状态；</li>
+<li>Router 守卫保护需要登录的页面；</li>
+<li>导航栏根据登录状态显示登录按钮或用户菜单。</li>
+</ol>
+<hr>
+<h2 id="十八、新手版：登录到底发生了什么"><a href="#十八、新手版：登录到底发生了什么" class="headerlink" title="十八、新手版：登录到底发生了什么"></a>十八、新手版：登录到底发生了什么</h2><h3 id="18-1-用生活例子理解-Token"><a href="#18-1-用生活例子理解-Token" class="headerlink" title="18.1 用生活例子理解 Token"></a>18.1 用生活例子理解 Token</h3><p>可以把网站想象成一栋办公楼：</p>
+<ul>
+<li>用户名和密码：第一次进楼时出示身份证；</li>
+<li>Access Token：临时门禁卡，有效期短；</li>
+<li>Refresh Token：续卡凭证，放在更安全的地方；</li>
+<li>后端 API：不同办公室；</li>
+<li><code>IsAuthenticated</code>：门口保安，检查你有没有门禁卡。</li>
+</ul>
+<p>登录成功后，前端每次访问需要权限的接口，都要带上门禁卡：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Authorization: Bearer &lt;access_token&gt;</span><br></pre></td></tr></table></figure></div>
+
+<p>后端验证通过后，<code>request.user</code> 就会变成当前登录用户。</p>
+<h3 id="18-2-为什么刷新页面后还能保持登录"><a href="#18-2-为什么刷新页面后还能保持登录" class="headerlink" title="18.2 为什么刷新页面后还能保持登录"></a>18.2 为什么刷新页面后还能保持登录</h3><p>刷新页面会导致 JavaScript 内存中的 Pinia 状态丢失。</p>
+<p>但是 Refresh Token 保存在 HttpOnly Cookie 中，浏览器会自动带给后端。</p>
+<p>所以恢复登录的过程是：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">刷新页面</span><br><span class="line">  ↓</span><br><span class="line">前端没有 access token</span><br><span class="line">  ↓</span><br><span class="line">请求用户信息失败，返回 401</span><br><span class="line">  ↓</span><br><span class="line">Axios 自动请求 refresh_token</span><br><span class="line">  ↓</span><br><span class="line">后端从 Cookie 里拿到 refresh token</span><br><span class="line">  ↓</span><br><span class="line">生成新的 access token</span><br><span class="line">  ↓</span><br><span class="line">前端重新请求用户信息</span><br><span class="line">  ↓</span><br><span class="line">登录状态恢复</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="十九、跟做步骤：如何验证登录模块"><a href="#十九、跟做步骤：如何验证登录模块" class="headerlink" title="十九、跟做步骤：如何验证登录模块"></a>十九、跟做步骤：如何验证登录模块</h2><h3 id="19-1-验证注册"><a href="#19-1-验证注册" class="headerlink" title="19.1 验证注册"></a>19.1 验证注册</h3><ol>
+<li>启动后端；</li>
+<li>启动前端；</li>
+<li>打开注册页面；</li>
+<li>输入用户名和密码；</li>
+<li>点击注册；</li>
+<li>注册成功后进入首页或登录状态页面。</li>
+</ol>
+<p>验证数据库中是否创建用户：</p>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd backend</span><br><span class="line">python manage.py shell</span><br></pre></td></tr></table></figure></div>
+
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.contrib.auth.models <span class="keyword">import</span> User</span><br><span class="line">User.objects.<span class="built_in">all</span>()</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="19-2-验证登录"><a href="#19-2-验证登录" class="headerlink" title="19.2 验证登录"></a>19.2 验证登录</h3><p>打开浏览器开发者工具 <code>Network</code>，点击登录后观察：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">POST /api/user/account/login/</span><br></pre></td></tr></table></figure></div>
+
+<p>如果成功，响应中应包含：</p>
+<div class="code-container" data-rel="Json"><figure class="iseeu highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">{</span></span><br><span class="line">  <span class="attr">"result"</span><span class="punctuation">:</span> <span class="string">"success"</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">"access"</span><span class="punctuation">:</span> <span class="string">"..."</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">"username"</span><span class="punctuation">:</span> <span class="string">"..."</span></span><br><span class="line"><span class="punctuation">}</span></span><br></pre></td></tr></table></figure></div>
+
+<p>同时在 <code>Application -&gt; Cookies</code> 中可以看到 <code>refresh_token</code>。</p>
+<h3 id="19-3-验证自动刷新-Token"><a href="#19-3-验证自动刷新-Token" class="headerlink" title="19.3 验证自动刷新 Token"></a>19.3 验证自动刷新 Token</h3><p>可以把 Access Token 有效期调短，例如 1 分钟，然后：</p>
+<ol>
+<li>登录；</li>
+<li>等 Access Token 过期；</li>
+<li>再请求需要登录的页面；</li>
+<li>观察 Network 中是否先出现 401，再出现 refresh_token 请求，再重发原请求。</li>
+</ol>
+<hr>
+<h2 id="二十、登录模块常见报错排查"><a href="#二十、登录模块常见报错排查" class="headerlink" title="二十、登录模块常见报错排查"></a>二十、登录模块常见报错排查</h2><h3 id="20-1-登录后仍然显示未登录"><a href="#20-1-登录后仍然显示未登录" class="headerlink" title="20.1 登录后仍然显示未登录"></a>20.1 登录后仍然显示未登录</h3><p>检查：</p>
+<ol>
+<li>后端是否返回了 <code>access</code>；</li>
+<li>前端是否调用 <code>user.setAccessToken(data.access)</code>；</li>
+<li>前端是否调用 <code>user.setUserInfo(data)</code>；</li>
+<li>导航栏是否使用了正确的 store；</li>
+<li><code>hasPulledUserInfo</code> 是否被正确设置。</li>
+</ol>
+<h3 id="20-2-Cookie-没有保存"><a href="#20-2-Cookie-没有保存" class="headerlink" title="20.2 Cookie 没有保存"></a>20.2 Cookie 没有保存</h3><p>检查：</p>
+<ol>
+<li>后端 <code>set_cookie</code> 是否执行；</li>
+<li>前端 Axios 是否设置 <code>withCredentials: true</code>；</li>
+<li>后端是否设置 <code>CORS_ALLOW_CREDENTIALS = True</code>；</li>
+<li>浏览器是否拦截第三方 Cookie；</li>
+<li>开发环境下 <code>secure=True</code> 会导致 HTTP 无法写入 Cookie。</li>
+</ol>
+<h3 id="20-3-一直-401"><a href="#20-3-一直-401" class="headerlink" title="20.3 一直 401"></a>20.3 一直 401</h3><p>检查：</p>
+<ol>
+<li>请求头是否有 <code>Authorization</code>；</li>
+<li>格式是否是 <code>Bearer token</code>；</li>
+<li>Token 是否过期；</li>
+<li>后端 JWT 配置是否正确；</li>
+<li>访问的接口是否加了 <code>IsAuthenticated</code>。</li>
+</ol>
+<h3 id="20-4-注册时报用户名已存在"><a href="#20-4-注册时报用户名已存在" class="headerlink" title="20.4 注册时报用户名已存在"></a>20.4 注册时报用户名已存在</h3><p>检查数据库：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.contrib.auth.models <span class="keyword">import</span> User</span><br><span class="line">User.objects.<span class="built_in">filter</span>(username=<span class="string">'你的用户名'</span>).exists()</span><br></pre></td></tr></table></figure></div>
+
+<p>如果返回 <code>True</code>，说明这个用户名已经被注册。</p>
+<hr>
+<h2 id="二十一、本节复习问题"><a href="#二十一、本节复习问题" class="headerlink" title="二十一、本节复习问题"></a>二十一、本节复习问题</h2><ol>
+<li>为什么项目要有 <code>UserProfile</code>，而不是只用 Django 自带 <code>User</code>？</li>
+<li><code>Access Token</code> 和 <code>Refresh Token</code> 分别保存在什么地方？</li>
+<li>为什么 Refresh Token 要放在 HttpOnly Cookie 中？</li>
+<li>Axios 请求拦截器做了什么？</li>
+<li>Axios 响应拦截器如何处理 401？</li>
+<li><code>IsAuthenticated</code> 的作用是什么？</li>
+<li>页面刷新后，前端如何恢复用户状态？</li>
+<li>为什么需要 <code>hasPulledUserInfo</code>？</li>
+</ol>
+<hr>
+<h2 id="二十二、核心接口完整请求-响应示例"><a href="#二十二、核心接口完整请求-响应示例" class="headerlink" title="二十二、核心接口完整请求 / 响应示例"></a>二十二、核心接口完整请求 / 响应示例</h2><h3 id="22-1-注册接口"><a href="#22-1-注册接口" class="headerlink" title="22.1 注册接口"></a>22.1 注册接口</h3><div class="code-container" data-rel="Http"><figure class="iseeu highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">POST /api/user/account/register/</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>application/json</span><br></pre></td></tr></table></figure></div>
+
+<p>请求体：</p>
+<div class="code-container" data-rel="Json"><figure class="iseeu highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">{</span></span><br><span class="line">  <span class="attr">"username"</span><span class="punctuation">:</span> <span class="string">"alice"</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">"password"</span><span class="punctuation">:</span> <span class="string">"123456"</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">"password_confirm"</span><span class="punctuation">:</span> <span class="string">"123456"</span></span><br><span class="line"><span class="punctuation">}</span></span><br></pre></td></tr></table></figure></div>
+
+<p>成功响应：</p>
+<div class="code-container" data-rel="Json"><figure class="iseeu highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">{</span></span><br><span class="line">  <span class="attr">"result"</span><span class="punctuation">:</span> <span class="string">"success"</span></span><br><span class="line"><span class="punctuation">}</span></span><br></pre></td></tr></table></figure></div>
+
+<p>失败响应示例：</p>
+<div class="code-container" data-rel="Json"><figure class="iseeu highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">{</span></span><br><span class="line">  <span class="attr">"result"</span><span class="punctuation">:</span> <span class="string">"用户名已存在"</span></span><br><span class="line"><span class="punctuation">}</span></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="22-2-登录接口"><a href="#22-2-登录接口" class="headerlink" title="22.2 登录接口"></a>22.2 登录接口</h3><div class="code-container" data-rel="Http"><figure class="iseeu highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">POST /api/user/account/login/</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>application/json</span><br></pre></td></tr></table></figure></div>
+
+<p>请求体：</p>
+<div class="code-container" data-rel="Json"><figure class="iseeu highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">{</span></span><br><span class="line">  <span class="attr">"username"</span><span class="punctuation">:</span> <span class="string">"alice"</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">"password"</span><span class="punctuation">:</span> <span class="string">"123456"</span></span><br><span class="line"><span class="punctuation">}</span></span><br></pre></td></tr></table></figure></div>
+
+<p>成功响应：</p>
+<div class="code-container" data-rel="Json"><figure class="iseeu highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">{</span></span><br><span class="line">  <span class="attr">"result"</span><span class="punctuation">:</span> <span class="string">"success"</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">"access"</span><span class="punctuation">:</span> <span class="string">"eyJhbGciOi..."</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">"id"</span><span class="punctuation">:</span> <span class="number">1</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">"username"</span><span class="punctuation">:</span> <span class="string">"alice"</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">"photo"</span><span class="punctuation">:</span> <span class="string">"/media/user/photo/default.png"</span></span><br><span class="line"><span class="punctuation">}</span></span><br></pre></td></tr></table></figure></div>
+
+<p>同时后端会通过响应头设置 Cookie：</p>
+<div class="code-container" data-rel="Http"><figure class="iseeu highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Set-Cookie</span><span class="punctuation">: </span>refresh_token=eyJhbGciOi...; HttpOnly; Path=/</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="22-3-获取当前用户信息接口"><a href="#22-3-获取当前用户信息接口" class="headerlink" title="22.3 获取当前用户信息接口"></a>22.3 获取当前用户信息接口</h3><div class="code-container" data-rel="Http"><figure class="iseeu highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GET /api/user/account/info/</span><br><span class="line"><span class="attribute">Authorization</span><span class="punctuation">: </span>Bearer &lt;access_token&gt;</span><br></pre></td></tr></table></figure></div>
+
+<p>成功响应：</p>
+<div class="code-container" data-rel="Json"><figure class="iseeu highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">{</span></span><br><span class="line">  <span class="attr">"result"</span><span class="punctuation">:</span> <span class="string">"success"</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">"id"</span><span class="punctuation">:</span> <span class="number">1</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">"username"</span><span class="punctuation">:</span> <span class="string">"alice"</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">"photo"</span><span class="punctuation">:</span> <span class="string">"/media/user/photo/alice.png"</span></span><br><span class="line"><span class="punctuation">}</span></span><br></pre></td></tr></table></figure></div>
+
+<p>未登录响应：</p>
+<div class="code-container" data-rel="Json"><figure class="iseeu highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">{</span></span><br><span class="line">  <span class="attr">"detail"</span><span class="punctuation">:</span> <span class="string">"Authentication credentials were not provided."</span></span><br><span class="line"><span class="punctuation">}</span></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="22-4-刷新-Token-接口"><a href="#22-4-刷新-Token-接口" class="headerlink" title="22.4 刷新 Token 接口"></a>22.4 刷新 Token 接口</h3><div class="code-container" data-rel="Http"><figure class="iseeu highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">POST /api/user/account/token/refresh/</span><br><span class="line"><span class="attribute">Cookie</span><span class="punctuation">: </span>refresh_token=&lt;refresh_token&gt;</span><br></pre></td></tr></table></figure></div>
+
+<p>成功响应：</p>
+<div class="code-container" data-rel="Json"><figure class="iseeu highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">{</span></span><br><span class="line">  <span class="attr">"result"</span><span class="punctuation">:</span> <span class="string">"success"</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">"access"</span><span class="punctuation">:</span> <span class="string">"新的access_token"</span></span><br><span class="line"><span class="punctuation">}</span></span><br></pre></td></tr></table></figure></div>
+
+<p>失败响应：</p>
+<div class="code-container" data-rel="Json"><figure class="iseeu highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">{</span></span><br><span class="line">  <span class="attr">"result"</span><span class="punctuation">:</span> <span class="string">"refresh token无效或已过期"</span></span><br><span class="line"><span class="punctuation">}</span></span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="二十三、关键代码逐行解释示例"><a href="#二十三、关键代码逐行解释示例" class="headerlink" title="二十三、关键代码逐行解释示例"></a>二十三、关键代码逐行解释示例</h2><p>以后看到类似代码时，可以这样拆开理解：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">InfoView</span>(<span class="title class_ inherited__">APIView</span>):</span><br><span class="line">    permission_classes = [IsAuthenticated]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get</span>(<span class="params">self, request</span>):</span><br><span class="line">        user = request.user</span><br><span class="line">        profile = user.userprofile</span><br><span class="line">        <span class="keyword">return</span> Response({</span><br><span class="line">            <span class="string">"result"</span>: <span class="string">"success"</span>,</span><br><span class="line">            <span class="string">"id"</span>: user.<span class="built_in">id</span>,</span><br><span class="line">            <span class="string">"username"</span>: user.username,</span><br><span class="line">            <span class="string">"photo"</span>: profile.photo.url,</span><br><span class="line">        })</span><br></pre></td></tr></table></figure></div>
+
+<p>逐行解释：</p>
+<table>
+<thead>
+<tr>
+<th>代码</th>
+<th>新手解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>class InfoView(APIView):</code></td>
+<td>定义一个 DRF 接口视图类</td>
+</tr>
+<tr>
+<td><code>permission_classes = [IsAuthenticated]</code></td>
+<td>这个接口必须登录后才能访问</td>
+</tr>
+<tr>
+<td><code>def get(self, request):</code></td>
+<td>当前端发送 GET 请求时执行这个函数</td>
+</tr>
+<tr>
+<td><code>user = request.user</code></td>
+<td>DRF 根据 Token 找到当前用户</td>
+</tr>
+<tr>
+<td><code>profile = user.userprofile</code></td>
+<td>通过一对一关系找到用户扩展资料</td>
+</tr>
+<tr>
+<td><code>return Response(...)</code></td>
+<td>把用户信息以 JSON 格式返回给前端</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="二十四、Vue-登录状态数据流图"><a href="#二十四、Vue-登录状态数据流图" class="headerlink" title="二十四、Vue 登录状态数据流图"></a>二十四、Vue 登录状态数据流图</h2><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">LoginView.vue</span><br><span class="line">  │ 用户输入账号密码</span><br><span class="line">  ↓</span><br><span class="line">loginApi.js</span><br><span class="line">  │ POST /login/</span><br><span class="line">  ↓</span><br><span class="line">后端 LoginView</span><br><span class="line">  │ 校验成功，返回 access，写入 refresh cookie</span><br><span class="line">  ↓</span><br><span class="line">Pinia user store</span><br><span class="line">  │ 保存 access、id、username、photo</span><br><span class="line">  ↓</span><br><span class="line">NavBar.vue</span><br><span class="line">  │ 根据 store 显示头像或登录按钮</span><br><span class="line">  ↓</span><br><span class="line">Axios 请求拦截器</span><br><span class="line">  │ 后续请求自动带 Authorization</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="二十五、后端登录视图处理流程"><a href="#二十五、后端登录视图处理流程" class="headerlink" title="二十五、后端登录视图处理流程"></a>二十五、后端登录视图处理流程</h2><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">收到 POST /login/</span><br><span class="line">  ↓</span><br><span class="line">读取 username 和 password</span><br><span class="line">  ↓</span><br><span class="line">调用 authenticate 校验账号密码</span><br><span class="line">  ↓</span><br><span class="line">如果失败，返回用户名或密码错误</span><br><span class="line">  ↓</span><br><span class="line">如果成功，生成 refresh 和 access</span><br><span class="line">  ↓</span><br><span class="line">把 refresh 写入 HttpOnly Cookie</span><br><span class="line">  ↓</span><br><span class="line">把 access 和用户信息放入 JSON 返回</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="二十六、小练习与自测答案"><a href="#二十六、小练习与自测答案" class="headerlink" title="二十六、小练习与自测答案"></a>二十六、小练习与自测答案</h2><h3 id="练习-1"><a href="#练习-1" class="headerlink" title="练习 1"></a>练习 1</h3><p>问题：如果前端请求用户信息接口时没有携带 <code>Authorization</code> 请求头，会发生什么？</p>
+<p>答案：后端的 <code>IsAuthenticated</code> 会拦截请求，返回 401，前端应尝试使用 refresh token 刷新 access token。</p>
+<h3 id="练习-2"><a href="#练习-2" class="headerlink" title="练习 2"></a>练习 2</h3><p>问题：为什么 Refresh Token 不建议直接放在 LocalStorage？</p>
+<p>答案：LocalStorage 可以被 JavaScript 读取，如果页面出现 XSS 漏洞，攻击者可能偷走 Refresh Token。HttpOnly Cookie 不能被 JS 直接读取，相对更安全。</p>
+<h3 id="练习-3"><a href="#练习-3" class="headerlink" title="练习 3"></a>练习 3</h3><p>问题：为什么需要 Axios 响应拦截器？</p>
+<p>答案：因为 access token 会过期。响应拦截器可以统一处理 401，自动刷新 token 并重发原请求，避免每个接口都写重复逻辑。</p>
+
+		</div>
+
+		
+		<div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+			<div class="article-copyright-info-container">
+    <ul>
+        <li><strong>标题:</strong> 2.登录模块与前后端认证体系</li>
+        <li><strong>作者:</strong> Lionlnuc</li>
+        <li><strong>创建于
+                :</strong> 2026-07-12 00:00:00</li>
+        
+            <li>
+                <strong>更新于
+                    :</strong> 2026-07-12 00:00:00
+            </li>
+        
+        <li>
+            <strong>链接:</strong> https://lionlnuc.github.io/2026/07/12/AgentTalk/2.登录模块/
+        </li>
+        <li>
+            <strong>
+                版权声明:
+            </strong>
+            
+
+            
+                本文章采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a> 进行许可。
+            
+        </li>
+    </ul>
+</div>
+
+		</div>
+		
+
+		
+		<ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/AgentTalk/">#AgentTalk</a>&nbsp;
+			</li>
+			
+		</ul>
+		
+
+		
+
+		
+		<div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+			
+			<div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="prev" rel="prev" href="/2026/07/12/AgentTalk/4.%20%E6%B5%81%E5%BC%8F%E5%B8%83%E5%B1%80/">
+					<span class="left arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-left"></i>
+					</span>
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">4.流式布局、首页、搜索与好友入口</span>
+						<span class="post-nav-item">上一篇</span>
+					</span>
+				</a>
+			</div>
+			
+			
+			<div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="next" rel="next" href="/2026/07/12/AgentTalk/%E8%AF%B4%E6%98%8E/">
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">0.说明</span>
+						<span class="post-nav-item">下一篇</span>
+					</span>
+					<span class="right arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-right"></i>
+					</span>
+				</a>
+			</div>
+			
+		</div>
+		
+
+
+		
+		<div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+			<div class="comments-container mt-10 w-full ">
+    <div id="comment-anchor" class="w-full h-2.5"></div>
+    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
+        评论
+    </div>
+    
+
+        
+            
+    <div id="giscus-container"></div>
+    <script data-swup-reload-script defer>
+        (function() {
+            const containerId = "giscus-container";
+            const mapping = "pathname";
+            const lang = "zh-CN";
+            const inputPosition = "bottom";
+            const reactionsEnabled = "1" === "1";
+            const emitMetadata = "1" === "1";
+            const strict = "0" === "1";
+            const loading = "lazy";
+
+            const getTerm = () => {
+                if (mapping === "pathname") return location.pathname;
+                if (mapping === "url") return location.href;
+                if (mapping === "title") return document.title;
+                if (mapping === "og:title") {
+                    const ogTitle = document.querySelector("meta[property='og:title']");
+                    return ogTitle?.content || document.title;
+                }
+                return "";
+            };
+
+            const sendUpdate = () => {
+                const iframe = document.querySelector("iframe.giscus-frame");
+                if (!iframe) {
+                    return;
+                }
+
+                const setConfig = {
+                    theme: "preferred_color_scheme",
+                    lang,
+                    inputPosition,
+                    reactionsEnabled,
+                    emitMetadata,
+                    strict,
+                };
+
+                if (mapping !== "number") {
+                    const term = getTerm();
+                    if (term) {
+                        setConfig.term = term;
+                    }
+                }
+
+                iframe.contentWindow.postMessage(
+                    { giscus: { setConfig } },
+                    "https://giscus.app",
+                );
+            };
+
+            const loadGiscus = () => {
+                const container = document.getElementById(containerId);
+                if (!container) {
+                    return;
+                }
+
+                const iframe = container.querySelector("iframe.giscus-frame");
+                if (iframe) {
+                    sendUpdate();
+                    return;
+                }
+
+                if (container.dataset.giscusInit === "true") {
+                    return;
+                }
+
+                const giscusConfig = {
+                    src: "https://giscus.app/client.js",
+                    "data-repo": "lionlnuc/lionlnuc.github.io",
+                    "data-repo-id": "R_kgDOQnj-7Q",
+                    "data-category": "Announcements",
+                    "data-category-id": "DIC_kwDOQnj-7c4Cz7IZ",
+                    "data-mapping": mapping,
+                    "data-strict": "0",
+                    "data-reactions-enabled": "1",
+                    "data-emit-metadata": "1",
+                    "data-theme": "preferred_color_scheme",
+                    "data-lang": lang,
+                    "data-input-position": inputPosition,
+                    "data-loading": loading,
+                    crossorigin: "anonymous",
+                    async: true,
+                };
+
+                const giscusScript = document.createElement("script");
+                for (const key in giscusConfig) {
+                    giscusScript.setAttribute(key, giscusConfig[key]);
+                }
+                container.appendChild(giscusScript);
+                container.dataset.giscusInit = "true";
+            };
+
+            const runGiscus = () => {
+                const container = document.getElementById(containerId);
+                if (!container) {
+                    return;
+                }
+
+                if (container.querySelector("iframe.giscus-frame")) {
+                    sendUpdate();
+                    return;
+                }
+
+                loadGiscus();
+            };
+
+            runGiscus();
+        })();
+    </script>
+
+
+        
+    
+</div>
+
+		</div>
+		
+	</div>
+
+	
+	<div class="toc-content-container">
+		<div class="post-toc-wrap">
+	<div class="post-toc">
+		<div class="toc-title">目录</div>
+		<div class="page-title">2.登录模块与前后端认证体系</div>
+		<ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%99%BB%E5%BD%95%E6%A8%A1%E5%9D%97%E4%B8%8E%E5%89%8D%E5%90%8E%E7%AB%AF%E8%AE%A4%E8%AF%81%E4%BD%93%E7%B3%BB"><span class="nav-text">登录模块与前后端认证体系</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E7%9B%AE%E6%A0%87"><span class="nav-text">一、目标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E8%AE%A4%E8%AF%81%E6%A8%A1%E5%9D%97%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84"><span class="nav-text">二、认证模块总体架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E6%95%B0%E6%8D%AE%E6%B5%81%E6%A6%82%E8%A7%88"><span class="nav-text">2.1 数据流概览</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E5%8F%8C-Token-%E8%AE%BE%E8%AE%A1"><span class="nav-text">2.2 双 Token 设计</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%90%8E%E7%AB%AF%E7%94%A8%E6%88%B7%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B"><span class="nav-text">三、后端用户数据模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Django-%E5%86%85%E7%BD%AE-User"><span class="nav-text">3.1 Django 内置 User</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-UserProfile-%E6%89%A9%E5%B1%95%E6%A8%A1%E5%9E%8B"><span class="nav-text">3.2 UserProfile 扩展模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-OneToOneField-%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-text">3.3 OneToOneField 的作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E6%B3%A8%E5%86%8C%E5%88%B0-Admin"><span class="nav-text">3.4 注册到 Admin</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%81%E7%A7%BB"><span class="nav-text">四、数据库迁移</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-makemigrations"><span class="nav-text">4.1 makemigrations</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-migrate"><span class="nav-text">4.2 migrate</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E6%A0%87%E5%87%86%E6%B5%81%E7%A8%8B"><span class="nav-text">4.3 标准流程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E5%90%8E%E7%AB%AF%E8%B4%A6%E5%8F%B7-API"><span class="nav-text">五、后端账号 API</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%E6%B3%A8%E5%86%8C%E6%8E%A5%E5%8F%A3"><span class="nav-text">5.1 注册接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-%E7%94%A8%E6%88%B7%E5%90%8D%E9%87%8D%E5%A4%8D%E6%A3%80%E6%9F%A5%E6%98%93%E9%94%99%E7%82%B9"><span class="nav-text">5.2 用户名重复检查易错点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-%E7%99%BB%E5%BD%95%E6%8E%A5%E5%8F%A3"><span class="nav-text">5.3 登录接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-%E9%80%80%E5%87%BA%E7%99%BB%E5%BD%95%E6%8E%A5%E5%8F%A3"><span class="nav-text">5.4 退出登录接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-5-%E5%88%B7%E6%96%B0-Token-%E6%8E%A5%E5%8F%A3"><span class="nav-text">5.5 刷新 Token 接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-6-%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%E6%8E%A5%E5%8F%A3"><span class="nav-text">5.6 获取用户信息接口</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E5%90%8E%E7%AB%AF%E8%B7%AF%E7%94%B1%E9%85%8D%E7%BD%AE"><span class="nav-text">六、后端路由配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E3%80%81%E5%89%8D%E7%AB%AF-Pinia-%E7%94%A8%E6%88%B7%E7%8A%B6%E6%80%81"><span class="nav-text">七、前端 Pinia 用户状态</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81-hasPulledUserInfo%EF%BC%9F"><span class="nav-text">7.1 为什么需要 hasPulledUserInfo？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB%E3%80%81Axios-%E8%AF%B7%E6%B1%82%E5%B0%81%E8%A3%85"><span class="nav-text">八、Axios 请求封装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-%E6%8B%A6%E6%88%AA%E5%99%A8%E6%B5%81%E7%A8%8B"><span class="nav-text">8.1 拦截器流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-%E5%A4%9A%E4%B8%AA%E8%AF%B7%E6%B1%82%E5%90%8C%E6%97%B6-401-%E7%9A%84%E5%A4%84%E7%90%86"><span class="nav-text">8.2 多个请求同时 401 的处理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D%E3%80%81%E7%99%BB%E5%BD%95%E9%A1%B5%E9%9D%A2"><span class="nav-text">九、登录页面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E3%80%81%E6%B3%A8%E5%86%8C%E9%A1%B5%E9%9D%A2"><span class="nav-text">十、注册页面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B8%80%E3%80%81%E5%AF%BC%E8%88%AA%E6%A0%8F%E7%99%BB%E5%BD%95%E7%8A%B6%E6%80%81"><span class="nav-text">十一、导航栏登录状态</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#11-1-%E9%81%BF%E5%85%8D%E5%88%B7%E6%96%B0%E9%97%AA%E7%83%81"><span class="nav-text">11.1 避免刷新闪烁</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%BA%8C%E3%80%81%E7%94%A8%E6%88%B7%E8%8F%9C%E5%8D%95%E4%B8%8E%E9%80%80%E5%87%BA%E7%99%BB%E5%BD%95"><span class="nav-text">十二、用户菜单与退出登录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B8%89%E3%80%81%E8%B7%AF%E7%94%B1%E5%AE%88%E5%8D%AB"><span class="nav-text">十三、路由守卫</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#13-1-%E8%B7%AF%E7%94%B1-meta"><span class="nav-text">13.1 路由 meta</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-2-beforeEach-%E5%AE%88%E5%8D%AB"><span class="nav-text">13.2 beforeEach 守卫</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-3-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%85%88%E5%88%A4%E6%96%AD-hasPulledUserInfo%EF%BC%9F"><span class="nav-text">13.3 为什么先判断 hasPulledUserInfo？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E5%9B%9B%E3%80%81App-vue-%E4%B8%AD%E6%81%A2%E5%A4%8D%E7%99%BB%E5%BD%95%E7%8A%B6%E6%80%81"><span class="nav-text">十四、App.vue 中恢复登录状态</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#14-1-%E9%A1%B5%E9%9D%A2%E5%88%B7%E6%96%B0%E6%81%A2%E5%A4%8D%E6%B5%81%E7%A8%8B"><span class="nav-text">14.1 页面刷新恢复流程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%BA%94%E3%80%81%E5%89%8D%E7%AB%AF%E8%B7%AF%E7%94%B1%E5%91%BD%E5%90%8D%E5%BB%BA%E8%AE%AE"><span class="nav-text">十五、前端路由命名建议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E5%85%AD%E3%80%81%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E4%B8%8E%E6%98%93%E9%94%99%E7%82%B9"><span class="nav-text">十六、常见问题与易错点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#16-1-Cookie-%E8%AE%BE%E7%BD%AE-secure"><span class="nav-text">16.1 Cookie 设置 secure</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-2-withCredentials-%E5%BF%85%E9%A1%BB%E5%BC%80%E5%90%AF"><span class="nav-text">16.2 withCredentials 必须开启</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-3-Authorization-%E6%A0%BC%E5%BC%8F"><span class="nav-text">16.3 Authorization 格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-4-refresh-token-%E6%8B%BC%E5%86%99"><span class="nav-text">16.4 refresh_token 拼写</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-5-%E5%9B%BE%E7%89%87%E5%AD%97%E6%AE%B5%E8%BF%94%E5%9B%9E-URL"><span class="nav-text">16.5 图片字段返回 URL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-6-%E6%8D%95%E8%8E%B7%E5%BC%82%E5%B8%B8%E4%B8%8D%E8%A6%81%E5%90%9E%E6%8E%89%E9%97%AE%E9%A2%98"><span class="nav-text">16.6 捕获异常不要吞掉问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B8%83%E3%80%81%E5%B0%8F%E7%BB%93"><span class="nav-text">十七、小结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E5%85%AB%E3%80%81%E6%96%B0%E6%89%8B%E7%89%88%EF%BC%9A%E7%99%BB%E5%BD%95%E5%88%B0%E5%BA%95%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88"><span class="nav-text">十八、新手版：登录到底发生了什么</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#18-1-%E7%94%A8%E7%94%9F%E6%B4%BB%E4%BE%8B%E5%AD%90%E7%90%86%E8%A7%A3-Token"><span class="nav-text">18.1 用生活例子理解 Token</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#18-2-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%88%B7%E6%96%B0%E9%A1%B5%E9%9D%A2%E5%90%8E%E8%BF%98%E8%83%BD%E4%BF%9D%E6%8C%81%E7%99%BB%E5%BD%95"><span class="nav-text">18.2 为什么刷新页面后还能保持登录</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B9%9D%E3%80%81%E8%B7%9F%E5%81%9A%E6%AD%A5%E9%AA%A4%EF%BC%9A%E5%A6%82%E4%BD%95%E9%AA%8C%E8%AF%81%E7%99%BB%E5%BD%95%E6%A8%A1%E5%9D%97"><span class="nav-text">十九、跟做步骤：如何验证登录模块</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#19-1-%E9%AA%8C%E8%AF%81%E6%B3%A8%E5%86%8C"><span class="nav-text">19.1 验证注册</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#19-2-%E9%AA%8C%E8%AF%81%E7%99%BB%E5%BD%95"><span class="nav-text">19.2 验证登录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#19-3-%E9%AA%8C%E8%AF%81%E8%87%AA%E5%8A%A8%E5%88%B7%E6%96%B0-Token"><span class="nav-text">19.3 验证自动刷新 Token</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8D%81%E3%80%81%E7%99%BB%E5%BD%95%E6%A8%A1%E5%9D%97%E5%B8%B8%E8%A7%81%E6%8A%A5%E9%94%99%E6%8E%92%E6%9F%A5"><span class="nav-text">二十、登录模块常见报错排查</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#20-1-%E7%99%BB%E5%BD%95%E5%90%8E%E4%BB%8D%E7%84%B6%E6%98%BE%E7%A4%BA%E6%9C%AA%E7%99%BB%E5%BD%95"><span class="nav-text">20.1 登录后仍然显示未登录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#20-2-Cookie-%E6%B2%A1%E6%9C%89%E4%BF%9D%E5%AD%98"><span class="nav-text">20.2 Cookie 没有保存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#20-3-%E4%B8%80%E7%9B%B4-401"><span class="nav-text">20.3 一直 401</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#20-4-%E6%B3%A8%E5%86%8C%E6%97%B6%E6%8A%A5%E7%94%A8%E6%88%B7%E5%90%8D%E5%B7%B2%E5%AD%98%E5%9C%A8"><span class="nav-text">20.4 注册时报用户名已存在</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8D%81%E4%B8%80%E3%80%81%E6%9C%AC%E8%8A%82%E5%A4%8D%E4%B9%A0%E9%97%AE%E9%A2%98"><span class="nav-text">二十一、本节复习问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8D%81%E4%BA%8C%E3%80%81%E6%A0%B8%E5%BF%83%E6%8E%A5%E5%8F%A3%E5%AE%8C%E6%95%B4%E8%AF%B7%E6%B1%82-%E5%93%8D%E5%BA%94%E7%A4%BA%E4%BE%8B"><span class="nav-text">二十二、核心接口完整请求 &#x2F; 响应示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#22-1-%E6%B3%A8%E5%86%8C%E6%8E%A5%E5%8F%A3"><span class="nav-text">22.1 注册接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#22-2-%E7%99%BB%E5%BD%95%E6%8E%A5%E5%8F%A3"><span class="nav-text">22.2 登录接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#22-3-%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%E6%8E%A5%E5%8F%A3"><span class="nav-text">22.3 获取当前用户信息接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#22-4-%E5%88%B7%E6%96%B0-Token-%E6%8E%A5%E5%8F%A3"><span class="nav-text">22.4 刷新 Token 接口</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8D%81%E4%B8%89%E3%80%81%E5%85%B3%E9%94%AE%E4%BB%A3%E7%A0%81%E9%80%90%E8%A1%8C%E8%A7%A3%E9%87%8A%E7%A4%BA%E4%BE%8B"><span class="nav-text">二十三、关键代码逐行解释示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8D%81%E5%9B%9B%E3%80%81Vue-%E7%99%BB%E5%BD%95%E7%8A%B6%E6%80%81%E6%95%B0%E6%8D%AE%E6%B5%81%E5%9B%BE"><span class="nav-text">二十四、Vue 登录状态数据流图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8D%81%E4%BA%94%E3%80%81%E5%90%8E%E7%AB%AF%E7%99%BB%E5%BD%95%E8%A7%86%E5%9B%BE%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B"><span class="nav-text">二十五、后端登录视图处理流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8D%81%E5%85%AD%E3%80%81%E5%B0%8F%E7%BB%83%E4%B9%A0%E4%B8%8E%E8%87%AA%E6%B5%8B%E7%AD%94%E6%A1%88"><span class="nav-text">二十六、小练习与自测答案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0-1"><span class="nav-text">练习 1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0-2"><span class="nav-text">练习 2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0-3"><span class="nav-text">练习 3</span></a></li></ol></li></ol></li></ol>
+
+	</div>
+</div>
+	</div>
+	
+</div>
+
+			</div>
+
+			
+		</div>
+
+		<div class="main-content-footer">
+			<footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2025</span>
+              -
+            
+            2026&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">Lionlnuc</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        共撰写了 44 篇文章
+                    </span>
+                    
+                </p>
+            
+        </div>
+        
+            <script data-swup-reload-script src="https://cn.vercount.one/js"></script>
+            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
+                
+                    <span id="busuanzi_container_site_uv" class="lg:!block">
+                        <span class="text-sm">访问人数</span>
+                        <span id="busuanzi_value_site_uv"></span>
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv" class="lg:!block">
+                        <span class="text-sm">总访问量</span>
+                        <span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">由 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a> 驱动</span>
+            <span class="text-sm lg:block">主题&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.9.0</a></span>
+        </div>
+        
+        
+            <div>
+                博客已运行 <span class="odometer" id="runtime_days" ></span> 天 <span class="odometer" id="runtime_hours"></span> 小时 <span class="odometer" id="runtime_minutes"></span> 分钟 <span class="odometer" id="runtime_seconds"></span> 秒
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+        
+    </div>  
+</footer>
+		</div>
+	</div>
+
+	
+	<div class="post-tools">
+		<div class="post-tools-container">
+	<ul class="article-tools-list">
+		<!-- TOC aside toggle -->
+		
+		<li class="right-bottom-tools page-aside-toggle">
+			<i class="fa-regular fa-outdent"></i>
+		</li>
+		
+
+		<!-- go comment -->
+		
+		<li class="go-comment">
+			<i class="fa-regular fa-comments"></i>
+		</li>
+		
+	</ul>
+</div>
+	</div>
+	
+
+	<div class="right-side-tools-container">
+		<div class="side-tools-container">
+	<ul class="hidden-tools-list">
+		<li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-plus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-minus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+			<i class="fa-regular fa-moon"></i>
+		</li>
+
+		<!-- rss -->
+		
+
+		
+
+		<li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+			<i class="fa-regular fa-arrow-down"></i>
+		</li>
+	</ul>
+
+	<ul class="visible-tools-list">
+		<li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+			<i class="fa-regular fa-cog fa-spin"></i>
+		</li>
+		
+		<li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+			<i class="arrow-up fas fa-arrow-up"></i>
+			<span class="percent"></span>
+		</li>
+		
+		
+	</ul>
+</div>
+	</div>
+
+	<div class="image-viewer-container" role="dialog" aria-modal="true" aria-label="图片查看器">
+	<button class="image-viewer-close" type="button" aria-label="关闭">
+		<i class="fa-solid fa-xmark"></i>
+	</button>
+	<button class="image-viewer-prev" type="button" aria-label="上一页">
+		<i class="fa-solid fa-chevron-left"></i>
+	</button>
+	<div class="image-viewer-frame">
+		<img src="" alt="">
+	</div>
+	<div class="image-viewer-exif-panel hidden absolute left-1/2 bottom-20 -translate-x-1/2 w-[min(92vw,420px)] max-h-[60vh] overflow-hidden rounded-2xl bg-background-color-transparent-80 p-4 text-left shadow-redefine-flat backdrop-blur-md" role="dialog" aria-label="EXIF" aria-hidden="true">
+		<div class="flex items-center justify-between mb-3">
+			<span class="text-sm font-semibold text-first-text-color">EXIF</span>
+			<button class="image-viewer-exif-close flex h-8 w-8 items-center justify-center rounded-full bg-background-color-transparent-80 text-first-text-color transition hover:bg-background-color-transparent-40" type="button" aria-label="关闭">
+				<i class="fa-solid fa-xmark text-[0.65rem]"></i>
+			</button>
+		</div>
+		<div class="image-viewer-exif-cards grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[50vh] overflow-y-auto pr-1 scrollbar-hide"></div>
+		<template class="image-viewer-exif-card-template">
+			<div class="rounded-lg bg-background-color-transparent-40 px-3 py-2">
+				<div class="image-viewer-exif-card-header flex items-center gap-2 mb-1">
+					<i class="image-viewer-exif-card-icon fa-solid fa-circle-info text-xs text-third-text-color"></i>
+					<div class="image-viewer-exif-card-title text-xs font-semibold text-first-text-color"></div>
+				</div>
+				<div class="image-viewer-exif-card-items flex flex-col gap-1"></div>
+			</div>
+		</template>
+	</div>
+	<button class="image-viewer-exif-toggle flex items-center gap-2 hidden absolute left-1/2 bottom-6 -translate-x-1/2 rounded-full border border-border-color bg-background-color-transparent-80 px-4 py-2 text-first-text-color backdrop-blur-md transition hover:bg-background-color-transparent-40" type="button" aria-label="EXIF" aria-expanded="false">
+		<i class="fa-solid fa-circle-info text-xs"></i>
+		<span class="text-xs font-semibold uppercase tracking-wider">EXIF</span>
+	</button>
+	<button class="image-viewer-next" type="button" aria-label="下一页">
+		<i class="fa-solid fa-chevron-right"></i>
+	</button>
+</div>
+
+
+	
+	<div class="search-pop-overlay">
+	<div class="popup search-popup">
+		<div class="search-header">
+			<span class="search-input-field-pre">
+				<i class="fa-solid fa-keyboard"></i>
+			</span>
+			<div class="search-input-container">
+				<input autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="站内搜索您需要的内容..." spellcheck="false" type="search" class="search-input">
+			</div>
+			<span class="popup-btn-close">
+				<i class="fa-solid fa-times"></i>
+			</span>
+		</div>
+		<div id="search-result">
+			<div id="no-result">
+				<i class="fa-solid fa-spinner fa-spin-pulse fa-5x fa-fw"></i>
+			</div>
+		</div>
+	</div>
+</div>
+	
+
+</main>
+
+
+
+<script src="/js/build/libs/Swup.min.js"></script>
+
+<script src="/js/build/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/build/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    window.swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+
+    window.dispatchEvent(
+        new CustomEvent("redefine:swup:ready", {
+            detail: {
+                swup: window.swup,
+            },
+        }),
+    );
+</script>
+
+
+
+
+	
+<script src="/js/build/main.js" type="module"></script>
+
+
+
+    
+<script src="/js/build/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+
+
+
+  
+<script src="/js/build/libs/Typed.min.js"></script>
+
+
+
+
+
+
+
+
+    
+<script src="/js/build/libs/minimasonry.min.js" data-swup-reload-script=""></script>
+
+
+
+
+<script src="/js/build/libs/moment-with-locales.min.js" data-swup-reload-script=""></script>
+
+
+
+	
+</body>
+
+</html>

@@ -1,0 +1,1790 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="软件开发,编程,技术学习,工程实践,C++,Java,Hexo,算法">
+    
+    
+    <meta name="author" content="Lionlnuc">
+    
+    <!-- Completely eliminate flash of wrong theme -->
+    <script>
+        (function() {
+            const THEME_KEY = "REDEFINE-THEME-STATUS";
+            const DARK = "dark", LIGHT = "light";
+            
+            // Get preferred theme
+            function getTheme() {
+                try {
+                    const saved = localStorage.getItem(THEME_KEY);
+                    if (saved) {
+                        const { isDark } = JSON.parse(saved);
+                        return isDark ? DARK : LIGHT;
+                    }
+                } catch (e) {}
+                
+                return matchMedia("(prefers-color-scheme: dark)").matches ? DARK : LIGHT;
+            }
+            
+            // Apply theme to document
+            function applyTheme(theme) {
+                const isDark = theme === DARK;
+                const root = document.documentElement;
+                
+                // Set classes for compatibility
+                root.classList.add(theme);
+                root.classList.remove(isDark ? LIGHT : DARK);
+                root.style.colorScheme = theme;
+            }
+            
+            // Initial application
+            const theme = getTheme();
+            applyTheme(theme);
+            
+            // Listen for system preference changes
+            matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ({ matches }) => {
+                // Only update if using system preference (no localStorage entry)
+                if (!localStorage.getItem(THEME_KEY)) {
+                    applyTheme(matches ? DARK : LIGHT);
+                }
+            });
+            
+            // Set body classes ASAP (before DOMContentLoaded)
+            (function() {
+                const addBodyClass = () => {
+                    const b = document.body;
+                    if (!b) return false;
+                    b.classList.add(theme + "-mode");
+                    return true;
+                };
+
+                // Try immediately
+                if (addBodyClass()) return;
+
+                // Observe until body exists
+                const mo = new MutationObserver(() => {
+                    if (addBodyClass()) mo.disconnect();
+                });
+                mo.observe(document.documentElement, { childList: true, subtree: true });
+            })();
+        })();
+    </script>
+    
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="https://lionlnuc.github.io/2026/07/12/agenttalk/3. 编辑资料、编辑角色模块/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+    
+        
+        <meta name="description" content="记录软件开发、技术学习、工程实践与生活思考的个人博客。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="3.编辑资料与编辑角色模块">
+<meta property="og:url" content="https://lionlnuc.github.io/2026/07/12/AgentTalk/3.%20%E7%BC%96%E8%BE%91%E8%B5%84%E6%96%99%E3%80%81%E7%BC%96%E8%BE%91%E8%A7%92%E8%89%B2%E6%A8%A1%E5%9D%97/">
+<meta property="og:site_name" content="Lionlnuc - 享受编程，享受生活">
+<meta property="og:description" content="记录软件开发、技术学习、工程实践与生活思考的个人博客。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://lionlnuc.github.io/images/redefine-og.webp">
+<meta property="article:published_time" content="2026-07-11T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-07-11T16:00:00.000Z">
+<meta property="article:author" content="Lionlnuc">
+<meta property="article:tag" content="AgentTalk">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lionlnuc.github.io/images/redefine-og.webp">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/image/logo.png" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/image/logo.png">
+    <meta name="theme-color" content="#83cff9">
+    <link rel="shortcut icon" href="/image/logo.png">
+    <!--- Page Info-->
+    
+    <title>
+        
+            3.编辑资料与编辑角色模块 | Lionlnuc
+        
+    </title>
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
+
+
+    <!--- Inject Part-->
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/css/build/tailwind.css">
+
+    
+
+    
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
+
+    
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
+
+    <!--- Font Part-->
+    
+    
+    
+    
+    
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"lionlnuc.github.io","root":"/","language":"zh-CN","path":"search.json"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":false,"title_alignment":"left","headings_top_spacing":{"h1":"3.2rem","h2":"2.4rem","h3":"1.9rem","h4":"1.6rem","h5":"1.4rem","h6":"1.3rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#83cff9","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":true,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":false,"custom_message":"Now loading......"},"side_tools":{"gear_rotation":true,"auto_expand":false},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"记录软件开发、技术学习、工程实践与生活思考的个人博客。"},"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/home-banner-light.webp","dark":"/images/home-banner-dark.webp"},"title":"Lionlnuc","subtitle":{"text":["技术学习与工程实践","记录问题、方案与思考","持续构建个人知识体系"],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":85,"backing_speed":24,"starting_delay":1000,"backing_delay":2200,"loop":true,"smart_backspace":true},"text_color":{"light":"#101010","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":true,"style":"default","links":[{"icon":"fa-brands fa-github","url":"https://github.com/lionlnuc","name":"github"},{"icon":"fa-solid fa-code","url":"https://blog.csdn.net/a140781","name":"CSDN"},{"icon":"fa-solid fa-at","url":"you@example.com"},{"icon":"fa-brands fa-telegram","url":null},{"icon":"/images/custom-icon.svg","url":null}],"qrs":[{"icon":"fa-brands fa-weixin","qr":"https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/qrcode_for_gh_94f2768aad8b_258.jpg","name":"weixin"},{"icon":"/images/custom-icon.svg","qr":null}]}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":false,"version":"11.4.1","theme":{"light":"default","dark":"dark"}}},"version":"2.9.0","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"专题":{"path":"/categories","icon":"fa-solid fa-layer-group"},"文章":{"icon":"fa-solid fa-book","submenus":{"归档":"/archives","标签":"/tags","说说":"/shuoshuo"}},"关于":{"path":"/about","icon":"fa-regular fa-user"},"GitHub":{"icon":"fa-brands fa-github","path":"https://github.com/lionlnuc"}},"search":{"enable":true,"preload":false,"path":"search.json","field":"post","content":false,"format":"striptags"}},"page_templates":{"friends_column":2,"tags_style":"blur","masonry":{"batch_size":12,"initial_batch_size":24}},"home":{"sidebar":{"enable":true,"position":"right","first_item":"info","announcement":"记录学习、实践与思考","show_on_mobile":true,"links":{"技术专题":{"path":"/categories","icon":"fa-solid fa-layer-group"},"文章归档":{"path":"/archives","icon":"fa-regular fa-archive"},"标签索引":{"path":"/tags","icon":"fa-regular fa-tags"},"关于本站":{"path":"/about","icon":"fa-regular fa-user"}}},"article_date_format":"auto","excerpt_length":160,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footer":{"runtime":true,"icon":"<i class=\"fa-solid fa-heart fa-beat\" style=\"--fa-animation-duration: 0.5s; color: #f54545\"></i>","start":"2025/12/15 22:45:00","statistics":true,"customize":null,"icp":{"enable":false,"number":null,"url":null}},"footerStart":"2025/12/15 22:45:00","mermaid":{"style":{"light":"default","dark":"dark"}}};
+    window.lang_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+    window.i18n = {"search":"站内搜索您需要的内容...","toc":"目录","prev":"上一页","next":"下一页","prev_posts":"上一篇","next_posts":"下一篇","page":"第 %d 页","recent_posts":"最新文章","share":"分享","powered_by":"由 %s 驱动","theme":"主题","rss_feed":"RSS Feed","category":"分类","categories":"分类","tag":"标签","tags":"标签","post":"文章","posts":"文章","tagcloud":"标签云","comment":"评论","comments":"评论","top":"置顶","sticky":"置顶","go-back-home":"回到首页","masonry_loading":"照片加载中...","image_viewer":"图片查看器","close":"关闭","exif":{"title":"EXIF","cards":{"camera":"相机","lens":"镜头","exposure":"曝光","other":"其他"},"fields":{"make":"品牌","model":"机型","date_taken":"拍摄时间","lens_model":"镜头","focal_length":"焦距","focus_mode":"对焦模式","shutter":"快门","aperture":"光圈","iso":"感光度","exposure_program":"曝光程序","exposure_compensation":"曝光补偿","metering_mode":"测光模式","flash":"闪光灯","white_balance":"白平衡","latitude":"纬度","longitude":"经度","altitude":"海拔"},"status":{"loading":"加载中...","no_exif":"无 EXIF 信息","library_missing":"EXIF 库未加载","image_source_missing":"图片地址不可用","unavailable":"EXIF 不可用（可能被 CORS 阻止或缺少元数据）","flag_unavailable":"EXIF 不可用"}},"home":"首页","archive":"归档","archives":"归档","about":"关于","links":"链接","link":"链接","friends":"友情链接","friend":"友情链接","timeline":"时间轴","shuoshuo":"说说","bookmarks":"书签","site_uv":"访问人数","site_pv":"总访问量","read_more":"阅读全文","wordcount":"字","min2read":"分钟","changelog":"更新日志","status":"状态","runtime":"博客已运行","days":"天","hours":"小时","minutes":"分钟","seconds":"秒","optimized_by":"并由 Evan 进行优化","rights":"版权所有","site_posts":"共撰写了 %s 篇文章","site_wordcount":"共 %s 字","copyright":{"title":"标题","author":"作者","link":"链接","create_time":"创建于","update_time":"更新于","license_title":"版权声明","license_content":"本文章采用 %s 进行许可。","all_rights_reserved":"版权所有 &#169 %s，禁止转载。","public_domain":"本文为公有领域作品，可自由转载、引用。"},"ago":{"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"},"create_time":"创建","update_time":"更新","expired":"这篇文章最后更新于 %s 天前，内容可能已经过时。"};
+    window.data = {"masonry":true};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 8.1.2"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+<body>
+	<div class="progress-bar-container">
+	
+	<span class="scroll-progress-bar"></span>
+	
+
+	
+	<span class="pjax-progress-bar"></span>
+	<!--        <span class="swup-progress-icon">-->
+	<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+	<!--        </span>-->
+	
+</div>
+
+<main class="page-container" id="swup">
+
+	
+
+	<div class="main-content-container flex flex-col justify-between min-h-dvh">
+		<div class="main-content-header">
+			<header class="navbar-container px-6 md:px-12">
+    <div class="navbar-content transition-navbar ">
+        <div class="left">
+            
+                <a class="logo-image h-8 w-8 sm:w-10 sm:h-10 mr-3" href="/">
+                    <img src="/image/logo.png" class="w-full h-full rounded-xs">
+                </a>
+            
+            <a class="logo-title" href="/">
+                
+                Lionlnuc
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    首页
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/categories"
+                                        >
+                                    <i class="fa-solid fa-layer-group fa-fw"></i>
+                                    专题
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="has-dropdown"
+                                   href="#"
+                                        onClick=&#34;return false;&#34;>
+                                    <i class="fa-solid fa-book fa-fw"></i>
+                                    文章
+                                    <i class="fa-solid fa-chevron-down fa-fw"></i>
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                                    <ul class="sub-menu">
+                                        
+                                            <li>
+                                                <a href="/archives">
+                                                    归档
+                                                </a>
+                                            </li>
+                                        
+                                            <li>
+                                                <a href="/tags">
+                                                    标签
+                                                </a>
+                                            </li>
+                                        
+                                            <li>
+                                                <a href="/shuoshuo">
+                                                    说说
+                                                </a>
+                                            </li>
+                                        
+                                    </ul>
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/about"
+                                        >
+                                    <i class="fa-regular fa-user fa-fw"></i>
+                                    关于
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   target="_blank" rel="noopener" href="https://github.com/lionlnuc"
+                                        >
+                                    <i class="fa-brands fa-github fa-fw"></i>
+                                    GITHUB
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                        <li class="navbar-item search search-popup-trigger">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-dvh w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                        >
+                            <span>
+                                首页
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/categories"
+                        >
+                            <span>
+                                专题
+                            </span>
+                            
+                                <i class="fa-solid fa-layer-group fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item-sub text-base my-1.5 flex flex-col w-full">
+                        
+                        <div class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary cursor-pointer text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                             navbar-data-toggle="submenu-文章"
+                        >
+                            <span>
+                                文章
+                            </span>
+                            
+                                <i class="fa-solid fa-chevron-right fa-sm fa-fw transition-all"></i>
+                            
+                        </div>
+                        
+
+                        
+                            <div class="flex-col items-start px-2 py-2 hidden" data-target="submenu-文章">
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           href="/archives">归档</a>
+                                    </div>
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           href="/tags">标签</a>
+                                    </div>
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           href="/shuoshuo">说说</a>
+                                    </div>
+                                
+                            </div>
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/about"
+                        >
+                            <span>
+                                关于
+                            </span>
+                            
+                                <i class="fa-regular fa-user fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           target="_blank" rel="noopener" href="https://github.com/lionlnuc"
+                        >
+                            <span>
+                                GITHUB
+                            </span>
+                            
+                                <i class="fa-brands fa-github fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+                
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/categories"
+                        >
+                            <span>技术专题</span>
+                            <i class="fa-solid fa-layer-group fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/archives"
+                        >
+                            <span>文章归档</span>
+                            <i class="fa-regular fa-archive fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/tags"
+                        >
+                            <span>标签索引</span>
+                            <i class="fa-regular fa-tags fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/about"
+                        >
+                            <span>关于本站</span>
+                            <i class="fa-regular fa-user fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">8</div>
+        <div class="label text-third-text-color text-sm">标签</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">3</div>
+        <div class="label text-third-text-color text-sm">专题</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">44</div>
+        <div class="label text-third-text-color text-sm">文章</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+		</div>
+
+		<div class="main-content-body transition-fade-up">
+			
+
+			<div class="main-content">
+				<div class="post-page-container flex relative justify-between box-border w-full h-full">
+	<div class="article-content-container">
+
+		<div class="article-title relative w-full">
+			
+			<div class="w-full flex items-center pt-6 justify-start">
+				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">3.编辑资料与编辑角色模块</h1>
+			</div>
+			
+		</div>
+
+		
+		<div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+			<div class="avatar w-[46px] h-[46px] shrink-0 rounded-medium border border-border-color p-px">
+				<img src="/image/avatar.png">
+			</div>
+			<div class="info flex flex-col justify-between">
+				<div class="author flex items-center">
+					<span class="name text-default-text-color text-lg font-semibold">Lionlnuc</span>
+					
+					<span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv4</span>
+					
+				</div>
+				<div class="meta-info">
+					<div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2026-07-12</span>
+        <span class="mobile">2026-07-12</span>
+        <span class="hover-info">创建</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2026-07-12</span>
+            <span class="mobile">2026-07-12</span>
+            <span class="hover-info">更新</span>
+        </span>
+    
+
+    
+        <span class="article-categories article-meta-item">
+            <i class="fa-regular fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/AgentTalk/">AgentTalk</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/AgentTalk/">AgentTalk</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+				</div>
+			</div>
+		</div>
+		
+
+		
+
+
+		<div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+			<h1 id="编辑资料与编辑角色模块"><a href="#编辑资料与编辑角色模块" class="headerlink" title="编辑资料与编辑角色模块"></a>编辑资料与编辑角色模块</h1><h2 id="一、目标"><a href="#一、目标" class="headerlink" title="一、目标"></a>一、目标</h2><p>本节完成两个核心能力：</p>
+<ul>
+<li>用户编辑资料：修改头像、用户名、个人简介；</li>
+<li>AI 角色管理：创建、更新、删除、获取单个角色。</li>
+</ul>
+<p>涉及的重要知识点：</p>
+<ul>
+<li><code>FormData</code> 文件上传；</li>
+<li>图片裁剪 Croppie；</li>
+<li>Base64 转 File；</li>
+<li>Django <code>ImageField</code>；</li>
+<li>删除旧媒体文件；</li>
+<li>Django ORM 外键查询；</li>
+<li>前端父子组件通信；</li>
+<li>角色 CRUD 接口设计。</li>
+</ul>
+<hr>
+<h2 id="二、编辑资料模块"><a href="#二、编辑资料模块" class="headerlink" title="二、编辑资料模块"></a>二、编辑资料模块</h2><h3 id="2-1-后端接口设计"><a href="#2-1-后端接口设计" class="headerlink" title="2.1 后端接口设计"></a>2.1 后端接口设计</h3><p>编辑资料接口通常为：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">POST /api/user/profile/update/</span><br></pre></td></tr></table></figure></div>
+
+<p>请求字段：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>来源</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>username</code></td>
+<td><code>request.data</code></td>
+<td>新用户名</td>
+</tr>
+<tr>
+<td><code>profile</code></td>
+<td><code>request.data</code></td>
+<td>新简介</td>
+</tr>
+<tr>
+<td><code>photo</code></td>
+<td><code>request.FILES</code></td>
+<td>新头像文件，可选</td>
+</tr>
+</tbody></table>
+<p>接口权限：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">permission_classes = [IsAuthenticated]</span><br></pre></td></tr></table></figure></div>
+
+<p>表示只有登录用户才能修改自己的资料。</p>
+<h3 id="2-2-删除旧头像工具函数"><a href="#2-2-删除旧头像工具函数" class="headerlink" title="2.2 删除旧头像工具函数"></a>2.2 删除旧头像工具函数</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> django.conf <span class="keyword">import</span> settings</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">remove_old_photo</span>(<span class="params">photo</span>):</span><br><span class="line">    <span class="keyword">if</span> photo <span class="keyword">and</span> photo.name != <span class="string">'user/photos/default.png'</span>:</span><br><span class="line">        old_path = settings.MEDIA_ROOT / photo.name</span><br><span class="line">        <span class="keyword">if</span> os.path.exists(old_path):</span><br><span class="line">            os.remove(old_path)</span><br></pre></td></tr></table></figure></div>
+
+<p>重点：</p>
+<ul>
+<li>不能删除默认头像；</li>
+<li><code>photo.name</code> 是相对于 <code>MEDIA_ROOT</code> 的路径；</li>
+<li>删除前必须判断文件是否存在。</li>
+</ul>
+<h3 id="2-3-更新资料接口核心逻辑"><a href="#2-3-更新资料接口核心逻辑" class="headerlink" title="2.3 更新资料接口核心逻辑"></a>2.3 更新资料接口核心逻辑</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.contrib.auth.models <span class="keyword">import</span> User</span><br><span class="line"><span class="keyword">from</span> django.utils.timezone <span class="keyword">import</span> now</span><br><span class="line"><span class="keyword">from</span> rest_framework.views <span class="keyword">import</span> APIView</span><br><span class="line"><span class="keyword">from</span> rest_framework.response <span class="keyword">import</span> Response</span><br><span class="line"><span class="keyword">from</span> rest_framework.permissions <span class="keyword">import</span> IsAuthenticated</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> web.models.user <span class="keyword">import</span> UserProfile</span><br><span class="line"><span class="keyword">from</span> web.views.utils.photo <span class="keyword">import</span> remove_old_photo</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">UpdateProfileView</span>(<span class="title class_ inherited__">APIView</span>):</span><br><span class="line">    permission_classes = [IsAuthenticated]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">post</span>(<span class="params">self, request</span>):</span><br><span class="line">        user = request.user</span><br><span class="line">        user_profile = UserProfile.objects.<span class="built_in">filter</span>(user=user).first()</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> user_profile:</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">'result'</span>: <span class="string">'用户资料不存在'</span>})</span><br><span class="line"></span><br><span class="line">        username = request.data.get(<span class="string">'username'</span>, <span class="string">''</span>).strip()</span><br><span class="line">        profile = request.data.get(<span class="string">'profile'</span>, <span class="string">''</span>).strip()[:<span class="number">500</span>]</span><br><span class="line">        photo = request.FILES.get(<span class="string">'photo'</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> username:</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">'result'</span>: <span class="string">'用户名不得为空'</span>})</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> profile:</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">'result'</span>: <span class="string">'简介不得为空'</span>})</span><br><span class="line">        <span class="keyword">if</span> username != user.username <span class="keyword">and</span> User.objects.<span class="built_in">filter</span>(username=username).exists():</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">'result'</span>: <span class="string">'该用户名已存在'</span>})</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> photo:</span><br><span class="line">            remove_old_photo(user_profile.photo)</span><br><span class="line">            user_profile.photo = photo</span><br><span class="line"></span><br><span class="line">        user.username = username</span><br><span class="line">        user.save()</span><br><span class="line"></span><br><span class="line">        user_profile.profile = profile</span><br><span class="line">        user_profile.update_time = now()</span><br><span class="line">        user_profile.save()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> Response({</span><br><span class="line">            <span class="string">'result'</span>: <span class="string">'success'</span>,</span><br><span class="line">            <span class="string">'user_id'</span>: user.<span class="built_in">id</span>,</span><br><span class="line">            <span class="string">'username'</span>: user.username,</span><br><span class="line">            <span class="string">'profile'</span>: user_profile.profile,</span><br><span class="line">            <span class="string">'photo'</span>: user_profile.photo.url,</span><br><span class="line">        })</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="2-4-路由"><a href="#2-4-路由" class="headerlink" title="2.4 路由"></a>2.4 路由</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">path(<span class="string">'api/user/profile/update/'</span>, UpdateProfileView.as_view()),</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="三、前端编辑资料页面"><a href="#三、前端编辑资料页面" class="headerlink" title="三、前端编辑资料页面"></a>三、前端编辑资料页面</h2><h3 id="3-1-组件拆分"><a href="#3-1-组件拆分" class="headerlink" title="3.1 组件拆分"></a>3.1 组件拆分</h3><p>建议拆成三个子组件：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">frontend/src/views/user/profile/components/</span><br><span class="line">├── Photo.vue       # 头像选择与裁剪</span><br><span class="line">├── Username.vue    # 用户名输入</span><br><span class="line">└── Profile.vue     # 简介输入</span><br></pre></td></tr></table></figure></div>
+
+<p>父组件：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">frontend/src/views/user/profile/ProfileIndex.vue</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="3-2-为什么要拆组件？"><a href="#3-2-为什么要拆组件？" class="headerlink" title="3.2 为什么要拆组件？"></a>3.2 为什么要拆组件？</h3><ul>
+<li>头像裁剪逻辑较复杂，单独维护更清晰；</li>
+<li>用户名、简介都是表单项，可独立复用；</li>
+<li>父组件只负责收集数据并提交。</li>
+</ul>
+<h3 id="3-3-子组件接收-props-与暴露数据"><a href="#3-3-子组件接收-props-与暴露数据" class="headerlink" title="3.3 子组件接收 props 与暴露数据"></a>3.3 子组件接收 props 与暴露数据</h3><p><code>Username.vue</code> 示例：</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&lt;script setup&gt;</span><br><span class="line">import { ref, watch } from 'vue'</span><br><span class="line"></span><br><span class="line">const props = defineProps(['username'])</span><br><span class="line">const myUsername = ref(props.username)</span><br><span class="line"></span><br><span class="line">watch(() =&gt; props.username, value =&gt; {</span><br><span class="line">  myUsername.value = value</span><br><span class="line">})</span><br><span class="line"></span><br><span class="line">defineExpose({ myUsername })</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;fieldset class="fieldset"&gt;</span><br><span class="line">    &lt;label class="label text-base"&gt;用户名&lt;/label&gt;</span><br><span class="line">    &lt;input v-model="myUsername" type="text" class="input w-108" /&gt;</span><br><span class="line">  &lt;/fieldset&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre></td></tr></table></figure></div>
+
+<p><code>watch</code> 的作用：刷新页面后，用户信息是异步从后端加载的，props 后变化时子组件也要同步更新。</p>
+<h3 id="3-4-Croppie-裁剪头像"><a href="#3-4-Croppie-裁剪头像" class="headerlink" title="3.4 Croppie 裁剪头像"></a>3.4 Croppie 裁剪头像</h3><p>安装：</p>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd frontend</span><br><span class="line">npm install croppie</span><br></pre></td></tr></table></figure></div>
+
+<p>使用：</p>
+<div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">Croppie</span> <span class="keyword">from</span> <span class="string">'croppie'</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">'croppie/croppie.css'</span></span><br></pre></td></tr></table></figure></div>
+
+<p>裁剪结果：</p>
+<div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">myPhoto.<span class="property">value</span> = <span class="keyword">await</span> croppie.<span class="title function_">result</span>({</span><br><span class="line">  <span class="attr">type</span>: <span class="string">'base64'</span>,</span><br><span class="line">  <span class="attr">size</span>: <span class="string">'viewport'</span>,</span><br><span class="line">})</span><br></pre></td></tr></table></figure></div>
+
+<p>注意事项：</p>
+<ul>
+<li><code>vue-croppie</code> 不支持 Vue 3 时，直接使用原生 <code>croppie</code>；</li>
+<li>每次打开弹窗前要避免重复初始化；</li>
+<li>组件卸载时执行 <code>croppie?.destroy()</code>；</li>
+<li><code>modal-box</code> 与 Croppie 样式冲突时，可加 <code>transition-none</code>。</li>
+</ul>
+<h3 id="3-5-Base64-转-File"><a href="#3-5-Base64-转-File" class="headerlink" title="3.5 Base64 转 File"></a>3.5 Base64 转 File</h3><p><code>frontend/src/js/utils/base64_to_file.js</code>：</p>
+<div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">function</span> <span class="title function_">base64ToFile</span>(<span class="params">base64, filename</span>) {</span><br><span class="line">  <span class="keyword">const</span> arr = base64.<span class="title function_">split</span>(<span class="string">','</span>)</span><br><span class="line">  <span class="keyword">const</span> mime = arr[<span class="number">0</span>].<span class="title function_">match</span>(<span class="regexp">/:(.*?);/</span>)[<span class="number">1</span>]</span><br><span class="line">  <span class="keyword">const</span> bstr = <span class="title function_">atob</span>(arr[<span class="number">1</span>])</span><br><span class="line">  <span class="keyword">let</span> n = bstr.<span class="property">length</span></span><br><span class="line">  <span class="keyword">const</span> u8arr = <span class="keyword">new</span> <span class="title class_">Uint8Array</span>(n)</span><br><span class="line">  <span class="keyword">while</span> (n--) u8arr[n] = bstr.<span class="title function_">charCodeAt</span>(n)</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">File</span>([u8arr], filename, { <span class="attr">type</span>: mime })</span><br><span class="line">}</span><br></pre></td></tr></table></figure></div>
+
+<p>该函数只适用于：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">data:image/png;base64,...</span><br></pre></td></tr></table></figure></div>
+
+<p>这种 data URL。</p>
+<h3 id="3-6-父组件提交-FormData"><a href="#3-6-父组件提交-FormData" class="headerlink" title="3.6 父组件提交 FormData"></a>3.6 父组件提交 FormData</h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">handleUpdate</span>(<span class="params"></span>) {</span><br><span class="line">  <span class="keyword">const</span> photo = photoRef.<span class="property">value</span>.<span class="property">myPhoto</span></span><br><span class="line">  <span class="keyword">const</span> username = usernameRef.<span class="property">value</span>.<span class="property">myUsername</span>.<span class="title function_">trim</span>()</span><br><span class="line">  <span class="keyword">const</span> profile = profileRef.<span class="property">value</span>.<span class="property">myProfile</span>.<span class="title function_">trim</span>()</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> formData = <span class="keyword">new</span> <span class="title class_">FormData</span>()</span><br><span class="line">  formData.<span class="title function_">append</span>(<span class="string">'username'</span>, username)</span><br><span class="line">  formData.<span class="title function_">append</span>(<span class="string">'profile'</span>, profile)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (photo &amp;&amp; photo.<span class="title function_">startsWith</span>(<span class="string">'data:'</span>)) {</span><br><span class="line">    formData.<span class="title function_">append</span>(<span class="string">'photo'</span>, <span class="title function_">base64ToFile</span>(photo, <span class="string">'photo.png'</span>))</span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> res = <span class="keyword">await</span> api.<span class="title function_">post</span>(<span class="string">'/api/user/profile/update/'</span>, formData)</span><br><span class="line">  <span class="keyword">const</span> data = res.<span class="property">data</span></span><br><span class="line">  <span class="keyword">if</span> (data.<span class="property">result</span> === <span class="string">'success'</span>) {</span><br><span class="line">    user.<span class="title function_">setUserInfo</span>(data)</span><br><span class="line">  }</span><br><span class="line">}</span><br></pre></td></tr></table></figure></div>
+
+<p>重点：</p>
+<ul>
+<li>上传文件必须使用 <code>FormData</code>；</li>
+<li>新头像是 Base64，需要转成 File；</li>
+<li>旧头像一般是 URL，不应传给 <code>base64ToFile</code>。</li>
+</ul>
+<hr>
+<h2 id="四、角色模型-Character"><a href="#四、角色模型-Character" class="headerlink" title="四、角色模型 Character"></a>四、角色模型 Character</h2><h3 id="4-1-字段设计"><a href="#4-1-字段设计" class="headerlink" title="4.1 字段设计"></a>4.1 字段设计</h3><p>角色模型用于保存 AI 角色信息：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> uuid</span><br><span class="line"><span class="keyword">from</span> django.db <span class="keyword">import</span> models</span><br><span class="line"><span class="keyword">from</span> django.utils.timezone <span class="keyword">import</span> now, localtime</span><br><span class="line"><span class="keyword">from</span> web.models.user <span class="keyword">import</span> UserProfile</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">photo_upload_to</span>(<span class="params">instance, filename</span>):</span><br><span class="line">    ext = filename.split(<span class="string">'.'</span>)[-<span class="number">1</span>]</span><br><span class="line">    filename = <span class="string">f'<span class="subst">{uuid.uuid4().<span class="built_in">hex</span>[:<span class="number">10</span>]}</span>.<span class="subst">{ext}</span>'</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">f'character/photos/<span class="subst">{instance.author.user_id}</span>/<span class="subst">{filename}</span>'</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">background_image_upload_to</span>(<span class="params">instance, filename</span>):</span><br><span class="line">    ext = filename.split(<span class="string">'.'</span>)[-<span class="number">1</span>]</span><br><span class="line">    filename = <span class="string">f'<span class="subst">{uuid.uuid4().<span class="built_in">hex</span>[:<span class="number">10</span>]}</span>.<span class="subst">{ext}</span>'</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">f'character/background_images/<span class="subst">{instance.author.user_id}</span>/<span class="subst">{filename}</span>'</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Character</span>(models.Model):</span><br><span class="line">    author = models.ForeignKey(UserProfile, on_delete=models.CASCADE)</span><br><span class="line">    name = models.CharField(max_length=<span class="number">50</span>)</span><br><span class="line">    photo = models.ImageField(upload_to=photo_upload_to)</span><br><span class="line">    profile = models.TextField(max_length=<span class="number">10000</span>)</span><br><span class="line">    background_image = models.ImageField(upload_to=background_image_upload_to)</span><br><span class="line">    voice = models.CharField(max_length=<span class="number">50</span>, default=<span class="string">'longanyang'</span>)</span><br><span class="line">    create_time = models.DateTimeField(default=now)</span><br><span class="line">    update_time = models.DateTimeField(default=now)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__str__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">f"<span class="subst">{self.author.user.username}</span> - <span class="subst">{self.name}</span> - <span class="subst">{localtime(self.create_time).strftime(<span class="string">'%Y-%m-%d %H:%M:%S'</span>)}</span>"</span></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="4-2-字段说明"><a href="#4-2-字段说明" class="headerlink" title="4.2 字段说明"></a>4.2 字段说明</h3><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>author</code></td>
+<td>创建者，指向 <code>UserProfile</code></td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td>角色名称</td>
+</tr>
+<tr>
+<td><code>photo</code></td>
+<td>角色头像</td>
+</tr>
+<tr>
+<td><code>profile</code></td>
+<td>角色设定、人设、简介，也是后续提示词重要来源</td>
+</tr>
+<tr>
+<td><code>background_image</code></td>
+<td>聊天背景图</td>
+</tr>
+<tr>
+<td><code>voice</code></td>
+<td>TTS 语音音色</td>
+</tr>
+<tr>
+<td><code>create_time</code></td>
+<td>创建时间</td>
+</tr>
+<tr>
+<td><code>update_time</code></td>
+<td>更新时间</td>
+</tr>
+</tbody></table>
+<h3 id="4-3-Admin-注册"><a href="#4-3-Admin-注册" class="headerlink" title="4.3 Admin 注册"></a>4.3 Admin 注册</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@admin.register(<span class="params">Character</span>)</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CharacterAdmin</span>(admin.ModelAdmin):</span><br><span class="line">    raw_id_fields = (<span class="string">'author'</span>,)</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="五、角色后端-CRUD"><a href="#五、角色后端-CRUD" class="headerlink" title="五、角色后端 CRUD"></a>五、角色后端 CRUD</h2><h3 id="5-1-创建角色"><a href="#5-1-创建角色" class="headerlink" title="5.1 创建角色"></a>5.1 创建角色</h3><p>接口：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">POST /api/create/character/create/</span><br></pre></td></tr></table></figure></div>
+
+<p>核心逻辑：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">CreateCharacterView</span>(<span class="title class_ inherited__">APIView</span>):</span><br><span class="line">    permission_classes = [IsAuthenticated]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">post</span>(<span class="params">self, request</span>):</span><br><span class="line">        user_profile = UserProfile.objects.get(user=request.user)</span><br><span class="line">        name = request.data.get(<span class="string">'name'</span>, <span class="string">''</span>).strip()</span><br><span class="line">        profile = request.data.get(<span class="string">'profile'</span>, <span class="string">''</span>).strip()[:<span class="number">10000</span>]</span><br><span class="line">        photo = request.FILES.get(<span class="string">'photo'</span>)</span><br><span class="line">        background_image = request.FILES.get(<span class="string">'background_image'</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> name:</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">'result'</span>: <span class="string">'名字不得为空'</span>})</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> profile:</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">'result'</span>: <span class="string">'角色介绍不得为空'</span>})</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> photo:</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">'result'</span>: <span class="string">'头像不得为空'</span>})</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> background_image:</span><br><span class="line">            <span class="keyword">return</span> Response({<span class="string">'result'</span>: <span class="string">'聊天背景不得为空'</span>})</span><br><span class="line"></span><br><span class="line">        Character.objects.create(</span><br><span class="line">            author=user_profile,</span><br><span class="line">            name=name,</span><br><span class="line">            profile=profile,</span><br><span class="line">            photo=photo,</span><br><span class="line">            background_image=background_image,</span><br><span class="line">        )</span><br><span class="line">        <span class="keyword">return</span> Response({<span class="string">'result'</span>: <span class="string">'success'</span>})</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="5-2-更新角色"><a href="#5-2-更新角色" class="headerlink" title="5.2 更新角色"></a>5.2 更新角色</h3><p>接口：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">POST /api/create/character/update/</span><br></pre></td></tr></table></figure></div>
+
+<p>关键点：</p>
+<ul>
+<li>必须确保只能修改自己的角色；</li>
+<li>图片可选，有新图才替换；</li>
+<li>替换前删除旧图。</li>
+</ul>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">character = Character.objects.get(<span class="built_in">id</span>=character_id, author__user=request.user)</span><br></pre></td></tr></table></figure></div>
+
+<p><code>author__user=request.user</code> 是跨表查询：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Character.author -&gt; UserProfile.user -&gt; User</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="5-3-删除角色"><a href="#5-3-删除角色" class="headerlink" title="5.3 删除角色"></a>5.3 删除角色</h3><p>接口：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">POST /api/create/character/remove/</span><br></pre></td></tr></table></figure></div>
+
+<p>建议删除前清理图片：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">character = Character.objects.get(pk=character_id, author__user=request.user)</span><br><span class="line">remove_old_photo(character.photo)</span><br><span class="line">remove_old_photo(character.background_image)</span><br><span class="line">character.delete()</span><br></pre></td></tr></table></figure></div>
+
+<p>不要写成：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">character = Character.objects.get(...).delete()</span><br></pre></td></tr></table></figure></div>
+
+<p>因为 <code>.delete()</code> 返回删除结果，不是模型实例。</p>
+<h3 id="5-4-获取单个角色"><a href="#5-4-获取单个角色" class="headerlink" title="5.4 获取单个角色"></a>5.4 获取单个角色</h3><p>接口：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET /api/create/character/get_single/?character_id=1</span><br></pre></td></tr></table></figure></div>
+
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">character_id = request.query_params.get(<span class="string">'character_id'</span>)</span><br><span class="line">character = Character.objects.get(<span class="built_in">id</span>=character_id, author__user=request.user)</span><br></pre></td></tr></table></figure></div>
+
+<p>返回：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">{</span><br><span class="line">    <span class="string">'result'</span>: <span class="string">'success'</span>,</span><br><span class="line">    <span class="string">'character'</span>: {</span><br><span class="line">        <span class="string">'id'</span>: character.<span class="built_in">id</span>,</span><br><span class="line">        <span class="string">'name'</span>: character.name,</span><br><span class="line">        <span class="string">'profile'</span>: character.profile,</span><br><span class="line">        <span class="string">'photo'</span>: character.photo.url,</span><br><span class="line">        <span class="string">'background_image'</span>: character.background_image.url,</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="六、角色前端页面"><a href="#六、角色前端页面" class="headerlink" title="六、角色前端页面"></a>六、角色前端页面</h2><h3 id="6-1-组件拆分"><a href="#6-1-组件拆分" class="headerlink" title="6.1 组件拆分"></a>6.1 组件拆分</h3><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">frontend/src/views/create/character/</span><br><span class="line">├── CreateCharacter.vue</span><br><span class="line">├── UpdateCharacter.vue</span><br><span class="line">└── components/</span><br><span class="line">    ├── Photo.vue</span><br><span class="line">    ├── Name.vue</span><br><span class="line">    ├── Profile.vue</span><br><span class="line">    └── BackgroundImage.vue</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="6-2-创建角色页面流程"><a href="#6-2-创建角色页面流程" class="headerlink" title="6.2 创建角色页面流程"></a>6.2 创建角色页面流程</h3><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">用户选择头像、背景图并填写信息</span><br><span class="line">    ↓</span><br><span class="line">Croppie 裁剪图片为 Base64</span><br><span class="line">    ↓</span><br><span class="line">父组件读取子组件暴露的数据</span><br><span class="line">    ↓</span><br><span class="line">base64ToFile 转为 File</span><br><span class="line">    ↓</span><br><span class="line">FormData 提交到后端</span><br><span class="line">    ↓</span><br><span class="line">创建成功后跳转个人空间</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="6-3-创建角色-FormData"><a href="#6-3-创建角色-FormData" class="headerlink" title="6.3 创建角色 FormData"></a>6.3 创建角色 FormData</h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> formData = <span class="keyword">new</span> <span class="title class_">FormData</span>()</span><br><span class="line">formData.<span class="title function_">append</span>(<span class="string">'name'</span>, name)</span><br><span class="line">formData.<span class="title function_">append</span>(<span class="string">'profile'</span>, profile)</span><br><span class="line">formData.<span class="title function_">append</span>(<span class="string">'photo'</span>, <span class="title function_">base64ToFile</span>(photo, <span class="string">'photo.png'</span>))</span><br><span class="line">formData.<span class="title function_">append</span>(<span class="string">'background_image'</span>, <span class="title function_">base64ToFile</span>(backgroundImage, <span class="string">'background.png'</span>))</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> res = <span class="keyword">await</span> api.<span class="title function_">post</span>(<span class="string">'/api/create/character/create/'</span>, formData)</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="6-4-更新角色页面流程"><a href="#6-4-更新角色页面流程" class="headerlink" title="6.4 更新角色页面流程"></a>6.4 更新角色页面流程</h3><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">进入 /create/character/update/:character_id/</span><br><span class="line">    ↓</span><br><span class="line">从 route.params.character_id 读取角色 ID</span><br><span class="line">    ↓</span><br><span class="line">GET get_single 拉取角色详情</span><br><span class="line">    ↓</span><br><span class="line">将角色数据传给子组件回显</span><br><span class="line">    ↓</span><br><span class="line">用户修改后提交 FormData</span><br><span class="line">    ↓</span><br><span class="line">只有图片变化且是 data URL 时才上传新文件</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="6-5-更新时判断图片是否变化"><a href="#6-5-更新时判断图片是否变化" class="headerlink" title="6.5 更新时判断图片是否变化"></a>6.5 更新时判断图片是否变化</h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (photo !== character.<span class="property">value</span>.<span class="property">photo</span> &amp;&amp; photo.<span class="title function_">startsWith</span>(<span class="string">'data:'</span>)) {</span><br><span class="line">  formData.<span class="title function_">append</span>(<span class="string">'photo'</span>, <span class="title function_">base64ToFile</span>(photo, <span class="string">'photo.png'</span>))</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (backgroundImage !== character.<span class="property">value</span>.<span class="property">background_image</span> &amp;&amp; backgroundImage.<span class="title function_">startsWith</span>(<span class="string">'data:'</span>)) {</span><br><span class="line">  formData.<span class="title function_">append</span>(<span class="string">'background_image'</span>, <span class="title function_">base64ToFile</span>(backgroundImage, <span class="string">'background.png'</span>))</span><br><span class="line">}</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="七、路由汇总"><a href="#七、路由汇总" class="headerlink" title="七、路由汇总"></a>七、路由汇总</h2><h3 id="7-1-后端路由"><a href="#7-1-后端路由" class="headerlink" title="7.1 后端路由"></a>7.1 后端路由</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">path(<span class="string">'api/user/profile/update/'</span>, UpdateProfileView.as_view()),</span><br><span class="line">path(<span class="string">'api/create/character/create/'</span>, CreateCharacterView.as_view()),</span><br><span class="line">path(<span class="string">'api/create/character/update/'</span>, UpdateCharacterView.as_view()),</span><br><span class="line">path(<span class="string">'api/create/character/remove/'</span>, RemoveCharacterView.as_view()),</span><br><span class="line">path(<span class="string">'api/create/character/get_single/'</span>, GetSingleCharacterView.as_view()),</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="7-2-前端路由"><a href="#7-2-前端路由" class="headerlink" title="7.2 前端路由"></a>7.2 前端路由</h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">{</span><br><span class="line">  <span class="attr">path</span>: <span class="string">'/user/profile/'</span>,</span><br><span class="line">  <span class="attr">component</span>: <span class="title class_">ProfileIndex</span>,</span><br><span class="line">  <span class="attr">name</span>: <span class="string">'user-profile-index'</span>,</span><br><span class="line">  <span class="attr">meta</span>: { <span class="attr">needLogin</span>: <span class="literal">true</span> },</span><br><span class="line">},</span><br><span class="line">{</span><br><span class="line">  <span class="attr">path</span>: <span class="string">'/create/character/update/:character_id/'</span>,</span><br><span class="line">  <span class="attr">component</span>: <span class="title class_">UpdateCharacter</span>,</span><br><span class="line">  <span class="attr">name</span>: <span class="string">'update-character'</span>,</span><br><span class="line">  <span class="attr">meta</span>: { <span class="attr">needLogin</span>: <span class="literal">true</span> },</span><br><span class="line">}</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="八、核心知识点补充"><a href="#八、核心知识点补充" class="headerlink" title="八、核心知识点补充"></a>八、核心知识点补充</h2><h3 id="8-1-request-data、request-FILES、request-query-params"><a href="#8-1-request-data、request-FILES、request-query-params" class="headerlink" title="8.1 request.data、request.FILES、request.query_params"></a>8.1 request.data、request.FILES、request.query_params</h3><table>
+<thead>
+<tr>
+<th>对象</th>
+<th>使用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>request.data</code></td>
+<td>POST、PUT 请求中的 JSON 或表单字段</td>
+</tr>
+<tr>
+<td><code>request.FILES</code></td>
+<td>上传文件</td>
+</tr>
+<tr>
+<td><code>request.query_params</code></td>
+<td>GET URL 查询参数</td>
+</tr>
+</tbody></table>
+<p>示例：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">name = request.data.get(<span class="string">'name'</span>)</span><br><span class="line">photo = request.FILES.get(<span class="string">'photo'</span>)</span><br><span class="line">character_id = request.query_params.get(<span class="string">'character_id'</span>)</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="8-2-Django-双下划线查询"><a href="#8-2-Django-双下划线查询" class="headerlink" title="8.2 Django 双下划线查询"></a>8.2 Django 双下划线查询</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Character.objects.get(<span class="built_in">id</span>=character_id, author__user=request.user)</span><br></pre></td></tr></table></figure></div>
+
+<p>含义：</p>
+<ul>
+<li>查询 <code>Character</code>；</li>
+<li>它的 <code>author</code> 字段指向 <code>UserProfile</code>；</li>
+<li><code>UserProfile</code> 的 <code>user</code> 字段必须等于当前登录用户。</li>
+</ul>
+<h3 id="8-3-FormData-的特点"><a href="#8-3-FormData-的特点" class="headerlink" title="8.3 FormData 的特点"></a>8.3 FormData 的特点</h3><p><code>FormData</code> 可同时提交普通字段和文件：</p>
+<div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">formData.<span class="title function_">append</span>(<span class="string">'name'</span>, name)</span><br><span class="line">formData.<span class="title function_">append</span>(<span class="string">'photo'</span>, file)</span><br></pre></td></tr></table></figure></div>
+
+<p>浏览器会自动设置合适的 <code>Content-Type: multipart/form-data</code>。</p>
+<hr>
+<h2 id="九、易错点总结"><a href="#九、易错点总结" class="headerlink" title="九、易错点总结"></a>九、易错点总结</h2><ol>
+<li>默认头像路径要写对：<code>user/photos/default.png</code>；</li>
+<li>删除旧头像时不能删除默认头像；</li>
+<li>后端返回图片要使用 <code>.url</code>；</li>
+<li>Base64 转 File 前要确认是 <code>data:</code> 开头；</li>
+<li><code>get()</code> 返回对象，<code>filter()</code> 返回 QuerySet；</li>
+<li>修改角色时必须用 <code>author__user=request.user</code> 限制权限；</li>
+<li>删除角色时先获取实例再删图片，最后再 <code>delete()</code>；</li>
+<li>Croppie 组件卸载时要 <code>destroy()</code>；</li>
+<li>前端组件 props 异步更新时要用 <code>watch</code> 同步本地 ref。</li>
+</ol>
+<hr>
+<h2 id="十、小结"><a href="#十、小结" class="headerlink" title="十、小结"></a>十、小结</h2><p>本节实现了用户资料编辑和角色 CRUD。核心是：</p>
+<ul>
+<li>前端用组件化方式管理复杂表单；</li>
+<li>图片使用 Croppie 裁剪并以 Base64 暂存；</li>
+<li>提交前转为 File 并放入 FormData；</li>
+<li>后端通过 <code>request.FILES</code> 接收文件；</li>
+<li>更新文件时删除旧文件，避免媒体目录膨胀；</li>
+<li>角色所有权通过 ORM 跨表查询保证安全。</li>
+</ul>
+<hr>
+<h2 id="十一、核心接口完整请求-响应示例"><a href="#十一、核心接口完整请求-响应示例" class="headerlink" title="十一、核心接口完整请求 / 响应示例"></a>十一、核心接口完整请求 / 响应示例</h2><h3 id="11-1-获取用户资料接口"><a href="#11-1-获取用户资料接口" class="headerlink" title="11.1 获取用户资料接口"></a>11.1 获取用户资料接口</h3><div class="code-container" data-rel="Http"><figure class="iseeu highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GET /api/user/profile/getinfo/</span><br><span class="line"><span class="attribute">Authorization</span><span class="punctuation">: </span>Bearer &lt;access_token&gt;</span><br></pre></td></tr></table></figure></div>
+
+<p>成功响应：</p>
+<div class="code-container" data-rel="Json"><figure class="iseeu highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">{</span></span><br><span class="line">  <span class="attr">"result"</span><span class="punctuation">:</span> <span class="string">"success"</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">"id"</span><span class="punctuation">:</span> <span class="number">1</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">"username"</span><span class="punctuation">:</span> <span class="string">"alice"</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">"photo"</span><span class="punctuation">:</span> <span class="string">"/media/user/photo/alice.png"</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">"background"</span><span class="punctuation">:</span> <span class="string">"/media/user/background/bg.png"</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">"description"</span><span class="punctuation">:</span> <span class="string">"正在学习 AI 应用开发"</span></span><br><span class="line"><span class="punctuation">}</span></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="11-2-修改用户资料接口"><a href="#11-2-修改用户资料接口" class="headerlink" title="11.2 修改用户资料接口"></a>11.2 修改用户资料接口</h3><div class="code-container" data-rel="Http"><figure class="iseeu highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">POST /api/user/profile/update/</span><br><span class="line"><span class="attribute">Authorization</span><span class="punctuation">: </span>Bearer &lt;access_token&gt;</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>multipart/form-data</span><br></pre></td></tr></table></figure></div>
+
+<p>表单字段：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>username</code></td>
+<td>string</td>
+<td>用户名</td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td>string</td>
+<td>个人简介</td>
+</tr>
+<tr>
+<td><code>photo</code></td>
+<td>file</td>
+<td>新头像，可选</td>
+</tr>
+<tr>
+<td><code>background</code></td>
+<td>file</td>
+<td>新背景图，可选</td>
+</tr>
+</tbody></table>
+<p>成功响应：</p>
+<div class="code-container" data-rel="Json"><figure class="iseeu highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">{</span></span><br><span class="line">  <span class="attr">"result"</span><span class="punctuation">:</span> <span class="string">"success"</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">"username"</span><span class="punctuation">:</span> <span class="string">"alice"</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">"photo"</span><span class="punctuation">:</span> <span class="string">"/media/user/photo/new.png"</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">"background"</span><span class="punctuation">:</span> <span class="string">"/media/user/background/new-bg.png"</span></span><br><span class="line"><span class="punctuation">}</span></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="11-3-创建角色接口"><a href="#11-3-创建角色接口" class="headerlink" title="11.3 创建角色接口"></a>11.3 创建角色接口</h3><div class="code-container" data-rel="Http"><figure class="iseeu highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">POST /api/character/create/</span><br><span class="line"><span class="attribute">Authorization</span><span class="punctuation">: </span>Bearer &lt;access_token&gt;</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>multipart/form-data</span><br></pre></td></tr></table></figure></div>
+
+<p>表单字段：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>name</code></td>
+<td>string</td>
+<td>角色名</td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td>string</td>
+<td>角色简介</td>
+</tr>
+<tr>
+<td><code>profile</code></td>
+<td>string</td>
+<td>角色人设提示词</td>
+</tr>
+<tr>
+<td><code>photo</code></td>
+<td>file</td>
+<td>角色头像</td>
+</tr>
+<tr>
+<td><code>background</code></td>
+<td>file</td>
+<td>角色背景</td>
+</tr>
+</tbody></table>
+<p>成功响应：</p>
+<div class="code-container" data-rel="Json"><figure class="iseeu highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">{</span></span><br><span class="line">  <span class="attr">"result"</span><span class="punctuation">:</span> <span class="string">"success"</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">"id"</span><span class="punctuation">:</span> <span class="number">12</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">"name"</span><span class="punctuation">:</span> <span class="string">"小助手"</span></span><br><span class="line"><span class="punctuation">}</span></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="11-4-删除角色接口"><a href="#11-4-删除角色接口" class="headerlink" title="11.4 删除角色接口"></a>11.4 删除角色接口</h3><div class="code-container" data-rel="Http"><figure class="iseeu highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">POST /api/character/remove/</span><br><span class="line"><span class="attribute">Authorization</span><span class="punctuation">: </span>Bearer &lt;access_token&gt;</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>application/json</span><br></pre></td></tr></table></figure></div>
+
+<p>请求体：</p>
+<div class="code-container" data-rel="Json"><figure class="iseeu highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">{</span></span><br><span class="line">  <span class="attr">"character_id"</span><span class="punctuation">:</span> <span class="number">12</span></span><br><span class="line"><span class="punctuation">}</span></span><br></pre></td></tr></table></figure></div>
+
+<p>成功响应：</p>
+<div class="code-container" data-rel="Json"><figure class="iseeu highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">{</span></span><br><span class="line">  <span class="attr">"result"</span><span class="punctuation">:</span> <span class="string">"success"</span></span><br><span class="line"><span class="punctuation">}</span></span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="十二、关键代码逐行解释示例"><a href="#十二、关键代码逐行解释示例" class="headerlink" title="十二、关键代码逐行解释示例"></a>十二、关键代码逐行解释示例</h2><h3 id="12-1-Base64-转-File"><a href="#12-1-Base64-转-File" class="headerlink" title="12.1 Base64 转 File"></a>12.1 Base64 转 File</h3><div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">dataURLtoFile</span>(<span class="params">dataUrl, filename</span>) {</span><br><span class="line">  <span class="keyword">const</span> arr = dataUrl.<span class="title function_">split</span>(<span class="string">','</span>)</span><br><span class="line">  <span class="keyword">const</span> mime = arr[<span class="number">0</span>].<span class="title function_">match</span>(<span class="regexp">/:(.*?);/</span>)[<span class="number">1</span>]</span><br><span class="line">  <span class="keyword">const</span> bstr = <span class="title function_">atob</span>(arr[<span class="number">1</span>])</span><br><span class="line">  <span class="keyword">let</span> n = bstr.<span class="property">length</span></span><br><span class="line">  <span class="keyword">const</span> u8arr = <span class="keyword">new</span> <span class="title class_">Uint8Array</span>(n)</span><br><span class="line">  <span class="keyword">while</span> (n--) {</span><br><span class="line">    u8arr[n] = bstr.<span class="title function_">charCodeAt</span>(n)</span><br><span class="line">  }</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">File</span>([u8arr], filename, { <span class="attr">type</span>: mime })</span><br><span class="line">}</span><br></pre></td></tr></table></figure></div>
+
+<p>逐行解释：</p>
+<table>
+<thead>
+<tr>
+<th>代码</th>
+<th>新手解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>dataUrl.split(',')</code></td>
+<td>把 <code>data:image/png;base64,...</code> 分成头部和真实数据</td>
+</tr>
+<tr>
+<td><code>match(/:(.*?);/)</code></td>
+<td>从头部提取图片 MIME 类型，例如 <code>image/png</code></td>
+</tr>
+<tr>
+<td><code>atob(arr[1])</code></td>
+<td>把 base64 字符串解码成二进制字符串</td>
+</tr>
+<tr>
+<td><code>new Uint8Array(n)</code></td>
+<td>创建一个字节数组，用来存图片二进制</td>
+</tr>
+<tr>
+<td><code>bstr.charCodeAt(n)</code></td>
+<td>把每个字符转成对应字节</td>
+</tr>
+<tr>
+<td><code>new File(...)</code></td>
+<td>把字节数组包装成浏览器能上传的 File 对象</td>
+</tr>
+</tbody></table>
+<h3 id="12-2-后端保存上传文件"><a href="#12-2-后端保存上传文件" class="headerlink" title="12.2 后端保存上传文件"></a>12.2 后端保存上传文件</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">photo = request.FILES.get(<span class="string">'photo'</span>)</span><br><span class="line"><span class="keyword">if</span> photo:</span><br><span class="line">    profile.photo = photo</span><br><span class="line">profile.save()</span><br></pre></td></tr></table></figure></div>
+
+<p>逐行解释：</p>
+<table>
+<thead>
+<tr>
+<th>代码</th>
+<th>新手解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>request.FILES.get('photo')</code></td>
+<td>从上传表单中取出名为 <code>photo</code> 的文件</td>
+</tr>
+<tr>
+<td><code>if photo:</code></td>
+<td>只有用户真的上传新头像时才更新</td>
+</tr>
+<tr>
+<td><code>profile.photo = photo</code></td>
+<td>把新文件赋值给模型字段</td>
+</tr>
+<tr>
+<td><code>profile.save()</code></td>
+<td>保存到数据库，同时 Django 处理文件存储</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="十三、Vue-组件数据传递图"><a href="#十三、Vue-组件数据传递图" class="headerlink" title="十三、Vue 组件数据传递图"></a>十三、Vue 组件数据传递图</h2><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">ProfileEditView.vue</span><br><span class="line">  │ 保存用户资料表单状态</span><br><span class="line">  ├── photoUrl 传给</span><br><span class="line">  │   ↓</span><br><span class="line">  │  ImageCropper.vue</span><br><span class="line">  │   │ 用户裁剪头像</span><br><span class="line">  │   └── emit cropped-image</span><br><span class="line">  │       ↓</span><br><span class="line">  │     ProfileEditView.vue 更新 photoFile</span><br><span class="line">  │</span><br><span class="line">  └── 点击保存</span><br><span class="line">      ↓</span><br><span class="line">     FormData</span><br><span class="line">      ↓</span><br><span class="line">     profileApi.js</span><br><span class="line">      ↓</span><br><span class="line">     后端 ProfileUpdateView</span><br></pre></td></tr></table></figure></div>
+
+<p>角色编辑类似：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">CharacterEditView.vue</span><br><span class="line">  │ name / description / profile / photo / background</span><br><span class="line">  ↓</span><br><span class="line">CharacterForm.vue</span><br><span class="line">  │ 管理表单输入</span><br><span class="line">  ↓</span><br><span class="line">ImageCropper.vue</span><br><span class="line">  │ 裁剪图片</span><br><span class="line">  ↓</span><br><span class="line">FormData</span><br><span class="line">  ↓</span><br><span class="line">CharacterCreateView 或 CharacterUpdateView</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="十四、后端视图处理流程"><a href="#十四、后端视图处理流程" class="headerlink" title="十四、后端视图处理流程"></a>十四、后端视图处理流程</h2><h3 id="14-1-修改资料流程"><a href="#14-1-修改资料流程" class="headerlink" title="14.1 修改资料流程"></a>14.1 修改资料流程</h3><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">收到 POST /profile/update/</span><br><span class="line">  ↓</span><br><span class="line">IsAuthenticated 检查用户是否登录</span><br><span class="line">  ↓</span><br><span class="line">从 request.user 找到当前用户</span><br><span class="line">  ↓</span><br><span class="line">读取 username、description</span><br><span class="line">  ↓</span><br><span class="line">从 request.FILES 读取 photo、background</span><br><span class="line">  ↓</span><br><span class="line">如果上传了新图片，删除旧图片</span><br><span class="line">  ↓</span><br><span class="line">保存 User 和 UserProfile</span><br><span class="line">  ↓</span><br><span class="line">返回最新用户资料</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="14-2-创建角色流程"><a href="#14-2-创建角色流程" class="headerlink" title="14.2 创建角色流程"></a>14.2 创建角色流程</h3><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">收到 POST /character/create/</span><br><span class="line">  ↓</span><br><span class="line">检查登录状态</span><br><span class="line">  ↓</span><br><span class="line">读取 name、description、profile</span><br><span class="line">  ↓</span><br><span class="line">读取 photo、background</span><br><span class="line">  ↓</span><br><span class="line">通过 request.user.userprofile 找到作者</span><br><span class="line">  ↓</span><br><span class="line">创建 Character</span><br><span class="line">  ↓</span><br><span class="line">返回角色 id 和成功信息</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="14-3-删除角色流程"><a href="#14-3-删除角色流程" class="headerlink" title="14.3 删除角色流程"></a>14.3 删除角色流程</h3><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">收到 POST /character/remove/</span><br><span class="line">  ↓</span><br><span class="line">读取 character_id</span><br><span class="line">  ↓</span><br><span class="line">查询 author__user=request.user 且 id=character_id 的角色</span><br><span class="line">  ↓</span><br><span class="line">如果找不到，返回无权限或角色不存在</span><br><span class="line">  ↓</span><br><span class="line">删除头像和背景文件</span><br><span class="line">  ↓</span><br><span class="line">删除数据库记录</span><br><span class="line">  ↓</span><br><span class="line">返回 success</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="十五、小练习与自测答案"><a href="#十五、小练习与自测答案" class="headerlink" title="十五、小练习与自测答案"></a>十五、小练习与自测答案</h2><h3 id="练习-1"><a href="#练习-1" class="headerlink" title="练习 1"></a>练习 1</h3><p>问题：为什么上传图片时不能直接用普通 JSON？</p>
+<p>答案：JSON 适合传文本结构，不适合直接传二进制文件。图片文件通常使用 <code>multipart/form-data</code>，前端用 <code>FormData</code> 组织，后端从 <code>request.FILES</code> 读取。</p>
+<h3 id="练习-2"><a href="#练习-2" class="headerlink" title="练习 2"></a>练习 2</h3><p>问题：删除角色时为什么查询条件要包含 <code>author__user=request.user</code>？</p>
+<p>答案：这是权限校验。它保证用户只能删除自己创建的角色，不能通过猜测别人的 <code>character_id</code> 删除别人的角色。</p>
+<h3 id="练习-3"><a href="#练习-3" class="headerlink" title="练习 3"></a>练习 3</h3><p>问题：为什么更新头像时要删除旧文件？</p>
+<p>答案：如果不删除旧文件，媒体目录会不断堆积无用图片，占用磁盘空间。</p>
+<hr>
+<h2 id="十一、新手版：为什么图片上传比普通文本复杂"><a href="#十一、新手版：为什么图片上传比普通文本复杂" class="headerlink" title="十一、新手版：为什么图片上传比普通文本复杂"></a>十一、新手版：为什么图片上传比普通文本复杂</h2><p>普通文本提交很简单：</p>
+<div class="code-container" data-rel="Json"><figure class="iseeu highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">{</span></span><br><span class="line">  <span class="attr">"username"</span><span class="punctuation">:</span> <span class="string">"alice"</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">"profile"</span><span class="punctuation">:</span> <span class="string">"你好"</span></span><br><span class="line"><span class="punctuation">}</span></span><br></pre></td></tr></table></figure></div>
+
+<p>但是图片不是普通字符串，而是二进制文件。浏览器不能直接把图片像普通 JSON 一样轻松传给后端，所以需要 <code>FormData</code>。</p>
+<p>可以把 <code>FormData</code> 想象成一个快递箱：</p>
+<ul>
+<li>可以放文字纸条，例如用户名；</li>
+<li>也可以放真实文件，例如头像；</li>
+<li>后端收到后，从 <code>request.data</code> 拿文字，从 <code>request.FILES</code> 拿文件。</li>
+</ul>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">前端 FormData</span><br><span class="line">  ├── username: alice</span><br><span class="line">  ├── profile: hello</span><br><span class="line">  └── photo: photo.png</span><br><span class="line">        ↓</span><br><span class="line">后端</span><br><span class="line">  ├── request.data['username']</span><br><span class="line">  ├── request.data['profile']</span><br><span class="line">  └── request.FILES['photo']</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="十二、跟做步骤：编辑资料功能"><a href="#十二、跟做步骤：编辑资料功能" class="headerlink" title="十二、跟做步骤：编辑资料功能"></a>十二、跟做步骤：编辑资料功能</h2><h3 id="12-1-后端要做什么"><a href="#12-1-后端要做什么" class="headerlink" title="12.1 后端要做什么"></a>12.1 后端要做什么</h3><ol>
+<li>创建或确认 <code>UserProfile</code> 模型；</li>
+<li>写删除旧图片的工具函数；</li>
+<li>写 <code>UpdateProfileView</code>；</li>
+<li>在 <code>urls.py</code> 中添加路由；</li>
+<li>启动后端测试接口。</li>
+</ol>
+<h3 id="12-2-前端要做什么"><a href="#12-2-前端要做什么" class="headerlink" title="12.2 前端要做什么"></a>12.2 前端要做什么</h3><ol>
+<li>创建编辑资料页面 <code>ProfileIndex.vue</code>；</li>
+<li>创建头像、用户名、简介三个子组件；</li>
+<li>头像组件中使用 Croppie；</li>
+<li>父组件读取子组件暴露的数据；</li>
+<li>使用 <code>FormData</code> 提交；</li>
+<li>成功后更新 Pinia 中的用户信息。</li>
+</ol>
+<h3 id="12-3-如何验证"><a href="#12-3-如何验证" class="headerlink" title="12.3 如何验证"></a>12.3 如何验证</h3><p>编辑资料后检查三处：</p>
+<ol>
+<li>页面导航栏头像和用户名是否变化；</li>
+<li>数据库中 <code>User</code> 和 <code>UserProfile</code> 是否变化；</li>
+<li><code>backend/media/user/photos/</code> 中是否出现新头像。</li>
+</ol>
+<p>如果上传了新头像，还要检查旧头像是否被删除。</p>
+<hr>
+<h2 id="十三、跟做步骤：创建角色功能"><a href="#十三、跟做步骤：创建角色功能" class="headerlink" title="十三、跟做步骤：创建角色功能"></a>十三、跟做步骤：创建角色功能</h2><h3 id="13-1-后端流程"><a href="#13-1-后端流程" class="headerlink" title="13.1 后端流程"></a>13.1 后端流程</h3><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">创建 Character 模型</span><br><span class="line">  ↓</span><br><span class="line">执行 makemigrations</span><br><span class="line">  ↓</span><br><span class="line">执行 migrate</span><br><span class="line">  ↓</span><br><span class="line">注册 Admin</span><br><span class="line">  ↓</span><br><span class="line">写 create / update / remove / get_single 接口</span><br><span class="line">  ↓</span><br><span class="line">配置路由</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="13-2-前端流程"><a href="#13-2-前端流程" class="headerlink" title="13.2 前端流程"></a>13.2 前端流程</h3><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">创建 CreateCharacter.vue</span><br><span class="line">  ↓</span><br><span class="line">拆分 Name / Profile / Photo / BackgroundImage 组件</span><br><span class="line">  ↓</span><br><span class="line">用户填写表单</span><br><span class="line">  ↓</span><br><span class="line">图片裁剪成 Base64</span><br><span class="line">  ↓</span><br><span class="line">Base64 转 File</span><br><span class="line">  ↓</span><br><span class="line">FormData 上传</span><br><span class="line">  ↓</span><br><span class="line">创建成功后跳转个人空间</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="13-3-验证角色创建"><a href="#13-3-验证角色创建" class="headerlink" title="13.3 验证角色创建"></a>13.3 验证角色创建</h3><p>成功创建角色后检查：</p>
+<ol>
+<li>数据库 <code>Character</code> 表是否新增一条记录；</li>
+<li><code>media</code> 目录中是否有头像和背景图；</li>
+<li>个人空间是否能展示角色卡片；</li>
+<li>后台 Admin 是否能看到角色。</li>
+</ol>
+<hr>
+<h2 id="十四、新手重点：父子组件通信"><a href="#十四、新手重点：父子组件通信" class="headerlink" title="十四、新手重点：父子组件通信"></a>十四、新手重点：父子组件通信</h2><h3 id="14-1-props-是父传子"><a href="#14-1-props-是父传子" class="headerlink" title="14.1 props 是父传子"></a>14.1 props 是父传子</h3><p>父组件：</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;Username :username="user.username" /&gt;</span><br></pre></td></tr></table></figure></div>
+
+<p>子组件：</p>
+<div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> props = <span class="title function_">defineProps</span>([<span class="string">'username'</span>])</span><br></pre></td></tr></table></figure></div>
+
+<p>这叫父组件把数据传给子组件。</p>
+<h3 id="14-2-defineExpose-是子暴露给父"><a href="#14-2-defineExpose-是子暴露给父" class="headerlink" title="14.2 defineExpose 是子暴露给父"></a>14.2 defineExpose 是子暴露给父</h3><p>子组件：</p>
+<div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> myUsername = <span class="title function_">ref</span>(props.<span class="property">username</span>)</span><br><span class="line"></span><br><span class="line"><span class="title function_">defineExpose</span>({ myUsername })</span><br></pre></td></tr></table></figure></div>
+
+<p>父组件：</p>
+<div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> usernameRef = <span class="title function_">useTemplateRef</span>(<span class="string">'username-ref'</span>)</span><br><span class="line"><span class="keyword">const</span> username = usernameRef.<span class="property">value</span>.<span class="property">myUsername</span></span><br></pre></td></tr></table></figure></div>
+
+<p>这表示父组件可以读取子组件内部的数据。</p>
+<h3 id="14-3-emit-是子通知父"><a href="#14-3-emit-是子通知父" class="headerlink" title="14.3 emit 是子通知父"></a>14.3 emit 是子通知父</h3><p>如果子组件要告诉父组件“我完成了某个动作”，就用 <code>emit</code>。</p>
+<p>例如删除角色成功后：</p>
+<div class="code-container" data-rel="Javascript"><figure class="iseeu highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">emit</span>(<span class="string">'remove'</span>, props.<span class="property">character</span>.<span class="property">id</span>)</span><br></pre></td></tr></table></figure></div>
+
+<p>父组件监听：</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;Character @remove="removeCharacter" /&gt;</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h2 id="十五、常见报错排查"><a href="#十五、常见报错排查" class="headerlink" title="十五、常见报错排查"></a>十五、常见报错排查</h2><h3 id="15-1-后端提示-photo-为空"><a href="#15-1-后端提示-photo-为空" class="headerlink" title="15.1 后端提示 photo 为空"></a>15.1 后端提示 photo 为空</h3><p>检查：</p>
+<ol>
+<li>前端是否使用了 <code>FormData</code>；</li>
+<li>是否执行了 <code>formData.append('photo', file)</code>；</li>
+<li>字段名是否和后端 <code>request.FILES.get('photo')</code> 一致；</li>
+<li>Base64 是否成功转成 File。</li>
+</ol>
+<h3 id="15-2-图片显示不出来"><a href="#15-2-图片显示不出来" class="headerlink" title="15.2 图片显示不出来"></a>15.2 图片显示不出来</h3><p>检查：</p>
+<ol>
+<li>后端返回的是不是 <code>.url</code>；</li>
+<li><code>MEDIA_URL</code> 和 <code>MEDIA_ROOT</code> 是否配置；</li>
+<li>开发环境是否在根路由中加了 <code>static('/media/', ...)</code>；</li>
+<li>前端如果在 Vite 开发环境运行，是否需要拼接后端 BASE_URL。</li>
+</ol>
+<h3 id="15-3-修改别人的角色成功了"><a href="#15-3-修改别人的角色成功了" class="headerlink" title="15.3 修改别人的角色成功了"></a>15.3 修改别人的角色成功了</h3><p>这是严重权限问题。检查后端查询是否限制了当前用户：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Character.objects.get(<span class="built_in">id</span>=character_id, author__user=request.user)</span><br></pre></td></tr></table></figure></div>
+
+<p>不能只写：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Character.objects.get(<span class="built_in">id</span>=character_id)</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="15-4-删除角色后图片还在"><a href="#15-4-删除角色后图片还在" class="headerlink" title="15.4 删除角色后图片还在"></a>15.4 删除角色后图片还在</h3><p>检查删除接口是否在 <code>character.delete()</code> 之前调用了：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">remove_old_photo(character.photo)</span><br><span class="line">remove_old_photo(character.background_image)</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="15-5-Croppie-报重复初始化"><a href="#15-5-Croppie-报重复初始化" class="headerlink" title="15.5 Croppie 报重复初始化"></a>15.5 Croppie 报重复初始化</h3><p>通常是同一个 DOM 上重复 <code>new Croppie</code>。解决：</p>
+<ul>
+<li>每次打开弹窗前销毁旧实例；</li>
+<li>或重新创建一个 wrapper 容器；</li>
+<li>组件卸载时 <code>croppie?.destroy()</code>。</li>
+</ul>
+<hr>
+<h2 id="十六、本节复习问题"><a href="#十六、本节复习问题" class="headerlink" title="十六、本节复习问题"></a>十六、本节复习问题</h2><ol>
+<li>为什么上传图片要用 <code>FormData</code>？</li>
+<li><code>request.data</code> 和 <code>request.FILES</code> 有什么区别？</li>
+<li>Base64 图片为什么要转成 File？</li>
+<li><code>ImageField</code> 保存的是图片本身还是图片路径？</li>
+<li>为什么更新头像时要删除旧头像？</li>
+<li><code>author__user=request.user</code> 这句查询是什么意思？</li>
+<li>父组件如何读取子组件的数据？</li>
+<li>子组件如何通知父组件删除某条数据？</li>
+</ol>
+
+		</div>
+
+		
+		<div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+			<div class="article-copyright-info-container">
+    <ul>
+        <li><strong>标题:</strong> 3.编辑资料与编辑角色模块</li>
+        <li><strong>作者:</strong> Lionlnuc</li>
+        <li><strong>创建于
+                :</strong> 2026-07-12 00:00:00</li>
+        
+            <li>
+                <strong>更新于
+                    :</strong> 2026-07-12 00:00:00
+            </li>
+        
+        <li>
+            <strong>链接:</strong> https://lionlnuc.github.io/2026/07/12/AgentTalk/3. 编辑资料、编辑角色模块/
+        </li>
+        <li>
+            <strong>
+                版权声明:
+            </strong>
+            
+
+            
+                本文章采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a> 进行许可。
+            
+        </li>
+    </ul>
+</div>
+
+		</div>
+		
+
+		
+		<ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/AgentTalk/">#AgentTalk</a>&nbsp;
+			</li>
+			
+		</ul>
+		
+
+		
+
+		
+		<div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+			
+			
+			<div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="next" rel="next" href="/2026/07/12/AgentTalk/5.%20%E6%96%87%E5%AD%97%E8%81%8A%E5%A4%A9/">
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">5.文字聊天、SSE、记忆、工具调用与 RAG</span>
+						<span class="post-nav-item">下一篇</span>
+					</span>
+					<span class="right arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-right"></i>
+					</span>
+				</a>
+			</div>
+			
+		</div>
+		
+
+
+		
+		<div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+			<div class="comments-container mt-10 w-full ">
+    <div id="comment-anchor" class="w-full h-2.5"></div>
+    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
+        评论
+    </div>
+    
+
+        
+            
+    <div id="giscus-container"></div>
+    <script data-swup-reload-script defer>
+        (function() {
+            const containerId = "giscus-container";
+            const mapping = "pathname";
+            const lang = "zh-CN";
+            const inputPosition = "bottom";
+            const reactionsEnabled = "1" === "1";
+            const emitMetadata = "1" === "1";
+            const strict = "0" === "1";
+            const loading = "lazy";
+
+            const getTerm = () => {
+                if (mapping === "pathname") return location.pathname;
+                if (mapping === "url") return location.href;
+                if (mapping === "title") return document.title;
+                if (mapping === "og:title") {
+                    const ogTitle = document.querySelector("meta[property='og:title']");
+                    return ogTitle?.content || document.title;
+                }
+                return "";
+            };
+
+            const sendUpdate = () => {
+                const iframe = document.querySelector("iframe.giscus-frame");
+                if (!iframe) {
+                    return;
+                }
+
+                const setConfig = {
+                    theme: "preferred_color_scheme",
+                    lang,
+                    inputPosition,
+                    reactionsEnabled,
+                    emitMetadata,
+                    strict,
+                };
+
+                if (mapping !== "number") {
+                    const term = getTerm();
+                    if (term) {
+                        setConfig.term = term;
+                    }
+                }
+
+                iframe.contentWindow.postMessage(
+                    { giscus: { setConfig } },
+                    "https://giscus.app",
+                );
+            };
+
+            const loadGiscus = () => {
+                const container = document.getElementById(containerId);
+                if (!container) {
+                    return;
+                }
+
+                const iframe = container.querySelector("iframe.giscus-frame");
+                if (iframe) {
+                    sendUpdate();
+                    return;
+                }
+
+                if (container.dataset.giscusInit === "true") {
+                    return;
+                }
+
+                const giscusConfig = {
+                    src: "https://giscus.app/client.js",
+                    "data-repo": "lionlnuc/lionlnuc.github.io",
+                    "data-repo-id": "R_kgDOQnj-7Q",
+                    "data-category": "Announcements",
+                    "data-category-id": "DIC_kwDOQnj-7c4Cz7IZ",
+                    "data-mapping": mapping,
+                    "data-strict": "0",
+                    "data-reactions-enabled": "1",
+                    "data-emit-metadata": "1",
+                    "data-theme": "preferred_color_scheme",
+                    "data-lang": lang,
+                    "data-input-position": inputPosition,
+                    "data-loading": loading,
+                    crossorigin: "anonymous",
+                    async: true,
+                };
+
+                const giscusScript = document.createElement("script");
+                for (const key in giscusConfig) {
+                    giscusScript.setAttribute(key, giscusConfig[key]);
+                }
+                container.appendChild(giscusScript);
+                container.dataset.giscusInit = "true";
+            };
+
+            const runGiscus = () => {
+                const container = document.getElementById(containerId);
+                if (!container) {
+                    return;
+                }
+
+                if (container.querySelector("iframe.giscus-frame")) {
+                    sendUpdate();
+                    return;
+                }
+
+                loadGiscus();
+            };
+
+            runGiscus();
+        })();
+    </script>
+
+
+        
+    
+</div>
+
+		</div>
+		
+	</div>
+
+	
+	<div class="toc-content-container">
+		<div class="post-toc-wrap">
+	<div class="post-toc">
+		<div class="toc-title">目录</div>
+		<div class="page-title">3.编辑资料与编辑角色模块</div>
+		<ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BC%96%E8%BE%91%E8%B5%84%E6%96%99%E4%B8%8E%E7%BC%96%E8%BE%91%E8%A7%92%E8%89%B2%E6%A8%A1%E5%9D%97"><span class="nav-text">编辑资料与编辑角色模块</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E7%9B%AE%E6%A0%87"><span class="nav-text">一、目标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E7%BC%96%E8%BE%91%E8%B5%84%E6%96%99%E6%A8%A1%E5%9D%97"><span class="nav-text">二、编辑资料模块</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%90%8E%E7%AB%AF%E6%8E%A5%E5%8F%A3%E8%AE%BE%E8%AE%A1"><span class="nav-text">2.1 后端接口设计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E5%88%A0%E9%99%A4%E6%97%A7%E5%A4%B4%E5%83%8F%E5%B7%A5%E5%85%B7%E5%87%BD%E6%95%B0"><span class="nav-text">2.2 删除旧头像工具函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E6%9B%B4%E6%96%B0%E8%B5%84%E6%96%99%E6%8E%A5%E5%8F%A3%E6%A0%B8%E5%BF%83%E9%80%BB%E8%BE%91"><span class="nav-text">2.3 更新资料接口核心逻辑</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-%E8%B7%AF%E7%94%B1"><span class="nav-text">2.4 路由</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%89%8D%E7%AB%AF%E7%BC%96%E8%BE%91%E8%B5%84%E6%96%99%E9%A1%B5%E9%9D%A2"><span class="nav-text">三、前端编辑资料页面</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E7%BB%84%E4%BB%B6%E6%8B%86%E5%88%86"><span class="nav-text">3.1 组件拆分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E6%8B%86%E7%BB%84%E4%BB%B6%EF%BC%9F"><span class="nav-text">3.2 为什么要拆组件？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E5%AD%90%E7%BB%84%E4%BB%B6%E6%8E%A5%E6%94%B6-props-%E4%B8%8E%E6%9A%B4%E9%9C%B2%E6%95%B0%E6%8D%AE"><span class="nav-text">3.3 子组件接收 props 与暴露数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-Croppie-%E8%A3%81%E5%89%AA%E5%A4%B4%E5%83%8F"><span class="nav-text">3.4 Croppie 裁剪头像</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-Base64-%E8%BD%AC-File"><span class="nav-text">3.5 Base64 转 File</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-6-%E7%88%B6%E7%BB%84%E4%BB%B6%E6%8F%90%E4%BA%A4-FormData"><span class="nav-text">3.6 父组件提交 FormData</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E8%A7%92%E8%89%B2%E6%A8%A1%E5%9E%8B-Character"><span class="nav-text">四、角色模型 Character</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E5%AD%97%E6%AE%B5%E8%AE%BE%E8%AE%A1"><span class="nav-text">4.1 字段设计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E5%AD%97%E6%AE%B5%E8%AF%B4%E6%98%8E"><span class="nav-text">4.2 字段说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-Admin-%E6%B3%A8%E5%86%8C"><span class="nav-text">4.3 Admin 注册</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E8%A7%92%E8%89%B2%E5%90%8E%E7%AB%AF-CRUD"><span class="nav-text">五、角色后端 CRUD</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%E5%88%9B%E5%BB%BA%E8%A7%92%E8%89%B2"><span class="nav-text">5.1 创建角色</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-%E6%9B%B4%E6%96%B0%E8%A7%92%E8%89%B2"><span class="nav-text">5.2 更新角色</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-%E5%88%A0%E9%99%A4%E8%A7%92%E8%89%B2"><span class="nav-text">5.3 删除角色</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-%E8%8E%B7%E5%8F%96%E5%8D%95%E4%B8%AA%E8%A7%92%E8%89%B2"><span class="nav-text">5.4 获取单个角色</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E8%A7%92%E8%89%B2%E5%89%8D%E7%AB%AF%E9%A1%B5%E9%9D%A2"><span class="nav-text">六、角色前端页面</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-%E7%BB%84%E4%BB%B6%E6%8B%86%E5%88%86"><span class="nav-text">6.1 组件拆分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-%E5%88%9B%E5%BB%BA%E8%A7%92%E8%89%B2%E9%A1%B5%E9%9D%A2%E6%B5%81%E7%A8%8B"><span class="nav-text">6.2 创建角色页面流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-%E5%88%9B%E5%BB%BA%E8%A7%92%E8%89%B2-FormData"><span class="nav-text">6.3 创建角色 FormData</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-%E6%9B%B4%E6%96%B0%E8%A7%92%E8%89%B2%E9%A1%B5%E9%9D%A2%E6%B5%81%E7%A8%8B"><span class="nav-text">6.4 更新角色页面流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-5-%E6%9B%B4%E6%96%B0%E6%97%B6%E5%88%A4%E6%96%AD%E5%9B%BE%E7%89%87%E6%98%AF%E5%90%A6%E5%8F%98%E5%8C%96"><span class="nav-text">6.5 更新时判断图片是否变化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E3%80%81%E8%B7%AF%E7%94%B1%E6%B1%87%E6%80%BB"><span class="nav-text">七、路由汇总</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-%E5%90%8E%E7%AB%AF%E8%B7%AF%E7%94%B1"><span class="nav-text">7.1 后端路由</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-%E5%89%8D%E7%AB%AF%E8%B7%AF%E7%94%B1"><span class="nav-text">7.2 前端路由</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB%E3%80%81%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86%E7%82%B9%E8%A1%A5%E5%85%85"><span class="nav-text">八、核心知识点补充</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-request-data%E3%80%81request-FILES%E3%80%81request-query-params"><span class="nav-text">8.1 request.data、request.FILES、request.query_params</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-Django-%E5%8F%8C%E4%B8%8B%E5%88%92%E7%BA%BF%E6%9F%A5%E8%AF%A2"><span class="nav-text">8.2 Django 双下划线查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-FormData-%E7%9A%84%E7%89%B9%E7%82%B9"><span class="nav-text">8.3 FormData 的特点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D%E3%80%81%E6%98%93%E9%94%99%E7%82%B9%E6%80%BB%E7%BB%93"><span class="nav-text">九、易错点总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E3%80%81%E5%B0%8F%E7%BB%93"><span class="nav-text">十、小结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B8%80%E3%80%81%E6%A0%B8%E5%BF%83%E6%8E%A5%E5%8F%A3%E5%AE%8C%E6%95%B4%E8%AF%B7%E6%B1%82-%E5%93%8D%E5%BA%94%E7%A4%BA%E4%BE%8B"><span class="nav-text">十一、核心接口完整请求 &#x2F; 响应示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#11-1-%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E8%B5%84%E6%96%99%E6%8E%A5%E5%8F%A3"><span class="nav-text">11.1 获取用户资料接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-2-%E4%BF%AE%E6%94%B9%E7%94%A8%E6%88%B7%E8%B5%84%E6%96%99%E6%8E%A5%E5%8F%A3"><span class="nav-text">11.2 修改用户资料接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-3-%E5%88%9B%E5%BB%BA%E8%A7%92%E8%89%B2%E6%8E%A5%E5%8F%A3"><span class="nav-text">11.3 创建角色接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-4-%E5%88%A0%E9%99%A4%E8%A7%92%E8%89%B2%E6%8E%A5%E5%8F%A3"><span class="nav-text">11.4 删除角色接口</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%BA%8C%E3%80%81%E5%85%B3%E9%94%AE%E4%BB%A3%E7%A0%81%E9%80%90%E8%A1%8C%E8%A7%A3%E9%87%8A%E7%A4%BA%E4%BE%8B"><span class="nav-text">十二、关键代码逐行解释示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#12-1-Base64-%E8%BD%AC-File"><span class="nav-text">12.1 Base64 转 File</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-2-%E5%90%8E%E7%AB%AF%E4%BF%9D%E5%AD%98%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6"><span class="nav-text">12.2 后端保存上传文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B8%89%E3%80%81Vue-%E7%BB%84%E4%BB%B6%E6%95%B0%E6%8D%AE%E4%BC%A0%E9%80%92%E5%9B%BE"><span class="nav-text">十三、Vue 组件数据传递图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E5%9B%9B%E3%80%81%E5%90%8E%E7%AB%AF%E8%A7%86%E5%9B%BE%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B"><span class="nav-text">十四、后端视图处理流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#14-1-%E4%BF%AE%E6%94%B9%E8%B5%84%E6%96%99%E6%B5%81%E7%A8%8B"><span class="nav-text">14.1 修改资料流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-2-%E5%88%9B%E5%BB%BA%E8%A7%92%E8%89%B2%E6%B5%81%E7%A8%8B"><span class="nav-text">14.2 创建角色流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-3-%E5%88%A0%E9%99%A4%E8%A7%92%E8%89%B2%E6%B5%81%E7%A8%8B"><span class="nav-text">14.3 删除角色流程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%BA%94%E3%80%81%E5%B0%8F%E7%BB%83%E4%B9%A0%E4%B8%8E%E8%87%AA%E6%B5%8B%E7%AD%94%E6%A1%88"><span class="nav-text">十五、小练习与自测答案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0-1"><span class="nav-text">练习 1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0-2"><span class="nav-text">练习 2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0-3"><span class="nav-text">练习 3</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B8%80%E3%80%81%E6%96%B0%E6%89%8B%E7%89%88%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E5%9B%BE%E7%89%87%E4%B8%8A%E4%BC%A0%E6%AF%94%E6%99%AE%E9%80%9A%E6%96%87%E6%9C%AC%E5%A4%8D%E6%9D%82"><span class="nav-text">十一、新手版：为什么图片上传比普通文本复杂</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%BA%8C%E3%80%81%E8%B7%9F%E5%81%9A%E6%AD%A5%E9%AA%A4%EF%BC%9A%E7%BC%96%E8%BE%91%E8%B5%84%E6%96%99%E5%8A%9F%E8%83%BD"><span class="nav-text">十二、跟做步骤：编辑资料功能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#12-1-%E5%90%8E%E7%AB%AF%E8%A6%81%E5%81%9A%E4%BB%80%E4%B9%88"><span class="nav-text">12.1 后端要做什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-2-%E5%89%8D%E7%AB%AF%E8%A6%81%E5%81%9A%E4%BB%80%E4%B9%88"><span class="nav-text">12.2 前端要做什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-3-%E5%A6%82%E4%BD%95%E9%AA%8C%E8%AF%81"><span class="nav-text">12.3 如何验证</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B8%89%E3%80%81%E8%B7%9F%E5%81%9A%E6%AD%A5%E9%AA%A4%EF%BC%9A%E5%88%9B%E5%BB%BA%E8%A7%92%E8%89%B2%E5%8A%9F%E8%83%BD"><span class="nav-text">十三、跟做步骤：创建角色功能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#13-1-%E5%90%8E%E7%AB%AF%E6%B5%81%E7%A8%8B"><span class="nav-text">13.1 后端流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-2-%E5%89%8D%E7%AB%AF%E6%B5%81%E7%A8%8B"><span class="nav-text">13.2 前端流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-3-%E9%AA%8C%E8%AF%81%E8%A7%92%E8%89%B2%E5%88%9B%E5%BB%BA"><span class="nav-text">13.3 验证角色创建</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E5%9B%9B%E3%80%81%E6%96%B0%E6%89%8B%E9%87%8D%E7%82%B9%EF%BC%9A%E7%88%B6%E5%AD%90%E7%BB%84%E4%BB%B6%E9%80%9A%E4%BF%A1"><span class="nav-text">十四、新手重点：父子组件通信</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#14-1-props-%E6%98%AF%E7%88%B6%E4%BC%A0%E5%AD%90"><span class="nav-text">14.1 props 是父传子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-2-defineExpose-%E6%98%AF%E5%AD%90%E6%9A%B4%E9%9C%B2%E7%BB%99%E7%88%B6"><span class="nav-text">14.2 defineExpose 是子暴露给父</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-3-emit-%E6%98%AF%E5%AD%90%E9%80%9A%E7%9F%A5%E7%88%B6"><span class="nav-text">14.3 emit 是子通知父</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%BA%94%E3%80%81%E5%B8%B8%E8%A7%81%E6%8A%A5%E9%94%99%E6%8E%92%E6%9F%A5"><span class="nav-text">十五、常见报错排查</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#15-1-%E5%90%8E%E7%AB%AF%E6%8F%90%E7%A4%BA-photo-%E4%B8%BA%E7%A9%BA"><span class="nav-text">15.1 后端提示 photo 为空</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-2-%E5%9B%BE%E7%89%87%E6%98%BE%E7%A4%BA%E4%B8%8D%E5%87%BA%E6%9D%A5"><span class="nav-text">15.2 图片显示不出来</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-3-%E4%BF%AE%E6%94%B9%E5%88%AB%E4%BA%BA%E7%9A%84%E8%A7%92%E8%89%B2%E6%88%90%E5%8A%9F%E4%BA%86"><span class="nav-text">15.3 修改别人的角色成功了</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-4-%E5%88%A0%E9%99%A4%E8%A7%92%E8%89%B2%E5%90%8E%E5%9B%BE%E7%89%87%E8%BF%98%E5%9C%A8"><span class="nav-text">15.4 删除角色后图片还在</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-5-Croppie-%E6%8A%A5%E9%87%8D%E5%A4%8D%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-text">15.5 Croppie 报重复初始化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E5%85%AD%E3%80%81%E6%9C%AC%E8%8A%82%E5%A4%8D%E4%B9%A0%E9%97%AE%E9%A2%98"><span class="nav-text">十六、本节复习问题</span></a></li></ol></li></ol>
+
+	</div>
+</div>
+	</div>
+	
+</div>
+
+			</div>
+
+			
+		</div>
+
+		<div class="main-content-footer">
+			<footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2025</span>
+              -
+            
+            2026&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">Lionlnuc</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        共撰写了 44 篇文章
+                    </span>
+                    
+                </p>
+            
+        </div>
+        
+            <script data-swup-reload-script src="https://cn.vercount.one/js"></script>
+            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
+                
+                    <span id="busuanzi_container_site_uv" class="lg:!block">
+                        <span class="text-sm">访问人数</span>
+                        <span id="busuanzi_value_site_uv"></span>
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv" class="lg:!block">
+                        <span class="text-sm">总访问量</span>
+                        <span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">由 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a> 驱动</span>
+            <span class="text-sm lg:block">主题&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.9.0</a></span>
+        </div>
+        
+        
+            <div>
+                博客已运行 <span class="odometer" id="runtime_days" ></span> 天 <span class="odometer" id="runtime_hours"></span> 小时 <span class="odometer" id="runtime_minutes"></span> 分钟 <span class="odometer" id="runtime_seconds"></span> 秒
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+        
+    </div>  
+</footer>
+		</div>
+	</div>
+
+	
+	<div class="post-tools">
+		<div class="post-tools-container">
+	<ul class="article-tools-list">
+		<!-- TOC aside toggle -->
+		
+		<li class="right-bottom-tools page-aside-toggle">
+			<i class="fa-regular fa-outdent"></i>
+		</li>
+		
+
+		<!-- go comment -->
+		
+		<li class="go-comment">
+			<i class="fa-regular fa-comments"></i>
+		</li>
+		
+	</ul>
+</div>
+	</div>
+	
+
+	<div class="right-side-tools-container">
+		<div class="side-tools-container">
+	<ul class="hidden-tools-list">
+		<li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-plus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-minus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+			<i class="fa-regular fa-moon"></i>
+		</li>
+
+		<!-- rss -->
+		
+
+		
+
+		<li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+			<i class="fa-regular fa-arrow-down"></i>
+		</li>
+	</ul>
+
+	<ul class="visible-tools-list">
+		<li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+			<i class="fa-regular fa-cog fa-spin"></i>
+		</li>
+		
+		<li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+			<i class="arrow-up fas fa-arrow-up"></i>
+			<span class="percent"></span>
+		</li>
+		
+		
+	</ul>
+</div>
+	</div>
+
+	<div class="image-viewer-container" role="dialog" aria-modal="true" aria-label="图片查看器">
+	<button class="image-viewer-close" type="button" aria-label="关闭">
+		<i class="fa-solid fa-xmark"></i>
+	</button>
+	<button class="image-viewer-prev" type="button" aria-label="上一页">
+		<i class="fa-solid fa-chevron-left"></i>
+	</button>
+	<div class="image-viewer-frame">
+		<img src="" alt="">
+	</div>
+	<div class="image-viewer-exif-panel hidden absolute left-1/2 bottom-20 -translate-x-1/2 w-[min(92vw,420px)] max-h-[60vh] overflow-hidden rounded-2xl bg-background-color-transparent-80 p-4 text-left shadow-redefine-flat backdrop-blur-md" role="dialog" aria-label="EXIF" aria-hidden="true">
+		<div class="flex items-center justify-between mb-3">
+			<span class="text-sm font-semibold text-first-text-color">EXIF</span>
+			<button class="image-viewer-exif-close flex h-8 w-8 items-center justify-center rounded-full bg-background-color-transparent-80 text-first-text-color transition hover:bg-background-color-transparent-40" type="button" aria-label="关闭">
+				<i class="fa-solid fa-xmark text-[0.65rem]"></i>
+			</button>
+		</div>
+		<div class="image-viewer-exif-cards grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[50vh] overflow-y-auto pr-1 scrollbar-hide"></div>
+		<template class="image-viewer-exif-card-template">
+			<div class="rounded-lg bg-background-color-transparent-40 px-3 py-2">
+				<div class="image-viewer-exif-card-header flex items-center gap-2 mb-1">
+					<i class="image-viewer-exif-card-icon fa-solid fa-circle-info text-xs text-third-text-color"></i>
+					<div class="image-viewer-exif-card-title text-xs font-semibold text-first-text-color"></div>
+				</div>
+				<div class="image-viewer-exif-card-items flex flex-col gap-1"></div>
+			</div>
+		</template>
+	</div>
+	<button class="image-viewer-exif-toggle flex items-center gap-2 hidden absolute left-1/2 bottom-6 -translate-x-1/2 rounded-full border border-border-color bg-background-color-transparent-80 px-4 py-2 text-first-text-color backdrop-blur-md transition hover:bg-background-color-transparent-40" type="button" aria-label="EXIF" aria-expanded="false">
+		<i class="fa-solid fa-circle-info text-xs"></i>
+		<span class="text-xs font-semibold uppercase tracking-wider">EXIF</span>
+	</button>
+	<button class="image-viewer-next" type="button" aria-label="下一页">
+		<i class="fa-solid fa-chevron-right"></i>
+	</button>
+</div>
+
+
+	
+	<div class="search-pop-overlay">
+	<div class="popup search-popup">
+		<div class="search-header">
+			<span class="search-input-field-pre">
+				<i class="fa-solid fa-keyboard"></i>
+			</span>
+			<div class="search-input-container">
+				<input autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="站内搜索您需要的内容..." spellcheck="false" type="search" class="search-input">
+			</div>
+			<span class="popup-btn-close">
+				<i class="fa-solid fa-times"></i>
+			</span>
+		</div>
+		<div id="search-result">
+			<div id="no-result">
+				<i class="fa-solid fa-spinner fa-spin-pulse fa-5x fa-fw"></i>
+			</div>
+		</div>
+	</div>
+</div>
+	
+
+</main>
+
+
+
+<script src="/js/build/libs/Swup.min.js"></script>
+
+<script src="/js/build/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/build/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    window.swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+
+    window.dispatchEvent(
+        new CustomEvent("redefine:swup:ready", {
+            detail: {
+                swup: window.swup,
+            },
+        }),
+    );
+</script>
+
+
+
+
+	
+<script src="/js/build/main.js" type="module"></script>
+
+
+
+    
+<script src="/js/build/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+
+
+
+  
+<script src="/js/build/libs/Typed.min.js"></script>
+
+
+
+
+
+
+
+
+    
+<script src="/js/build/libs/minimasonry.min.js" data-swup-reload-script=""></script>
+
+
+
+
+<script src="/js/build/libs/moment-with-locales.min.js" data-swup-reload-script=""></script>
+
+
+
+	
+</body>
+
+</html>
