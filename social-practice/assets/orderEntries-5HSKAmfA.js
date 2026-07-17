@@ -1,0 +1,1 @@
+function e(e){return[...e].sort((e,t)=>e.date.localeCompare(t.date)||e.dayOrder-t.dayOrder||e.id.localeCompare(t.id))}function t(t){let n=new Map;for(let r of e(t)){let e=n.get(r.date)??[];e.push(r),n.set(r.date,e)}return[...n.values()].flatMap(e=>e.map((e,t)=>({...e,dayOrder:t})))}export{e as n,t};
