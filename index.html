@@ -859,7 +859,7 @@ mjx-container[display="true"] + br {
 
         <div class="statistics flex justify-around my-2.5">
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
-        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">9</div>
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">8</div>
         <div class="label text-third-text-color text-sm">标签</div>
     </a>
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
@@ -915,7 +915,7 @@ mjx-container[display="true"] + br {
                         <span class="topic-copy">
                             <strong>编程语言</strong>
                             
-                                <small>4 篇文章</small>
+                                <small>5 篇文章</small>
                             
                         </span>
                         <i class="fa-solid fa-chevron-right topic-arrow"></i>
@@ -938,8 +938,6 @@ mjx-container[display="true"] + br {
                         <span class="topic-icon"><i class="fa-solid fa-microchip"></i></span>
                         <span class="topic-copy">
                             <strong>408 计算机基础</strong>
-                            
-                                <small>1 篇文章</small>
                             
                         </span>
                         <i class="fa-solid fa-chevron-right topic-arrow"></i>
@@ -1189,28 +1187,24 @@ Django ImageField；
                 
                 <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
                     <h3 class="home-article-title">
-                        <a href="/2026/07/12/AgentTalk/4.%20%E6%B5%81%E5%BC%8F%E5%B8%83%E5%B1%80/">
-                            4.流式布局、首页、搜索与好友入口
+                        <a href="/2026/07/12/AgentTalk/5.%20%E6%96%87%E5%AD%97%E8%81%8A%E5%A4%A9/">
+                            5.文字聊天、SSE、记忆、工具调用与 RAG
                         </a>
                     </h3>
 
                     <div class="home-article-content markdown-body">
                         
                             
-                            流式布局、首页、搜索与好友入口一、目标本节主要完成展示层与信息流相关功能：
+                            文字聊天、SSE、记忆、工具调用与 RAG一、目标本节实现 AI 角色的文字聊天能力，并逐步扩展为具备上下文、记忆、工具调用和知识库检索的 Agent。
+核心内容包括：
 
-个人空间页面；
-角色卡片组件；
-无限滚动 / 流式加载；
-首页角色广场；
-搜索功能；
-好友模型与好友列表；
-点击角色进入聊天弹窗的前置逻辑。
-
-涉及的重要知识点：
-
-IntersectionObserver；
-CSS Grid 自适应布...
+消息数据库 Message；
+LangGraph 对话流程；
+SSE 流式输出；
+前端流式请求封装；
+聊天历史加载；
+系统提示词；
+短期记忆；...
                         
                     </div>
 
@@ -1255,7 +1249,7 @@ CSS Grid 自适应布...
         
     </div>
 
-    <a href="/2026/07/12/AgentTalk/4.%20%E6%B5%81%E5%BC%8F%E5%B8%83%E5%B1%80/">阅读全文<span class="seo-reader-text">4.流式布局、首页、搜索与好友入口</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
+    <a href="/2026/07/12/AgentTalk/5.%20%E6%96%87%E5%AD%97%E8%81%8A%E5%A4%A9/">阅读全文<span class="seo-reader-text">5.文字聊天、SSE、记忆、工具调用与 RAG</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
 </div>
 
                 </div>
@@ -1347,24 +1341,28 @@ VAD 人声检测；
                 
                 <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
                     <h3 class="home-article-title">
-                        <a href="/2026/07/12/AgentTalk/5.%20%E6%96%87%E5%AD%97%E8%81%8A%E5%A4%A9/">
-                            5.文字聊天、SSE、记忆、工具调用与 RAG
+                        <a href="/2026/07/12/AgentTalk/4.%20%E6%B5%81%E5%BC%8F%E5%B8%83%E5%B1%80/">
+                            4.流式布局、首页、搜索与好友入口
                         </a>
                     </h3>
 
                     <div class="home-article-content markdown-body">
                         
                             
-                            文字聊天、SSE、记忆、工具调用与 RAG一、目标本节实现 AI 角色的文字聊天能力，并逐步扩展为具备上下文、记忆、工具调用和知识库检索的 Agent。
-核心内容包括：
+                            流式布局、首页、搜索与好友入口一、目标本节主要完成展示层与信息流相关功能：
 
-消息数据库 Message；
-LangGraph 对话流程；
-SSE 流式输出；
-前端流式请求封装；
-聊天历史加载；
-系统提示词；
-短期记忆；...
+个人空间页面；
+角色卡片组件；
+无限滚动 / 流式加载；
+首页角色广场；
+搜索功能；
+好友模型与好友列表；
+点击角色进入聊天弹窗的前置逻辑。
+
+涉及的重要知识点：
+
+IntersectionObserver；
+CSS Grid 自适应布...
                         
                     </div>
 
@@ -1409,7 +1407,7 @@ SSE 流式输出；
         
     </div>
 
-    <a href="/2026/07/12/AgentTalk/5.%20%E6%96%87%E5%AD%97%E8%81%8A%E5%A4%A9/">阅读全文<span class="seo-reader-text">5.文字聊天、SSE、记忆、工具调用与 RAG</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
+    <a href="/2026/07/12/AgentTalk/4.%20%E6%B5%81%E5%BC%8F%E5%B8%83%E5%B1%80/">阅读全文<span class="seo-reader-text">4.流式布局、首页、搜索与好友入口</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
 </div>
 
                 </div>
@@ -1734,7 +1732,7 @@ A 小红的 red思路：
 </div>
                 <div class="statistics flex justify-around my-2.5">
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
-        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">9</div>
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">8</div>
         <div class="label text-third-text-color text-sm">标签</div>
     </a>
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
