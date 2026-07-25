@@ -4963,7 +4963,7 @@ html.is-animating .transition-fade-down {
   gap: 8px;
   flex-wrap: wrap;
 }
-.topic-detail-page .topic-subtopic-list a {
+.topic-detail-page .topic-subtopic-list .topic-subtopic-item {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -4974,10 +4974,10 @@ html.is-animating .transition-fade-down {
   color: var(--second-text-color);
   background: var(--second-background-color);
 }
-.topic-detail-page .topic-subtopic-list a small {
+.topic-detail-page .topic-subtopic-list .topic-subtopic-item small {
   color: var(--third-text-color);
 }
-.topic-detail-page .topic-subtopic-list a:hover {
+.topic-detail-page .topic-subtopic-list a.topic-subtopic-item:hover {
   color: var(--topic-accent);
   border-color: var(--topic-accent);
 }
