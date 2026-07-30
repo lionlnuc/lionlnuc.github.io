@@ -1256,24 +1256,24 @@ Django ImageField；
                 
                 <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
                     <h3 class="home-article-title">
-                        <a href="/2026/07/12/AgentTalk/5.%20%E6%96%87%E5%AD%97%E8%81%8A%E5%A4%A9/">
-                            5.文字聊天、SSE、记忆、工具调用与 RAG
+                        <a href="/2026/07/12/AgentTalk/2.%E7%99%BB%E5%BD%95%E6%A8%A1%E5%9D%97/">
+                            2.登录模块与前后端认证体系
                         </a>
                     </h3>
 
                     <div class="home-article-content markdown-body">
                         
                             
-                            文字聊天、SSE、记忆、工具调用与 RAG一、目标本节实现 AI 角色的文字聊天能力，并逐步扩展为具备上下文、记忆、工具调用和知识库检索的 Agent。
-核心内容包括：
+                            登录模块与前后端认证体系一、目标在项目基础结构上实现完整的用户认证流程，包括：
 
-消息数据库 Message；
-LangGraph 对话流程；
-SSE 流式输出；
-前端流式请求封装；
-聊天历史加载；
-系统提示词；
-短期记忆；...
+用户注册；
+用户登录；
+用户退出；
+Access Token 与 Refresh Token 双 Token 机制；
+刷新页面后的登录状态恢复；
+Axios 自动携带 Token；
+401 自动刷新 Token；
+Vue Route...
                         
                     </div>
 
@@ -1318,76 +1318,7 @@ SSE 流式输出；
         
     </div>
 
-    <a href="/2026/07/12/AgentTalk/5.%20%E6%96%87%E5%AD%97%E8%81%8A%E5%A4%A9/">阅读全文<span class="seo-reader-text">5.文字聊天、SSE、记忆、工具调用与 RAG</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
-</div>
-
-                </div>
-            </li>
-        
-            <li class="home-article-item">
-
-                
-
-                
-
-                
-                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
-                    <h3 class="home-article-title">
-                        <a href="/2026/07/12/AgentTalk/%E8%AF%B4%E6%98%8E/">
-                            0.说明
-                        </a>
-                    </h3>
-
-                    <div class="home-article-content markdown-body">
-                        
-                            
-                            AgentTalk一、这套笔记适合谁这套文档是为第一次系统学习 Django + Vue + AI 应用开发的新手整理的项目复习资料
-如果你只会一点点 Python、JavaScript，甚至还不太熟悉前后端分离，也可以按下面的阅读顺序慢慢看。阅读时不要求一次全部理解，建议每看完一节都回到项目代码里对照文件位置。...
-                        
-                    </div>
-
-                    <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fa-solid fa-calendars"></i>&nbsp;
-            <span class="home-article-date" data-date="Sun Jul 12 2026 00:00:00 GMT+0800">
-                
-                    2026-07-12
-                
-            </span>
-        </span>
-        
-            <span class="home-article-category">
-                <i class="fa-solid fa-folders"></i>&nbsp;
-            <ul>
-                
-                
-                    
-                        
-                        <li>
-                            <a href="/categories/AgentTalk/">AgentTalk</a>&nbsp;
-                        </li>
-                    
-                    
-                
-            </ul>
-        </span>
-        
-        
-            <span class="home-article-tag">
-                <i class="fa-solid fa-tags"></i>&nbsp;
-                <ul>
-                    
-                        <li>
-                            
-                            <a href="/tags/AgentTalk/">AgentTalk</a>&nbsp;
-                        </li>
-                    
-                </ul>
-            </span>
-        
-    </div>
-
-    <a href="/2026/07/12/AgentTalk/%E8%AF%B4%E6%98%8E/">阅读全文<span class="seo-reader-text">0.说明</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
+    <a href="/2026/07/12/AgentTalk/2.%E7%99%BB%E5%BD%95%E6%A8%A1%E5%9D%97/">阅读全文<span class="seo-reader-text">2.登录模块与前后端认证体系</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
 </div>
 
                 </div>
@@ -1465,6 +1396,75 @@ VAD 人声检测；
     </div>
 
     <a href="/2026/07/12/AgentTalk/6.%20%E8%AF%AD%E9%9F%B3%E6%A8%A1%E5%9D%97/">阅读全文<span class="seo-reader-text">6.语音模块、ASR、TTS 与流式播放</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
+</div>
+
+                </div>
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                
+
+                
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2026/07/12/AgentTalk/%E8%AF%B4%E6%98%8E/">
+                            0.说明
+                        </a>
+                    </h3>
+
+                    <div class="home-article-content markdown-body">
+                        
+                            
+                            AgentTalk一、这套笔记适合谁这套文档是为第一次系统学习 Django + Vue + AI 应用开发的新手整理的项目复习资料
+如果你只会一点点 Python、JavaScript，甚至还不太熟悉前后端分离，也可以按下面的阅读顺序慢慢看。阅读时不要求一次全部理解，建议每看完一节都回到项目代码里对照文件位置。...
+                        
+                    </div>
+
+                    <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fa-solid fa-calendars"></i>&nbsp;
+            <span class="home-article-date" data-date="Sun Jul 12 2026 00:00:00 GMT+0800">
+                
+                    2026-07-12
+                
+            </span>
+        </span>
+        
+            <span class="home-article-category">
+                <i class="fa-solid fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/AgentTalk/">AgentTalk</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fa-solid fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/AgentTalk/">AgentTalk</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
+
+    <a href="/2026/07/12/AgentTalk/%E8%AF%B4%E6%98%8E/">阅读全文<span class="seo-reader-text">0.说明</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
 </div>
 
                 </div>
@@ -1560,24 +1560,24 @@ CSS Grid 自适应布...
                 
                 <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
                     <h3 class="home-article-title">
-                        <a href="/2026/07/12/AgentTalk/2.%E7%99%BB%E5%BD%95%E6%A8%A1%E5%9D%97/">
-                            2.登录模块与前后端认证体系
+                        <a href="/2026/07/12/AgentTalk/5.%20%E6%96%87%E5%AD%97%E8%81%8A%E5%A4%A9/">
+                            5.文字聊天、SSE、记忆、工具调用与 RAG
                         </a>
                     </h3>
 
                     <div class="home-article-content markdown-body">
                         
                             
-                            登录模块与前后端认证体系一、目标在项目基础结构上实现完整的用户认证流程，包括：
+                            文字聊天、SSE、记忆、工具调用与 RAG一、目标本节实现 AI 角色的文字聊天能力，并逐步扩展为具备上下文、记忆、工具调用和知识库检索的 Agent。
+核心内容包括：
 
-用户注册；
-用户登录；
-用户退出；
-Access Token 与 Refresh Token 双 Token 机制；
-刷新页面后的登录状态恢复；
-Axios 自动携带 Token；
-401 自动刷新 Token；
-Vue Route...
+消息数据库 Message；
+LangGraph 对话流程；
+SSE 流式输出；
+前端流式请求封装；
+聊天历史加载；
+系统提示词；
+短期记忆；...
                         
                     </div>
 
@@ -1622,7 +1622,7 @@ Vue Route...
         
     </div>
 
-    <a href="/2026/07/12/AgentTalk/2.%E7%99%BB%E5%BD%95%E6%A8%A1%E5%9D%97/">阅读全文<span class="seo-reader-text">2.登录模块与前后端认证体系</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
+    <a href="/2026/07/12/AgentTalk/5.%20%E6%96%87%E5%AD%97%E8%81%8A%E5%A4%A9/">阅读全文<span class="seo-reader-text">5.文字聊天、SSE、记忆、工具调用与 RAG</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
 </div>
 
                 </div>
