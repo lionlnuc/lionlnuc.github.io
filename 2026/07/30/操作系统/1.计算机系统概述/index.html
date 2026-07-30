@@ -1076,37 +1076,27 @@ mjx-container[display="true"] + br {
 </ul>
 <h4 id="功能和目标"><a href="#功能和目标" class="headerlink" title="功能和目标"></a>功能和目标</h4><p>1.操作系统作为计算机系统资源的管理者</p>
 <table>
-<thead>
-<tr>
-<th>处理机管理</th>
-<th>在多道程序环境下，<font color="#ff0000">处理机的分配和运行都以进程 (或线程) 为基本单位</font>，因此处理机管理本质上是对进程的管理。<br>进程管理的主要任务包括进程控制、进程同步、进程通信、死锁处理以及处理机调度等。</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>存储器管理</td>
-<td><font color="#ff0000">为多道程序提供良好的内存运行环境</font>，方便用户使用并提高内存利用率。<br>主要功能包括内存分配与回收、地址映射、内存保护与共享，以及内存扩充等。</td>
-</tr>
-<tr>
-<td>文件管理</td>
-<td>文件存储空间的管理、目录管理、文件读/写操作及访问保护等。</td>
-</tr>
-<tr>
-<td>设备管理</td>
-<td><font color="#ff0000">处理用户的 I/O 请求，屏蔽设备差异</font>，方便用户使用各类外设，并提高设备利用率。<br>主要包括缓冲管理、设备分配、设备驱动处理和虚拟设备等功能。</td>
-</tr>
-</tbody></table>
-<h5 id="处理机管理"><a href="#处理机管理" class="headerlink" title="处理机管理"></a>处理机管理</h5><p><font color="#92d050">进程控制</font>：操作系统需要为每道作业<font color="#92cddc">创建进程，撤销/终止已结束的进程、控制进程</font>在运行过程中的<font color="#92cddc">状态切换</font>。<br><font color="#92d050">进程同步</font>：<font color="#92cddc">对多个进程（含线程）的运行进行协调。</font><br><font color="#92d050">进程通信</font>：实现相互合作进程之间的信息交换。<br><font color="#92d050">进程调度</font>：按照一定的算法把处理器分配给进程。</p>
-<h5 id="存储器管理"><a href="#存储器管理" class="headerlink" title="存储器管理"></a>存储器管理</h5><p><font color="#92d050">内存分配</font>：</p>
-<ul>
-<li>通过一定的分配策略为每道程序分配内存空间。</li>
-<li>提高存储器的利用率，尽量减少不可用的内存空间。</li>
-<li>允许正在运行的程序申请附加内存空间，以适应程序和数据的动态增长。</li>
-</ul>
-<p><font color="#f79646">两种分配方式：</font></p>
-<ul>
-<li><font color="#92d050">静态分配</font>：作业所需的内存空间装载时确定，整个运行期间不允许该作业再申请新的内存空间。</li>
-<li><font color="#92d050">动态分配</font>：允许在运行过程中动态申请新的内存空间，以适应程序和数据的增长。</li>
-</ul>
+<tbody>
+<tr><td>处理机管理</td><td>在多道程序环境下，<font color="#ff0000">处理机的分配和运行都以进程 (或线程) 为基本单位</font>，因此处理机管理本质上是对进程的管理。<br>进程管理的主要任务包括进程控制、进程同步、进程通信、死锁处理以及处理机调度等。</td></tr>
+<tr><td>存储器管理</td><td><font color="#ff0000">为多道程序提供良好的内存运行环境</font>，方便用户使用并提高内存利用率。<br>主要功能包括内存分配与回收、地址映射、内存保护与共享，以及内存扩充等。</td></tr>
+<tr><td>文件管理</td><td>文件存储空间的管理、目录管理、文件读/写操作及访问保护等。</td></tr>
+<tr><td>设备管理</td><td><font color="#ff0000">处理用户的 I/O 请求，屏蔽设备差异</font>，方便用户使用各类外设，并提高设备利用率。<br>主要包括缓冲管理、设备分配、设备驱动处理和虚拟设备等功能。</td></tr>
+</tbody>
+</table>
+##### 处理机管理
+<font color="#92d050">进程控制</font>：操作系统需要为每道作业<font color="#92cddc">创建进程，撤销/终止已结束的进程、控制进程</font>在运行过程中的<font color="#92cddc">状态切换</font>。
+<font color="#92d050">进程同步</font>：<font color="#92cddc">对多个进程（含线程）的运行进行协调。</font>
+<font color="#92d050">进程通信</font>：实现相互合作进程之间的信息交换。
+<font color="#92d050">进程调度</font>：按照一定的算法把处理器分配给进程。
+##### 存储器管理
+<font color="#92d050">内存分配</font>：
+- 通过一定的分配策略为每道程序分配内存空间。
+- 提高存储器的利用率，尽量减少不可用的内存空间。
+- 允许正在运行的程序申请附加内存空间，以适应程序和数据的动态增长。
+<font color="#f79646">两种分配方式：</font>
+- <font color="#92d050">静态分配</font>：作业所需的内存空间装载时确定，整个运行期间不允许该作业再申请新的内存空间。
+- <font color="#92d050">动态分配</font>：允许在运行过程中动态申请新的内存空间，以适应程序和数据的增长。
+
 <p><font color="#92d050">内存保护</font>：保证各程序在各自的空间运行而互不干扰，不允许用户程序访问操作系统和其他用户的程序和数据。</p>
 <p><font color="#92d050">地址映射</font>：将地址空间中的<font color="#92cddc">逻辑地址</font>转换为内存空间中与之对应的<font color="#92cddc">物理地址</font>。</p>
 <p><font color="#92d050">内存扩充</font>：从逻辑上扩充内存容量，使用户感觉到的内存容量比实际内存容量大得多。以便让更多的用户程序能并发运行。</p>
@@ -1124,68 +1114,94 @@ mjx-container[display="true"] + br {
 <p><font color="#f79646">文件的读/写管理：</font>根据用户的请求，从外存中读取数据，或将数据写入外存。<br><font color="#f79646">文件保护：</font>防止系统中的文件被非法窃取和破坏，提供有效的存取控制功能。防止未经授权的用户对文件的操作和访问。</p>
 <h5 id="设备管理"><a href="#设备管理" class="headerlink" title="设备管理"></a>设备管理</h5><p>设备管理的基本任务是完成用户进程提出的 I/O 请求，分配所需的 I/O 设备，完成指定的 I/O 操作。提高 CPU 和 I/O 设备的利用率和并行程度，提高 I/O 速度。<br><font color="#f79646">缓冲管理：</font>通过在 I/O 设备和 CPU 之间引入缓冲，可以解决速度不匹配的矛盾，提高 CPU 利用率，提高系统吞吐量。<br><font color="#f79646">设备分配：</font>对于用户进程的 I/O 请求，根据系统现有的资源情况，按照某种设备分配策略为其分配所需的设备。<br><font color="#f79646">设备处理：</font><font color="#92d050">设备处理程序</font>即<font color="#92d050">设备驱动程序</font>，主要用于实现处理器和设备控制器之间的通信。<br><font color="#f79646">虚拟设备：</font>操作系统的虚拟性。</p>
 <p>2.操作系统作为用户与计算机硬件系统之间的接口<br>（1）用户接口</p>
-<p>| 联机用户接口<br>（交互式命令接口） | 用户输入命令后，系统立即解释并执行，完成后返回控制权，适用于实时交互场景。<br>“雇主”说一句话，“工人”做一件事，并做出反馈，强调<u>交互性</u>。 |<br>| 脱机用户接口<br>（批处理命令接口） | 用于批处理系统。<br>“雇主”预先将任务清单交给“工人”,“工人”按清单逐条完成这些任务。                                 |<br>| 图形用户接口<br>（GUI）     | 提升易用性，通过图标、菜单、对话框等图形元素替代文本命令。 <br>用户借助鼠标等设备进行操作，底层通过系统调用与内核交互，显著降低了使用门槛。       |</p>
+<table>
+<tbody>
+<tr><td>联机用户接口<br>（交互式命令接口）</td><td>用户输入命令后，系统立即解释并执行，完成后返回控制权，适用于实时交互场景。<br>“雇主”说一句话，“工人”做一件事，并做出反馈，强调<u>交互性</u>。</td></tr>
+<tr><td>脱机用户接口<br>（批处理命令接口）</td><td>用于批处理系统。<br>“雇主”预先将任务清单交给“工人”,“工人”按清单逐条完成这些任务。</td></tr>
+<tr><td>图形用户接口<br>（GUI）</td><td>提升易用性，通过图标、菜单、对话框等图形元素替代文本命令。<br>用户借助鼠标等设备进行操作，底层通过系统调用与内核交互，显著降低了使用门槛。</td></tr>
+</tbody>
+</table>
+
 <p>（2）程序接口<br>程序接口是应用程序在运行时请求操作系统服务、访问系统资源的唯一合法途径，其核心是一组<font color="#ff0000">系统调用</font>。每个系统调用对应内核中实现某个特定功能的子程序。当应用程序需要操作系统服务时，必须通过调用相应的系统调用来完成。<br><font color="#ff0000">注意，库函数本身并非操作系统接口，它们只是对系统调用的封装。</font></p>
 <h3 id="操作系统的四个特征"><a href="#操作系统的四个特征" class="headerlink" title="操作系统的四个特征"></a>操作系统的四个特征</h3><h5 id="并发——最基本的特征"><a href="#并发——最基本的特征" class="headerlink" title="并发——最基本的特征"></a>并发——最基本的特征</h5><p>并发：指两个或多个事件在<font color="#92cddc">同一时间间隔</font><font color="#92cddc">内</font>发生。在单处理器系统中，<font color="#ff0000">宏观来看，这些程序是同时向前推进的；而微观来看，并发执行的程序是交替在处理器上执行的。</font><br>并行：指两个或多个事件在<font color="#92cddc">同一时刻同时</font>在不同的处理单元上运行。<font color="#92cddc">并行通常需要多处理器等硬件支持</font>。并行是并发的特例，程序并行性一定是并发的，反之则不一定成立。</p>
 <h5 id="共享——最基本的特征"><a href="#共享——最基本的特征" class="headerlink" title="共享——最基本的特征"></a>共享——最基本的特征</h5><p>共享是指系统中的资源可供<font color="#92cddc">内存中</font>多个并发执行的进程共同使用。<br>两种资源共享方式：<br>根据资源特性与访问方式 的不同，共享主要分为<font color="#ff0000">互斥共享</font>和<font color="#ff0000">同时访问</font>两种形式。</p>
 <table>
-<thead>
-<tr>
-<th>互斥共享方式</th>
-<th>要求一个资源在一段时间内只满足一个请求，<font color="#ff0000">只能供一个作业使用</font>。<br><font color="#ff0000">一个时间段内只允许一个进程访问该资源</font>，释放该资源后才允许另一个进程对该资源进行访问。（临界资源）<br>计算机系统中的大多数独占型物理设备 (如打印机), 以及软件中的栈、变量、表格等，均属于临界资源，必须以互斥方式共享。</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>同时访问方式</td>
-<td>此处的“同时”通常指逻 辑上的并发访问，微观上这些进程可能通过分时交替方式访问资源，即分时共享。<br>允许<font color="#ff0000">一个时间段内有多个进程“同时”</font>对他们进行访问（宏观同时、微观交替）</td>
-</tr>
-</tbody></table>
+<tbody>
+<tr><td>互斥共享方式</td><td>要求一个资源在一段时间内只满足一个请求，<font color="#ff0000">只能供一个作业使用</font>。<br><font color="#ff0000">一个时间段内只允许一个进程访问该资源</font>，释放该资源后才允许另一个进程对该资源进行访问。（临界资源）<br>计算机系统中的大多数独占型物理设备（如打印机），以及软件中的栈、变量、表格等，均属于临界资源，必须以互斥方式共享。</td></tr>
+<tr><td>同时访问方式</td><td>此处的“同时”通常指逻辑上的并发访问，微观上这些进程可能通过分时交替方式访问资源，即分时共享。<br>允许<font color="#ff0000">一个时间段内有多个进程“同时”</font>对它们进行访问（宏观同时、微观交替）。</td></tr>
+</tbody>
+</table>
+
 <p><font color="#92d050">并发和共享二者互为前提：</font><br>①资源共享<font color="#92cddc">以进程的并发执行为前提</font>，若系统仅支持单道程序，则无须考虑资源共享；<br>②有效的资源共享机制是并发执行的基础，若无法协调资源访问，则并发程序将因竞争冲突而无法正确运行。</p>
 <h5 id="虚拟"><a href="#虚拟" class="headerlink" title="虚拟"></a>虚拟</h5><p>虚拟是指通过某种技术手段，将一个物理实体映射为多个逻辑上的对应物。<font color="#ff0000">物理实体是实际存在的，而逻辑上的对应物是用户感受到的。</font><br>操作系统主要通过两类复用技术实现虚拟：时分复用和空分复用。</p>
 <table>
-<thead>
-<tr>
-<th>时分复用技术</th>
-<th>通过利用处理机空闲时间运行其他程序，提高利用率。<br>虚拟处理器：处理器被多个程序“时分”地使用，微观上交替执行。<br>虚拟设备技术：利用时分复用技术，将物理上的 I/O 设备虚拟为多台逻辑上的 I/O 设备。</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>空分复用技术</td>
-<td>利用存储器的空闲区域存放和运行其他的多道程序。<br>单纯采用空分复用技术的存储器只能提高内存利用率，并不能实现在逻辑上扩大内存容量的功能，还应引入虚拟存储技术。<br>虚拟存储器技术：将一台机器的物理存储器变为虚拟存储器，将内存划分给多个程序使用。其本质上是实现内存的分时复用。</td>
-</tr>
-</tbody></table>
-<h5 id="异步"><a href="#异步" class="headerlink" title="异步"></a>异步</h5><p>在多道程序环境下，多个进程并发执行。但由于系统资源有限，进程的执行并非连续进行， 而是以不可预知的速度断续推进，这种特性称为进程的异步性。<br>可能导致与时间相关的错误。<br>拥有并发性才有可能导致异步性。</p>
-<h3 id="操作系统的发展"><a href="#操作系统的发展" class="headerlink" title="操作系统的发展"></a>操作系统的发展</h3><h4 id="手工操作阶段"><a href="#手工操作阶段" class="headerlink" title="手工操作阶段"></a>手工操作阶段</h4><h5 id="人工操作阶段"><a href="#人工操作阶段" class="headerlink" title="人工操作阶段"></a>人工操作阶段</h5><p>用户将准备好的穿孔纸带或卡片放入输入输出设备，计算机读取其中的程序和数据并运行。只有当前程序运行完毕并取出结果后，下一个用户才能使用计算机。<br>手工操作阶段存在两个突出缺点：①用户独占全机，虽无资源竞争，但系统资源利用率极低；②CPU 长时间空闲，等待人工完成 I/O 操作，导致其计算能力未能充分发挥。</p>
-<h5 id="脱机-I-O-方式"><a href="#脱机-I-O-方式" class="headerlink" title="脱机 I/O 方式"></a>脱机 I/O 方式</h5><p>引入一台外围机，在 CPU 不参与的情况下，预先完成 I/O 准备工作：输入时，外围机将纸带或卡片上的程序和数据读入磁带，供 CPU 后续调入内存；输出时，CPU 将结果先写入磁带，再由外围机将磁带内容输出至外设。<br>脱机 I/O 的主要优点包括：①装带、卸带及数据传输等操作在脱机状态下由外围机完成，显著减少了 CPU 空闲时间；② CPU 可直接从高速磁带读取或写入数据，大幅提升了 I/O 效率。</p>
-<h4 id="批处理阶段"><a href="#批处理阶段" class="headerlink" title="批处理阶段"></a>批处理阶段</h4><h5 id="单道批处理系统"><a href="#单道批处理系统" class="headerlink" title="单道批处理系统"></a>单道批处理系统</h5><p>引入脱机输入/输出技术，并用监督程序负责控制作业的输入输出。<br><font color="#f79646">主要特征：</font></p>
-<ul>
-<li><font color="#92d050">自动性：</font>磁带上的作业可自动连续执行，无须人工干预。</li>
-<li><font color="#92d050">顺</font><font color="#92d050">序性：</font>作业按磁带上的顺序依次装入内存，先装入者先完成。</li>
-<li><font color="#92d050">单道性：</font>内存中仅允许一道用户程序运行；监督程序每次仅从磁带调入一道作业，待其完成或异常终止后才装入下一道。<br>优点：缓解人机速度矛盾，减少 CPU 空闲时间；提高了I/O 速度，提升资源利用率。<br>缺点：内存中同一时刻只能有一道程序运行，且它在执行时独占资源，并在 CPU 上连续执行。但 CPU 在等待 I/O 完成期间无法处理其他任务，导致大量时间处于空闲，整体 CPU 利用率较低。</li>
-</ul>
-<h5 id="多道批处理系统"><a href="#多道批处理系统" class="headerlink" title="多道批处理系统"></a>多道批处理系统</h5><p>用户提交的作业首先存放在外存的后备队列中。作业调度程序按一定算法从该队列中选取若 干作业调入主存，<font color="#ff0000">并且允许多个作业并发运行，这些作业共享处理器、外设以及其他资源。</font><br><font color="#f79646">主要特征：</font></p>
-<ul>
-<li><font color="#92d050">制约性：</font>程序执行因为共享资源及相互协同的原因产生了竞争，相互制约。</li>
-<li><font color="#92d050">间断性：</font>考虑竞争的公平性，程序的执行是断续的。</li>
-<li><font color="#92d050">共享性：</font>内存中的多个程序共享系统中的各种软硬件资源。</li>
-</ul>
-<p><font color="#f79646">优点：</font></p>
-<ul>
-<li><font color="#92cddc">多道程序并发执行</font>，资源利用率大幅提升。</li>
-<li><font color="#92cddc">系统吞吐量大。</font></li>
-<li><font color="#ff0000">宏观上并发。</font></li>
-<li><font color="#ff0000">微观上串行。</font></li>
-</ul>
-<p><font color="#f79646">缺点：</font></p>
-<ul>
-<li><font color="#92cddc">无交互能力。</font></li>
-<li><font color="#92cddc">平均周转时间长。</font><br>多道程序环境需要付出额外的开销（作业调度开销、上下文切换开销、内存管理开销、资源竞争开销、进程间通信和同步开销）来组织作业和切换作业，管理内存以及处理各种任务。</li>
-</ul>
-<h4 id="分时操作系统"><a href="#分时操作系统" class="headerlink" title="分时操作系统"></a>分时操作系统</h4><p>分时技术是指将处理器时间划分为很短的时间片，轮流分配给各用户程序使用。<font color="#ff0000">用户可与计算机进行交互。</font><br><font color="#f79646">特点：</font><br><font color="#92d050">同时性：</font>多路性，允许多个终端用户同时使用一台计算机，并按分时原则为每个用户服务。<br><font color="#92d050">交互性：</font>即用户通过终端采用人机对话的方式直接控制程序运行。<br><font color="#92d050">独立性：</font>多个用户可以彼此独立地进行操作，互不干扰，单个用户感觉不到别人也在使用这台计算机。<br><font color="#92d050">及时性：</font>用户地请求能在短时间内获得响应。<br><font color="#f79646">优点：</font>及时接收，及时处理。<br><font color="#f79646">缺点：</font>对每个用户/作业完全公平，循环地为每个用户/作业服务一个时间片，不区分任务的紧急性，<font color="#92cddc">不能优先处理紧急任务</font>。</p>
-<h4 id="实时操作系统"><a href="#实时操作系统" class="headerlink" title="实时操作系统"></a>实时操作系统</h4><p>计算机系统在接收到外部信号后及时处理，并且要在严格的时限内处理完事件。<br>主要特点是及时性和可靠性。其进程调度采用抢占式的优先级调度算法。<br>优点：能够响应并优先处理紧急任务，某些紧急任务无需等待时间片排队。<br><font color="#92d050">硬实时操作系统：</font>必须在绝对严格的规定时限内完成处理。<br><font color="#92d050">软实时操作系统：</font>能接受偶尔违反时间限制。</p>
-<h4 id="网络操作系统"><a href="#网络操作系统" class="headerlink" title="网络操作系统"></a>网络操作系统</h4><p>网络操作系统是在单机操作系统基础上扩展网络功能而形成的系统，主要用于支持计算机之间的通信、数据传输以及资源共享 (如文件、打印机共享等)。</p>
-<h4 id="分布式操作系统"><a href="#分布式操作系统" class="headerlink" title="分布式操作系统"></a>分布式操作系统</h4><p>用于管理分布式计算机系统的操作系统称为<font color="#92d050">分布式操作系统</font>，<br>特征：节点地位对等，无固定的主从关系； 系统资源可被所有用户透明地共享；具备良好的可扩展性与容错能力，支持动态重组；能够将一个任务分解为多个子任务，并分布到不同节点上并行执行、协同完成。<br>特点：分布性、并行性、统一性、自治性、共享性和透明性。</p>
-<h4 id="微机操作系统"><a href="#微机操作系统" class="headerlink" title="微机操作系统"></a>微机操作系统</h4><p>1.单用户单任务操作系统<br>2.单用户多任务操作系统<br>3.多用户多任务操作系统</p>
+<tbody>
+<tr><td>时分复用技术</td><td>通过利用处理机空闲时间运行其他程序，提高利用率。<br>虚拟处理器：处理器被多个程序“时分”地使用，微观上交替执行。<br>虚拟设备技术：利用时分复用技术，将物理上的 I/O 设备虚拟为多台逻辑上的 I/O 设备。</td></tr>
+<tr><td>空分复用技术</td><td>利用存储器的空闲区域存放和运行其他的多道程序。<br>单纯采用空分复用技术的存储器只能提高内存利用率，并不能实现在逻辑上扩大内存容量的功能，还应引入虚拟存储技术。<br>虚拟存储器技术：将一台机器的物理存储器变为虚拟存储器，将内存划分给多个程序使用。其本质上是实现内存的分时复用。</td></tr>
+</tbody>
+</table>
+##### 异步
+在多道程序环境下，多个进程并发执行。但由于系统资源有限，进程的执行并非连续进行， 而是以不可预知的速度断续推进，这种特性称为进程的异步性。
+可能导致与时间相关的错误。
+拥有并发性才有可能导致异步性。
+### 操作系统的发展
+#### 手工操作阶段
+##### 人工操作阶段
+用户将准备好的穿孔纸带或卡片放入输入输出设备，计算机读取其中的程序和数据并运行。只有当前程序运行完毕并取出结果后，下一个用户才能使用计算机。
+手工操作阶段存在两个突出缺点：①用户独占全机，虽无资源竞争，但系统资源利用率极低；②CPU 长时间空闲，等待人工完成 I/O 操作，导致其计算能力未能充分发挥。
+##### 脱机 I/O 方式
+引入一台外围机，在 CPU 不参与的情况下，预先完成 I/O 准备工作：输入时，外围机将纸带或卡片上的程序和数据读入磁带，供 CPU 后续调入内存；输出时，CPU 将结果先写入磁带，再由外围机将磁带内容输出至外设。
+脱机 I/O 的主要优点包括：①装带、卸带及数据传输等操作在脱机状态下由外围机完成，显著减少了 CPU 空闲时间；② CPU 可直接从高速磁带读取或写入数据，大幅提升了 I/O 效率。
+#### 批处理阶段
+##### 单道批处理系统
+引入脱机输入/输出技术，并用监督程序负责控制作业的输入输出。
+<font color="#f79646">主要特征：</font>
+- <font color="#92d050">自动性：</font>磁带上的作业可自动连续执行，无须人工干预。
+- <font color="#92d050">顺</font><font color="#92d050">序性：</font>作业按磁带上的顺序依次装入内存，先装入者先完成。
+- <font color="#92d050">单道性：</font>内存中仅允许一道用户程序运行；监督程序每次仅从磁带调入一道作业，待其完成或异常终止后才装入下一道。
+优点：缓解人机速度矛盾，减少 CPU 空闲时间；提高了I/O 速度，提升资源利用率。
+缺点：内存中同一时刻只能有一道程序运行，且它在执行时独占资源，并在 CPU 上连续执行。但 CPU 在等待 I/O 完成期间无法处理其他任务，导致大量时间处于空闲，整体 CPU 利用率较低。
+##### 多道批处理系统
+用户提交的作业首先存放在外存的后备队列中。作业调度程序按一定算法从该队列中选取若 干作业调入主存，<font color="#ff0000">并且允许多个作业并发运行，这些作业共享处理器、外设以及其他资源。</font>
+<font color="#f79646">主要特征：</font>
+- <font color="#92d050">制约性：</font>程序执行因为共享资源及相互协同的原因产生了竞争，相互制约。
+- <font color="#92d050">间断性：</font>考虑竞争的公平性，程序的执行是断续的。
+- <font color="#92d050">共享性：</font>内存中的多个程序共享系统中的各种软硬件资源。
+<font color="#f79646">优点：</font>
+- <font color="#92cddc">多道程序并发执行</font>，资源利用率大幅提升。
+- <font color="#92cddc">系统吞吐量大。</font>
+- <font color="#ff0000">宏观上并发。</font>
+- <font color="#ff0000">微观上串行。</font>
+<font color="#f79646">缺点：</font>
+- <font color="#92cddc">无交互能力。</font>
+- <font color="#92cddc">平均周转时间长。</font>
+多道程序环境需要付出额外的开销（作业调度开销、上下文切换开销、内存管理开销、资源竞争开销、进程间通信和同步开销）来组织作业和切换作业，管理内存以及处理各种任务。
+#### 分时操作系统
+分时技术是指将处理器时间划分为很短的时间片，轮流分配给各用户程序使用。<font color="#ff0000">用户可与计算机进行交互。</font>
+<font color="#f79646">特点：</font>
+<font color="#92d050">同时性：</font>多路性，允许多个终端用户同时使用一台计算机，并按分时原则为每个用户服务。
+<font color="#92d050">交互性：</font>即用户通过终端采用人机对话的方式直接控制程序运行。
+<font color="#92d050">独立性：</font>多个用户可以彼此独立地进行操作，互不干扰，单个用户感觉不到别人也在使用这台计算机。
+<font color="#92d050">及时性：</font>用户地请求能在短时间内获得响应。
+<font color="#f79646">优点：</font>及时接收，及时处理。
+<font color="#f79646">缺点：</font>对每个用户/作业完全公平，循环地为每个用户/作业服务一个时间片，不区分任务的紧急性，<font color="#92cddc">不能优先处理紧急任务</font>。
+#### 实时操作系统
+计算机系统在接收到外部信号后及时处理，并且要在严格的时限内处理完事件。
+主要特点是及时性和可靠性。其进程调度采用抢占式的优先级调度算法。
+优点：能够响应并优先处理紧急任务，某些紧急任务无需等待时间片排队。
+<font color="#92d050">硬实时操作系统：</font>必须在绝对严格的规定时限内完成处理。
+<font color="#92d050">软实时操作系统：</font>能接受偶尔违反时间限制。
+#### 网络操作系统
+网络操作系统是在单机操作系统基础上扩展网络功能而形成的系统，主要用于支持计算机之间的通信、数据传输以及资源共享 (如文件、打印机共享等)。
+#### 分布式操作系统
+用于管理分布式计算机系统的操作系统称为<font color="#92d050">分布式操作系统</font>，
+特征：节点地位对等，无固定的主从关系； 系统资源可被所有用户透明地共享；具备良好的可扩展性与容错能力，支持动态重组；能够将一个任务分解为多个子任务，并分布到不同节点上并行执行、协同完成。
+特点：分布性、并行性、统一性、自治性、共享性和透明性。
+#### 微机操作系统
+1.单用户单任务操作系统
+2.单用户多任务操作系统
+3.多用户多任务操作系统
+
 <h3 id="程序运行环境"><a href="#程序运行环境" class="headerlink" title="程序运行环境"></a>程序运行环境</h3><h4 id="两种程序"><a href="#两种程序" class="headerlink" title="两种程序"></a>两种程序</h4><p><font color="#92d050">内核程序：</font>可以执行一些特权指令<br><font color="#92d050">应用程序：</font>只能执行非特权指令</p>
 <h4 id="两种指令"><a href="#两种指令" class="headerlink" title="两种指令"></a>两种指令</h4><table>
 <thead>
@@ -1233,24 +1249,36 @@ mjx-container[display="true"] + br {
 <li>访管指令（Trap 指令/陷入指令）<br>由<font color="#92cddc">用户态转到内核态</font>，则会用到访管指令，<font color="#ff0000">访管指令（Trap 指令）是在用户态使用的，</font>用于引发访管中断，<font color="#ff0000">请求进入内核态。</font></li>
 </ol>
 <p><font color="#92d050">访管中断：</font>因请求操作系统服务而自愿中断，转为内核态，由访管指令（陷入指令）产生。<br>访管指令本身是非特权指令，但它触发的中断处理程序是在内核态执行的。</p>
-<h4 id="两种状态的事件-指令"><a href="#两种状态的事件-指令" class="headerlink" title="两种状态的事件/指令"></a>两种状态的事件/指令</h4><p>| 用户态 | 事件  | 系统调用、外部中断、缺页               |<br>|        |      | |<br>|     | 指令  | 陷入指令（Trap）跳转指令、数据传送指令、设置断点 |<br>| 内核态 | 事件  | 进程切换、缺页处理                  |<br>|     | 指令  | 关中断、I/O 指令、所有特权指令          |</p>
-<h4 id="内核的三大基本支撑功能"><a href="#内核的三大基本支撑功能" class="headerlink" title="内核的三大基本支撑功能"></a>内核的三大基本支撑功能</h4><h5 id="时钟管理"><a href="#时钟管理" class="headerlink" title="时钟管理"></a>时钟管理</h5><ul>
-<li>计时功能，操作系统需要通过时钟管理向用户提供标准的系统时间。</li>
-<li>通过时钟中断的管理，可以实现进程的切换。</li>
-<li>每当定时器出发时钟中断，时钟中断处理程序更新的内容：a.内核中时钟变量的值（整个系统用了多少时间）；b.当前进程已使用的 CPU 时长；c.进程在当前时间片内剩余的执行时间。</li>
-<li><font color="#ff0000">获取（读）时钟可以在用户态进行，但设置（写）时钟必须在内核态进行。</font></li>
-</ul>
-<h5 id="中断机制"><a href="#中断机制" class="headerlink" title="中断机制"></a>中断机制</h5><ul>
-<li>目的：提高多道运行环境中 CPU 的利用率，它允许 CPU 在 I/O 操作期间执行其他指令。</li>
-<li>中断来源广泛，包括键盘输入、鼠标事件、进程的管理和调度、系统调用、设备驱动和文件访问等。<u>中断是现代操作系统运行的基础</u>。</li>
-</ul>
-<h5 id="原语"><a href="#原语" class="headerlink" title="原语"></a>原语</h5><p>它是一组由若干条指令组成、用于完成特定功能的过程。<br><font color="#92d050">原子性：</font>原语是原子操作。这意味着它的所有动作要么全部完成，要么全部不执行，是一个不可分割的基本单位。由于其原子性，<font color="#ff0000">原语在执行过程中不允许被中断。</font><br>原语在<font color="#92cddc">内核态</font>下执行，并且常驻内存。常用于实现对关键数据结构的原子操作或同步机制。</p>
-<h4 id="中断和异常"><a href="#中断和异常" class="headerlink" title="中断和异常"></a>中断和异常</h4><h5 id="中断的作用"><a href="#中断的作用" class="headerlink" title="中断的作用"></a>中断的作用</h5><ul>
-<li><font color="#ff0000">中断会使 CPU 由用户态变为内核态，OS 重新夺回对 CPU 的控制权。</font>（硬件实现）<br>硬件实现：用一个特殊寄存器来表示 CPU 当前的工作状态是内核态还是用户态。</li>
-<li>如果没有中断机制，就无法高效的进行并发。</li>
-<li><font color="#ff0000">中断是操作系统内核夺回 CPU 使用权的唯一途径</font>（用户态→内核态）。</li>
-</ul>
-<h5 id="中断的类型"><a href="#中断的类型" class="headerlink" title="中断的类型"></a>中断的类型</h5><p><img lazyload="" src="/images/loading.svg" data-src="https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%20(1).jpg"></p>
+<h4 id="两种状态的事件-指令"><a href="#两种状态的事件-指令" class="headerlink" title="两种状态的事件/指令"></a>两种状态的事件/指令</h4><table>
+<tbody>
+<tr><td rowspan="2">用户态</td><td>事件</td><td>系统调用、外部中断、缺页</td></tr>
+<tr><td>指令</td><td>陷入指令（Trap）、跳转指令、数据传送指令、设置断点</td></tr>
+<tr><td rowspan="2">内核态</td><td>事件</td><td>进程切换、缺页处理</td></tr>
+<tr><td>指令</td><td>关中断、I/O 指令、所有特权指令</td></tr>
+</tbody>
+</table>
+#### 内核的三大基本支撑功能
+##### 时钟管理
+- 计时功能，操作系统需要通过时钟管理向用户提供标准的系统时间。
+- 通过时钟中断的管理，可以实现进程的切换。
+- 每当定时器出发时钟中断，时钟中断处理程序更新的内容：a.内核中时钟变量的值（整个系统用了多少时间）；b.当前进程已使用的 CPU 时长；c.进程在当前时间片内剩余的执行时间。
+- <font color="#ff0000">获取（读）时钟可以在用户态进行，但设置（写）时钟必须在内核态进行。</font>
+##### 中断机制
+- 目的：提高多道运行环境中 CPU 的利用率，它允许 CPU 在 I/O 操作期间执行其他指令。
+- 中断来源广泛，包括键盘输入、鼠标事件、进程的管理和调度、系统调用、设备驱动和文件访问等。<u>中断是现代操作系统运行的基础</u>。
+##### 原语
+它是一组由若干条指令组成、用于完成特定功能的过程。
+<font color="#92d050">原子性：</font>原语是原子操作。这意味着它的所有动作要么全部完成，要么全部不执行，是一个不可分割的基本单位。由于其原子性，<font color="#ff0000">原语在执行过程中不允许被中断。</font>
+原语在<font color="#92cddc">内核态</font>下执行，并且常驻内存。常用于实现对关键数据结构的原子操作或同步机制。
+#### 中断和异常
+##### 中断的作用
+- <font color="#ff0000">中断会使 CPU 由用户态变为内核态，OS 重新夺回对 CPU 的控制权。</font>（硬件实现）
+硬件实现：用一个特殊寄存器来表示 CPU 当前的工作状态是内核态还是用户态。
+- 如果没有中断机制，就无法高效的进行并发。
+- <font color="#ff0000">中断是操作系统内核夺回 CPU 使用权的唯一途径</font>（用户态→内核态）。
+##### 中断的类型
+
+<p><img lazyload="" src="/images/loading.svg" data-src="https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%20(1).jpg"></p>
 <p>①<font color="#92d050">内中断</font>（异常、例外）<br>与当前执行的指令有关，中断信号来源于 CPU 内部，由某个指令引发的中断。检测异常的工作由 CPU（包括控制器和运算器）实现的。内中断通常不能被屏蔽，一旦出现应立即处理。</p>
 <table>
 <thead>
@@ -1342,38 +1370,25 @@ mjx-container[display="true"] + br {
 <h4 id="宏内核"><a href="#宏内核" class="headerlink" title="宏内核"></a>宏内核</h4><p>将系统的主要功能模块集成在一个紧密耦合的整体中，运行于内核态，从而为用户程序提供高效的系统服务。<br>优点：高性能。内核内部各功能可以直接相互调用。<br>缺点：内核代码庞大，结构混乱，难以维护；某个功能出错可能导致整个系统崩溃。</p>
 <h4 id="微内核"><a href="#微内核" class="headerlink" title="微内核"></a>微内核</h4><p><font color="#f79646">基本概念：</font></p>
 <table>
-<thead>
-<tr>
-<th>足够小的内核</th>
-<th><font color="#92cddc">内核只保留最基本功能</font>：a.与硬件处理最紧密相关的部分；b.基本的抽象机制； c.客户与服务器之间通信。<br>仅含有<font color="#92cddc"><u>时钟管理、中断管理、进程通信、原语</u></font>等与硬件关联紧密的模块。<br><font color="#92cddc">进程管理（部分）、文件管理、设备管理</font>等功能在用户态以用户进程的形式运行。</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>基于客户/服务器模块</td>
-<td>OS 绝大部分在微内核外的服务器中实现。<br>客户端与服务器借助微内核提供消息传递机制进行消息交互。</td>
-</tr>
-<tr>
-<td>机制与策略分离</td>
-<td>机制：实现某一功能具体执行的机构。<br>策略：在机制的基础上借助某些参数和算法来实现该功能的优化。<br>机制处于系统基层，策略处于系统高层。在微内核 OS 中，通常将机制放在 OS 的微内核中。</td>
-</tr>
-</tbody></table>
+<tbody>
+<tr><td>足够小的内核</td><td><font color="#92cddc">内核只保留最基本功能</font>：a.与硬件处理最紧密相关的部分；b.基本的抽象机制；c.客户与服务器之间通信。<br>仅含有<font color="#92cddc"><u>时钟管理、中断管理、进程通信、原语</u></font>等与硬件关联紧密的模块。<br><font color="#92cddc">进程管理（部分）、文件管理、设备管理</font>等功能在用户态以用户进程的形式运行。</td></tr>
+<tr><td>基于客户/服务器模块</td><td>OS 绝大部分在微内核外的服务器中实现。<br>客户端与服务器借助微内核提供消息传递机制进行消息交互。</td></tr>
+<tr><td>机制与策略分离</td><td>机制：实现某一功能具体执行的机构。<br>策略：在机制的基础上借助某些参数和算法来实现该功能的优化。<br>机制处于系统基层，策略处于系统高层。在微内核 OS 中，通常将机制放在 OS 的微内核中。</td></tr>
+</tbody>
+</table>
+
 <p><font color="#f79646">基本功能：</font></p>
 <table>
-<thead>
-<tr>
-<th>进程（线程）管理</th>
-<th>进程（线程）间通信功能是微内核 OS 最基本的功能，频繁使用，通信功能放入微内核中。<br>微内核 OS 在进程管理上，核心理念是遵循“机制与策略分离”的原则，将功能明确划分为内核内部的核心“机制”和内核外部的具体“策略”。即进程管理的部分功能在微内核内，部分在微内核外。<br>微内核内（机制）：微内核仅包含最基础的核心机制，如进程间通信、进程切换、线程调度（仅限底层操作，如状态管理、上下文切换），以及多处理机之间的同步等功能。它专注于实现“如何”执行进程管理的基本操作。<br>微内核外（策略）：微内核外部的用户态服务器则负责具体的进程管理“策略”。这包括决定进程的初始化优先级、根据运行时需求动态调整优先级（如老化、IO 或 CPU 消耗调整），以及选择哪个进程应被执行。他侧重解决了“什么”进程应该被调度和“何时”调度的问题，并通过进程间通信机制调用微内核提供的底层机制来执行其策略。</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>低级存储器管理</td>
-<td>微内核仅配置最基本的低级存储器管理机制，<font color="#ff0000">如页表机制和地址变换机制，这些机制用于将用户空间的逻辑地址转换为物理地址</font>，这一部分依赖硬件。因此放入微内核。<br>而实现虚拟存储器管理的策略，包括应采用何种页面置换算法，采用何种内存分配与回收策略等，则应放在微内核外的存储器管理服务器中。</td>
-</tr>
-<tr>
-<td>中断和陷入处理</td>
-<td>微内核捕获所发生的中断和陷入事件，进行初步的处理，然后将有关事件的信息转换成消息后，把它发送给相关服务器。<br>服务器根据中断或陷入的类型调用相应的从处理程序来进行后期处理。</td>
-</tr>
-</tbody></table>
+<tbody>
+<tr><td>进程（线程）管理</td><td>进程（线程）间通信功能是微内核 OS 最基本的功能，频繁使用，通信功能放入微内核中。<br>微内核 OS 在进程管理上，核心理念是遵循“机制与策略分离”的原则，将功能明确划分为内核内部的核心“机制”和内核外部的具体“策略”。即进程管理的部分功能在微内核内，部分在微内核外。<br>微内核内（机制）：微内核仅包含最基础的核心机制，如进程间通信、进程切换、线程调度（仅限底层操作，如状态管理、上下文切换），以及多处理机之间的同步等功能。它专注于实现“如何”执行进程管理的基本操作。<br>微内核外（策略）：微内核外部的用户态服务器则负责具体的进程管理“策略”。这包括决定进程的初始化优先级、根据运行时需求动态调整优先级（如老化、I/O 或 CPU 消耗调整），以及选择哪个进程应被执行。它侧重解决“什么”进程应该被调度和“何时”调度的问题，并通过进程间通信机制调用微内核提供的底层机制来执行其策略。</td></tr>
+<tr><td>低级存储器管理</td><td>微内核仅配置最基本的低级存储器管理机制，<font color="#ff0000">如页表机制和地址变换机制，这些机制用于将用户空间的逻辑地址转换为物理地址</font>，这一部分依赖硬件，因此放入微内核。<br>而实现虚拟存储器管理的策略，包括应采用何种页面置换算法、何种内存分配与回收策略等，则应放在微内核外的存储器管理服务器中。</td></tr>
+<tr><td>中断和陷入处理</td><td>微内核捕获所发生的中断和陷入事件，进行初步处理，然后将有关事件的信息转换成消息并发送给相关服务器。<br>服务器根据中断或陷入的类型调用相应的处理程序进行后期处理。</td></tr>
+</tbody>
+</table>
+
+
+
+
 <p><font color="#f79646">优点：</font></p>
 <p>①扩展性和灵活性。新增或修改功能只需调整相应服务器，无须改动内核。<br>②可靠性和安全性。用户态服务的故障不会导致系统崩溃，且攻击面更小。<br>③可移植性。仅微内核包含硬件相关代码，其余服务器与平台无关，便于移植。<br>④分布式计算。客户/服务器间通过消息传递通信，易于扩展至网络环境。</p>
 <p><font color="#f79646">缺点：</font></p>
@@ -1615,7 +1630,7 @@ mjx-container[display="true"] + br {
 	<div class="post-toc">
 		<div class="toc-title">目录</div>
 		<div class="page-title">1.计算机系统概述</div>
-		<ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%A6%82%E5%BF%B5%E4%B8%8E%E5%8A%9F%E8%83%BD"><span class="nav-text">操作系统的概念与功能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1"><span class="nav-text">1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2"><span class="nav-text">2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3"><span class="nav-text">3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4"><span class="nav-text">4</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5"><span class="nav-text">5</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83"><span class="nav-text">操作系统的运行环境</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1"><span class="nav-text">1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1"><span class="nav-text">2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1"><span class="nav-text">3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1"><span class="nav-text">4</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1"><span class="nav-text">5</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6"><span class="nav-text">6</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7"><span class="nav-text">7</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8"><span class="nav-text">8</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9"><span class="nav-text">9</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10"><span class="nav-text">10</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11"><span class="nav-text">11</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12"><span class="nav-text">12</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13"><span class="nav-text">13</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14"><span class="nav-text">14</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15"><span class="nav-text">15</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16"><span class="nav-text">16</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#17"><span class="nav-text">17</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#18"><span class="nav-text">18</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#19"><span class="nav-text">19</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#20"><span class="nav-text">20</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%BB%93%E6%9E%84%E5%92%8C%E5%BC%95%E5%AF%BC"><span class="nav-text">操作系统的结构和引导</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2"><span class="nav-text">1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2"><span class="nav-text">2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2"><span class="nav-text">3</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%8D%E4%B9%A0"><span class="nav-text">复习</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-text">操作系统的概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%9B%9B%E4%B8%AA%E7%89%B9%E5%BE%81"><span class="nav-text">操作系统的四个特征</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%8F%91%E5%B1%95"><span class="nav-text">操作系统的发展</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83"><span class="nav-text">程序运行环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-text">系统调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E6%97%B6%E5%86%85%E5%AD%98%E6%98%A0%E5%83%8F%E4%B8%8E%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4"><span class="nav-text">程序运行时内存映像与地址空间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%BB%93%E6%9E%84"><span class="nav-text">操作系统的结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%BC%95%E5%AF%BC"><span class="nav-text">操作系统引导</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="nav-text">虚拟机</span></a></li></ol></li></ol>
+		<ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%A6%82%E5%BF%B5%E4%B8%8E%E5%8A%9F%E8%83%BD"><span class="nav-text">操作系统的概念与功能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1"><span class="nav-text">1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2"><span class="nav-text">2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3"><span class="nav-text">3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4"><span class="nav-text">4</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5"><span class="nav-text">5</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83"><span class="nav-text">操作系统的运行环境</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1"><span class="nav-text">1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1"><span class="nav-text">2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1"><span class="nav-text">3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1"><span class="nav-text">4</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1"><span class="nav-text">5</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6"><span class="nav-text">6</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7"><span class="nav-text">7</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8"><span class="nav-text">8</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9"><span class="nav-text">9</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10"><span class="nav-text">10</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11"><span class="nav-text">11</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12"><span class="nav-text">12</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13"><span class="nav-text">13</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14"><span class="nav-text">14</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15"><span class="nav-text">15</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16"><span class="nav-text">16</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#17"><span class="nav-text">17</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#18"><span class="nav-text">18</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#19"><span class="nav-text">19</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#20"><span class="nav-text">20</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%BB%93%E6%9E%84%E5%92%8C%E5%BC%95%E5%AF%BC"><span class="nav-text">操作系统的结构和引导</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2"><span class="nav-text">1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2"><span class="nav-text">2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2"><span class="nav-text">3</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%8D%E4%B9%A0"><span class="nav-text">复习</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-text">操作系统的概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%9B%9B%E4%B8%AA%E7%89%B9%E5%BE%81"><span class="nav-text">操作系统的四个特征</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83"><span class="nav-text">程序运行环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-text">系统调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E6%97%B6%E5%86%85%E5%AD%98%E6%98%A0%E5%83%8F%E4%B8%8E%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4"><span class="nav-text">程序运行时内存映像与地址空间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%BB%93%E6%9E%84"><span class="nav-text">操作系统的结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%BC%95%E5%AF%BC"><span class="nav-text">操作系统引导</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="nav-text">虚拟机</span></a></li></ol></li></ol>
 
 	</div>
 </div>
