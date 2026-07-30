@@ -1250,7 +1250,7 @@ mjx-container[display="true"] + br {
 <li>如果没有中断机制，就无法高效的进行并发。</li>
 <li><font color="#ff0000">中断是操作系统内核夺回 CPU 使用权的唯一途径</font>（用户态→内核态）。</li>
 </ul>
-<h5 id="中断的类型"><a href="#中断的类型" class="headerlink" title="中断的类型"></a>中断的类型</h5><p>![](<a class="link" target="_blank" rel="noopener" href="https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE">https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/思维导图<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a> (1).jpg)</p>
+<h5 id="中断的类型"><a href="#中断的类型" class="headerlink" title="中断的类型"></a>中断的类型</h5><p><img lazyload="" src="/images/loading.svg" data-src="https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%20(1).jpg"></p>
 <p>①<font color="#92d050">内中断</font>（异常、例外）<br>与当前执行的指令有关，中断信号来源于 CPU 内部，由某个指令引发的中断。检测异常的工作由 CPU（包括控制器和运算器）实现的。内中断通常不能被屏蔽，一旦出现应立即处理。</p>
 <table>
 <thead>
@@ -1277,6 +1277,12 @@ mjx-container[display="true"] + br {
 </tr>
 </tbody></table>
 <pre><code>                  |
+
+
+
+
+
+                  
 </code></pre>
 <p>常见的内中断：地址非法、数据校验错误、访存缺页、存储访问控制错、算数操作上溢、数据格式非法、除数为 0、非法指令、用户程序执行特权指令、陷入指令、运行超时、等待超时、算数运算错。<br><font color="#ff0000">内中断一旦出现立即处理，返回的地方可能是发生异常的指令，也可能直接跳过。</font><br>②<font color="#92d050">外中断</font>（也称硬件中断）<br><font color="#ff0000">与当前执行的指令无关，中断信号来源于 CPU 外部。</font><br>时钟中断：时钟部件发出的中断信号，该部件每隔一个时间片，给 CPU 发送一个时钟中断信号。<br> <font color="#92d050">时钟中断</font>的主要工作：处理和时间有关的信息以及决定是否执行调度程序。包括<font color="#92cddc">系统时间、进程的时间片、延时、使用 CPU 的时间、各种定时器、进程已执行的时间、进程在时间片内的剩余执行时间</font>等。<br>I/O 中断：由输入输设备发出的中断信号。<br>常见的外中断：程序 I/O 中断、DMA 中断、通道中断、时钟中断。<br>内中断（异常）会引起中断，但中断未必是内中断引起的（也可由外中断）。<br><font color="#92d050">软件中断：</font>在程序中使用软件中断指令使机器进入中断处理的过程，不是随机产生的。<br><font color="#92d050">硬件中断：</font>由随机产生的硬件事件产生的中断。</p>
 <table>
@@ -1333,7 +1339,7 @@ mjx-container[display="true"] + br {
 <h4 id="子程序调用"><a href="#子程序调用" class="headerlink" title="子程序调用"></a>子程序调用</h4><p>系统调用是用户程序调用系统程序，子程序调用时用户程序调用用户程序。<br>过程调用和函数调用都是子程序调用。</p>
 <h6 id="子程序调用和中断处理的区别"><a href="#子程序调用和中断处理的区别" class="headerlink" title="子程序调用和中断处理的区别"></a>子程序调用和中断处理的区别</h6><p><font color="#ff0000">子程序调用只需要保护程序断点，即该指令的下一条指令的地址；中断处理不仅要保护断点（PC 的内容），还要保护程序状态字寄存器的内容 PSW。</font><br>子程序调用是通过调用指令（CALL）引起，是事先安排的；中断的产生是随机的。<br>子程序受主程序或上层子程序控制；中断服务程序一般与被中断的现行程序无关。<br>不 i 存在同一时刻调用多个子程序的情况；有可能发生多个外设同时请求 CPU 服务的情况。<br><u>无论中断处理还是子程序调用都需要保存通用数据寄存器和通用地址寄存器中的内容</u>。在中断处理过程中程序计数器（PC）和程序状态字（PSW）寄存器的内容可由软件来实现。<br>程序状态字（PSW）寄存器用于记录当前处理器的状态和控制指令的执行顺序，并且保留与运行程序相关的各种信息，主要作用是实现程序状态的保护和恢复。子程序调用在进程内部执行，不会涉及特权模式的切换，通常由硬件自动保存程序计数器（PC），而 PSW 的保存可视情况由软件处理。</p>
 <h3 id="程序运行时内存映像与地址空间"><a href="#程序运行时内存映像与地址空间" class="headerlink" title="程序运行时内存映像与地址空间"></a>程序运行时内存映像与地址空间</h3><h4 id="程序运行时内存映像"><a href="#程序运行时内存映像" class="headerlink" title="程序运行时内存映像"></a>程序运行时内存映像</h4><p>源代码要经过编译、链接等处理生成可执行二进制目标代码，然后装入内存并经过操作系统抽象后，变成一个进程。程序运行时的内存映像指的是进程在内存中存放和组织的方式，进程会被映射到一个统一的虚拟地址空间，结构如图所示。</p>
-<p>![](<a class="link" target="_blank" rel="noopener" href="https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/%E5%A4%B4%E8%84%91%E9%A3%8E%E6%9A%B4">https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/头脑风暴<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a> (3).png)</p>
+<p><img lazyload="" src="/images/loading.svg" data-src="https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/%E5%A4%B4%E8%84%91%E9%A3%8E%E6%9A%B4%20(3).png"></p>
 <p>下面按照虚拟地址递增顺序依次进行介绍：<br>只读代码和数据区：进程虚拟地址从此开始，该区域存放进程的只读代码和只读数据。<br>可读/写数据区：该区域存放进程的可读可写数据。<br>运行时堆：由进程在运行时动态创建，该区域可以动态增长和收缩，例如 malloc() 可以申请该区域的内存，free() 可以释放该区域的内存。<br>共享库：该区域用于存放公共的共享库代码和数据，例如 C 语言的标准库函数。<br>用户栈：用来存放局部变量、返回地址，函数调用参数等信息，可以利用该区域实现函数调用。和堆一样，该区域随着程序的运行增长和缩减。<br>操作系统内核区：该区域是操作系统内核使用的地址空间，包括内核程序、代码、内核栈等信息，这些信息对用户程序不可见。<br>由于这部分没怎么考，所以记得比较少，详细内容再看看书。</p>
 <h3 id="操作系统的结构"><a href="#操作系统的结构" class="headerlink" title="操作系统的结构"></a>操作系统的结构</h3><h4 id="分层"><a href="#分层" class="headerlink" title="分层"></a>分层</h4><p>将操作系统分为若干层次，每个层次由若干模块组成。<font color="#ff0000">最底层为硬件系统（裸机系统），最高层为用户接口（系统调用接口）</font>，每层只能调用紧邻它的低层的功能和服务，且不能跨层调用。</p>
 <h5 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h5><p>① <font color="#92cddc">便于调试与验证，</font>系统可自底向上逐层开发与测试。层 1 完成且验证无误后，即可开发层 2, 因其仅依赖已验证的下层；后续各层以此类推。若某层出现错误，可将其定位在该层内部，因其所有依赖的下层均已通过验证。<br>②<font color="#92cddc">易于扩充与维护。</font>在保持层间接口不变的前提下，可独立修改、替换或新增某一层的实现，而不会影响其他层次的功能。</p>
