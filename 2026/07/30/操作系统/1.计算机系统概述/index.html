@@ -1,0 +1,2042 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="软件开发,编程,技术学习,工程实践,C++,Java,Hexo,算法">
+    
+    
+    <meta name="author" content="Lionlnuc">
+    
+    <!-- Completely eliminate flash of wrong theme -->
+    <script>
+        (function() {
+            const THEME_KEY = "REDEFINE-THEME-STATUS";
+            const DARK = "dark", LIGHT = "light";
+            
+            // Get preferred theme
+            function getTheme() {
+                try {
+                    const saved = localStorage.getItem(THEME_KEY);
+                    if (saved) {
+                        const { isDark } = JSON.parse(saved);
+                        return isDark ? DARK : LIGHT;
+                    }
+                } catch (e) {}
+                
+                return matchMedia("(prefers-color-scheme: dark)").matches ? DARK : LIGHT;
+            }
+            
+            // Apply theme to document
+            function applyTheme(theme) {
+                const isDark = theme === DARK;
+                const root = document.documentElement;
+                
+                // Set classes for compatibility
+                root.classList.add(theme);
+                root.classList.remove(isDark ? LIGHT : DARK);
+                root.style.colorScheme = theme;
+            }
+            
+            // Initial application
+            const theme = getTheme();
+            applyTheme(theme);
+            
+            // Listen for system preference changes
+            matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ({ matches }) => {
+                // Only update if using system preference (no localStorage entry)
+                if (!localStorage.getItem(THEME_KEY)) {
+                    applyTheme(matches ? DARK : LIGHT);
+                }
+            });
+            
+            // Set body classes ASAP (before DOMContentLoaded)
+            (function() {
+                const addBodyClass = () => {
+                    const b = document.body;
+                    if (!b) return false;
+                    b.classList.add(theme + "-mode");
+                    return true;
+                };
+
+                // Try immediately
+                if (addBodyClass()) return;
+
+                // Observe until body exists
+                const mo = new MutationObserver(() => {
+                    if (addBodyClass()) mo.disconnect();
+                });
+                mo.observe(document.documentElement, { childList: true, subtree: true });
+            })();
+        })();
+    </script>
+    
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="https://lionlnuc.github.io/2026/07/30/操作系统/1.计算机系统概述/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+    
+        
+        <meta name="description" content="记录软件开发、技术学习、工程实践与生活思考的个人博客。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="1.计算机系统概述">
+<meta property="og:url" content="https://lionlnuc.github.io/2026/07/30/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/1.%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/">
+<meta property="og:site_name" content="Lionlnuc - 享受编程，享受生活">
+<meta property="og:description" content="记录软件开发、技术学习、工程实践与生活思考的个人博客。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://lionlnuc.github.io/images/redefine-og.webp">
+<meta property="article:published_time" content="2026-07-29T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-07-29T16:00:00.000Z">
+<meta property="article:author" content="Lionlnuc">
+<meta property="article:tag" content="操作系统">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lionlnuc.github.io/images/redefine-og.webp">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/image/logo.png" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/image/logo.png">
+    <meta name="theme-color" content="#83cff9">
+    <link rel="shortcut icon" href="/image/logo.png">
+    <!--- Page Info-->
+    
+    <title>
+        
+            1.计算机系统概述 | Lionlnuc
+        
+    </title>
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
+
+
+    <!--- Inject Part-->
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/css/build/tailwind.css">
+
+    
+
+    
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
+
+    
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
+
+    <!--- Font Part-->
+    
+    
+    
+    
+    
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"lionlnuc.github.io","root":"/","language":"zh-CN","path":"search.json"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":false,"title_alignment":"left","headings_top_spacing":{"h1":"3.2rem","h2":"2.4rem","h3":"1.9rem","h4":"1.6rem","h5":"1.4rem","h6":"1.3rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#83cff9","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":true,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":false,"custom_message":"Now loading......"},"side_tools":{"gear_rotation":true,"auto_expand":false},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"记录软件开发、技术学习、工程实践与生活思考的个人博客。"},"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/home-banner-light.webp","dark":"/images/home-banner-dark.webp"},"title":"Lionlnuc","subtitle":{"text":["技术学习与工程实践","记录问题、方案与思考","持续构建个人知识体系"],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":85,"backing_speed":24,"starting_delay":1000,"backing_delay":2200,"loop":true,"smart_backspace":true},"text_color":{"light":"#101010","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":true,"style":"default","links":[{"icon":"fa-brands fa-github","url":"https://github.com/lionlnuc","name":"github"},{"icon":"fa-solid fa-code","url":"https://blog.csdn.net/a140781","name":"CSDN"},{"icon":"fa-solid fa-at","url":"you@example.com"},{"icon":"fa-brands fa-telegram","url":null},{"icon":"/images/custom-icon.svg","url":null}],"qrs":[{"icon":"fa-brands fa-weixin","qr":"https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/qrcode_for_gh_94f2768aad8b_258.jpg","name":"weixin"},{"icon":"/images/custom-icon.svg","qr":null}]}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":false,"version":"11.4.1","theme":{"light":"default","dark":"dark"}}},"version":"2.9.0","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"专题":{"path":"/categories","icon":"fa-solid fa-layer-group"},"项目":{"path":"/projects/","icon":"fa-solid fa-briefcase"},"文章":{"icon":"fa-solid fa-book","submenus":{"归档":"/archives","标签":"/tags","说说":"/shuoshuo"}},"关于":{"path":"/about","icon":"fa-regular fa-user"},"GitHub":{"icon":"fa-brands fa-github","path":"https://github.com/lionlnuc"}},"search":{"enable":true,"preload":false,"path":"search.json","field":"post","content":false,"format":"striptags"}},"page_templates":{"friends_column":2,"tags_style":"blur","masonry":{"batch_size":12,"initial_batch_size":24}},"home":{"sidebar":{"enable":true,"position":"right","first_item":"info","announcement":"记录学习、实践与思考","show_on_mobile":true,"links":{"技术专题":{"path":"/categories","icon":"fa-solid fa-layer-group"},"项目展示":{"path":"/projects/","icon":"fa-solid fa-briefcase"},"文章归档":{"path":"/archives","icon":"fa-regular fa-archive"},"标签索引":{"path":"/tags","icon":"fa-regular fa-tags"},"关于本站":{"path":"/about","icon":"fa-regular fa-user"}}},"article_date_format":"auto","excerpt_length":160,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footer":{"runtime":true,"icon":"<i class=\"fa-solid fa-heart fa-beat\" style=\"--fa-animation-duration: 0.5s; color: #f54545\"></i>","start":"2025/12/15 22:45:00","statistics":true,"customize":null,"icp":{"enable":false,"number":null,"url":null}},"footerStart":"2025/12/15 22:45:00","mermaid":{"style":{"light":"default","dark":"dark"}}};
+    window.lang_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+    window.i18n = {"search":"站内搜索您需要的内容...","toc":"目录","prev":"上一页","next":"下一页","prev_posts":"上一篇","next_posts":"下一篇","page":"第 %d 页","recent_posts":"最新文章","share":"分享","powered_by":"由 %s 驱动","theme":"主题","rss_feed":"RSS Feed","category":"分类","categories":"分类","tag":"标签","tags":"标签","post":"文章","posts":"文章","tagcloud":"标签云","comment":"评论","comments":"评论","top":"置顶","sticky":"置顶","go-back-home":"回到首页","masonry_loading":"照片加载中...","image_viewer":"图片查看器","close":"关闭","exif":{"title":"EXIF","cards":{"camera":"相机","lens":"镜头","exposure":"曝光","other":"其他"},"fields":{"make":"品牌","model":"机型","date_taken":"拍摄时间","lens_model":"镜头","focal_length":"焦距","focus_mode":"对焦模式","shutter":"快门","aperture":"光圈","iso":"感光度","exposure_program":"曝光程序","exposure_compensation":"曝光补偿","metering_mode":"测光模式","flash":"闪光灯","white_balance":"白平衡","latitude":"纬度","longitude":"经度","altitude":"海拔"},"status":{"loading":"加载中...","no_exif":"无 EXIF 信息","library_missing":"EXIF 库未加载","image_source_missing":"图片地址不可用","unavailable":"EXIF 不可用（可能被 CORS 阻止或缺少元数据）","flag_unavailable":"EXIF 不可用"}},"home":"首页","archive":"归档","archives":"归档","about":"关于","links":"链接","link":"链接","friends":"友情链接","friend":"友情链接","timeline":"时间轴","shuoshuo":"说说","bookmarks":"书签","site_uv":"访问人数","site_pv":"总访问量","read_more":"阅读全文","wordcount":"字","min2read":"分钟","changelog":"更新日志","status":"状态","runtime":"博客已运行","days":"天","hours":"小时","minutes":"分钟","seconds":"秒","optimized_by":"并由 Evan 进行优化","rights":"版权所有","site_posts":"共撰写了 %s 篇文章","site_wordcount":"共 %s 字","copyright":{"title":"标题","author":"作者","link":"链接","create_time":"创建于","update_time":"更新于","license_title":"版权声明","license_content":"本文章采用 %s 进行许可。","all_rights_reserved":"版权所有 &#169 %s，禁止转载。","public_domain":"本文为公有领域作品，可自由转载、引用。"},"ago":{"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"},"create_time":"创建","update_time":"更新","expired":"这篇文章最后更新于 %s 天前，内容可能已经过时。"};
+    window.data = {"masonry":true};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 8.1.2"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+<body>
+	<div class="progress-bar-container">
+	
+	<span class="scroll-progress-bar"></span>
+	
+
+	
+	<span class="pjax-progress-bar"></span>
+	<!--        <span class="swup-progress-icon">-->
+	<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+	<!--        </span>-->
+	
+</div>
+
+<main class="page-container" id="swup">
+
+	
+
+	<div class="main-content-container flex flex-col justify-between min-h-dvh">
+		<div class="main-content-header">
+			<header class="navbar-container px-6 md:px-12">
+    <div class="navbar-content transition-navbar ">
+        <div class="left">
+            
+                <a class="logo-image h-8 w-8 sm:w-10 sm:h-10 mr-3" href="/">
+                    <img src="/image/logo.png" class="w-full h-full rounded-xs">
+                </a>
+            
+            <a class="logo-title" href="/">
+                
+                Lionlnuc
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    首页
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/categories"
+                                        
+                                        >
+                                    <i class="fa-solid fa-layer-group fa-fw"></i>
+                                    专题
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/projects/"
+                                        
+                                        >
+                                    <i class="fa-solid fa-briefcase fa-fw"></i>
+                                    项目
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="has-dropdown"
+                                   href="#"
+                                        
+                                        onClick=&#34;return false;&#34;>
+                                    <i class="fa-solid fa-book fa-fw"></i>
+                                    文章
+                                    <i class="fa-solid fa-chevron-down fa-fw"></i>
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                                    <ul class="sub-menu">
+                                        
+                                            <li>
+                                                <a href="/archives">
+                                                    归档
+                                                </a>
+                                            </li>
+                                        
+                                            <li>
+                                                <a href="/tags">
+                                                    标签
+                                                </a>
+                                            </li>
+                                        
+                                            <li>
+                                                <a href="/shuoshuo">
+                                                    说说
+                                                </a>
+                                            </li>
+                                        
+                                    </ul>
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/about"
+                                        
+                                        >
+                                    <i class="fa-regular fa-user fa-fw"></i>
+                                    关于
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   target="_blank" rel="noopener" href="https://github.com/lionlnuc"
+                                        
+                                        >
+                                    <i class="fa-brands fa-github fa-fw"></i>
+                                    GITHUB
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                        <li class="navbar-item search search-popup-trigger">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-dvh w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                           
+                        >
+                            <span>
+                                首页
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/categories"
+                           
+                        >
+                            <span>
+                                专题
+                            </span>
+                            
+                                <i class="fa-solid fa-layer-group fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/projects/"
+                           
+                        >
+                            <span>
+                                项目
+                            </span>
+                            
+                                <i class="fa-solid fa-briefcase fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item-sub text-base my-1.5 flex flex-col w-full">
+                        
+                        <div class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary cursor-pointer text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                             navbar-data-toggle="submenu-文章"
+                        >
+                            <span>
+                                文章
+                            </span>
+                            
+                                <i class="fa-solid fa-chevron-right fa-sm fa-fw transition-all"></i>
+                            
+                        </div>
+                        
+
+                        
+                            <div class="flex-col items-start px-2 py-2 hidden" data-target="submenu-文章">
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           href="/archives">归档</a>
+                                    </div>
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           href="/tags">标签</a>
+                                    </div>
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           href="/shuoshuo">说说</a>
+                                    </div>
+                                
+                            </div>
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/about"
+                           
+                        >
+                            <span>
+                                关于
+                            </span>
+                            
+                                <i class="fa-regular fa-user fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           target="_blank" rel="noopener" href="https://github.com/lionlnuc"
+                           
+                        >
+                            <span>
+                                GITHUB
+                            </span>
+                            
+                                <i class="fa-brands fa-github fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+                
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/categories"
+                           
+                        >
+                            <span>技术专题</span>
+                            <i class="fa-solid fa-layer-group fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/projects/"
+                           
+                        >
+                            <span>项目展示</span>
+                            <i class="fa-solid fa-briefcase fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/archives"
+                           
+                        >
+                            <span>文章归档</span>
+                            <i class="fa-regular fa-archive fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/tags"
+                           
+                        >
+                            <span>标签索引</span>
+                            <i class="fa-regular fa-tags fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/about"
+                           
+                        >
+                            <span>关于本站</span>
+                            <i class="fa-regular fa-user fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">10</div>
+        <div class="label text-third-text-color text-sm">标签</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">4</div>
+        <div class="label text-third-text-color text-sm">专题</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">46</div>
+        <div class="label text-third-text-color text-sm">文章</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+		</div>
+
+		<div class="main-content-body transition-fade-up">
+			
+
+			<div class="main-content">
+				<div class="post-page-container flex relative justify-between box-border w-full h-full">
+	<div class="article-content-container">
+
+		<div class="article-title relative w-full">
+			
+			<div class="w-full flex items-center pt-6 justify-start">
+				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">1.计算机系统概述</h1>
+			</div>
+			
+		</div>
+
+		
+		<div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+			<div class="avatar w-[46px] h-[46px] shrink-0 rounded-medium border border-border-color p-px">
+				<img src="/image/avatar.png">
+			</div>
+			<div class="info flex flex-col justify-between">
+				<div class="author flex items-center">
+					<span class="name text-default-text-color text-lg font-semibold">Lionlnuc</span>
+					
+					<span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv4</span>
+					
+				</div>
+				<div class="meta-info">
+					<div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2026-07-30</span>
+        <span class="mobile">2026-07-30</span>
+        <span class="hover-info">创建</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2026-07-30</span>
+            <span class="mobile">2026-07-30</span>
+            <span class="hover-info">更新</span>
+        </span>
+    
+
+    
+        <span class="article-categories article-meta-item">
+            <i class="fa-regular fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+				</div>
+			</div>
+		</div>
+		
+
+		
+
+
+		<div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+			<p>本博客中的题目截图来源于<a class="link" target="_blank" rel="noopener" href="https://www.408os.cn/exercise?knowledgeId=82&knowledgeName=%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0">智能刷题 - 408真题系统<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a> ，仅供个人学习交流使用，主要用来记录自己的刷题过程和笔迹，以便日后复盘与巩固！笔记内容参考王道考研课程等其他考研课程以及一颗牛奶糖 408 笔记汇总而成。</p>
+<h2 id="操作系统的概念与功能"><a href="#操作系统的概念与功能" class="headerlink" title="操作系统的概念与功能"></a>操作系统的概念与功能</h2><h3 id="1"><a href="#1" class="headerlink" title="1"></a>1</h3><p><strong>题目：</strong><br>![[image-9.png]]<br><strong>答案：</strong></p>
+<details class="relative my-4 border border-border-color bg-second-background-color rounded-md  green" data-header-exclude=""><summary class="px-4 py-2 rounded-md shadow-[0_0_2px_0_var(--shadow-color-1)] cursor-pointer not-markdown"><i class="fa-solid fa-chevron-right"></i>查看答案</summary><div class="content p-4 "><p>A</p>
+</div></details>
+<p><strong>解析：</strong></p>
+<blockquote>
+<p>批处理系统中，作业执行时用户无法干预其运行，只能通过事先配置作业控制来间接干预，缺少交互能力，也因此才发展出分时系统，I 错误。批处理系统按发展历程又分为单道批处理系统、多道批处理系统，II 正确。多道程序设计技术允许同时把多个程序放入内存，并允许它们交替在 CPU 中运行，它们共享系统中的各种硬、软件资源，当 一道程序因 1/0 请求而暂停运行时，CPU 便立即转去运行另 一道程序，即多道批处理系统的 I/O 设备可与 CPU 并行工作，这都是借助于中断技术实现的，III 正确。</p>
+</blockquote>
+<blockquote>
+<p>[!tips]- 知识点<br>adadada</p>
+</blockquote>
+<h3 id="2"><a href="#2" class="headerlink" title="2"></a>2</h3><p><strong>题目：</strong><br>![[image-10.png]]<br><strong>答案：</strong></p>
+<details class="relative my-4 border border-border-color bg-second-background-color rounded-md  green" data-header-exclude=""><summary class="px-4 py-2 rounded-md shadow-[0_0_2px_0_var(--shadow-color-1)] cursor-pointer not-markdown"><i class="fa-solid fa-chevron-right"></i>查看答案</summary><div class="content p-4 "><p>D</p>
+</div></details>
+
+<p><strong>解析：</strong></p>
+<blockquote>
+<p>多道程序系统通过组织作业（编码或数据）使 CPU 总有一个作业可执行，从而提高了 CPU 的利用率、系统吞吐量和 I/O 设备利用率，I、III、IV 是优点。但系统要付出额外的开销来组织作业和切换作业，II 错误。所以选 D。</p>
+</blockquote>
+<h3 id="3"><a href="#3" class="headerlink" title="3"></a>3</h3><p><strong>题目：</strong><br>![[image-11.png]]<br><strong>答案：</strong></p>
+<details class="relative my-4 border border-border-color bg-second-background-color rounded-md  green" data-header-exclude=""><summary class="px-4 py-2 rounded-md shadow-[0_0_2px_0_var(--shadow-color-1)] cursor-pointer not-markdown"><i class="fa-solid fa-chevron-right"></i>查看答案</summary><div class="content p-4 "><p>C</p>
+</div></details>
+
+<p><strong>解析：</strong></p>
+<blockquote>
+<p>多任务操作系统可以在同一时间内运行多个应用程序，故 Ⅰ 正确。多个任务必须互斥地访问共享资源，为达到这一目标必须对共享资源进行必要的保护，故 Ⅱ 正确。现代操作系统都是多任务的（主要特点是并发和并行），并不一定需要运行在多 CPU 的硬件上，单个 CPU 也可以满足要求，Ⅲ 错误。综上所述，Ⅰ、Ⅱ 正确，Ⅲ 错误，故选 C。</p>
+</blockquote>
+<h3 id="4"><a href="#4" class="headerlink" title="4"></a>4</h3><p><strong>题目：</strong><br>![[image-12.png]]<br><strong>答案：</strong></p>
+<details class="relative my-4 border border-border-color bg-second-background-color rounded-md  green" data-header-exclude=""><summary class="px-4 py-2 rounded-md shadow-[0_0_2px_0_var(--shadow-color-1)] cursor-pointer not-markdown"><i class="fa-solid fa-chevron-right"></i>查看答案</summary><div class="content p-4 "><p>D</p>
+</div></details>
+
+<p><strong>解析：</strong></p>
+<blockquote>
+<p>操作系统的 基本特点：并发、共享、虚拟、异步，其中最基本、一定要实现的是并发和共享，A、C 正确。早期的多道批处理操作系统会将所有进程的数据全部调入主存，再让多道程序并发执行，即使不支持虚拟存储管理，也能实现“多道程序并发”，B 正确。进程多并不意味着 CPU 利用率高，进程数量越多，进程之间的资源竞争越激烈，甚至可能因为资源竞争而出现死锁现象，导致 CPU 利用率低，D 错误。</p>
+</blockquote>
+<h3 id="5"><a href="#5" class="headerlink" title="5"></a>5</h3><p><strong>题目：</strong><br>![[image-13.png]]<br><strong>答案：</strong></p>
+<details class="relative my-4 border border-border-color bg-second-background-color rounded-md  green" data-header-exclude=""><summary class="px-4 py-2 rounded-md shadow-[0_0_2px_0_var(--shadow-color-1)] cursor-pointer not-markdown"><i class="fa-solid fa-chevron-right"></i>查看答案</summary><div class="content p-4 "><p>D</p>
+</div></details>
+
+<p><strong>解析：</strong></p>
+<blockquote>
+<p>与宏内核相比，微内核通常具有<strong>较高的可靠性、较高的安全性、较强的可扩展性</strong>，但<strong>不具有较好的性能</strong>。</p>
+<p>判断这题的关键，是先抓住<strong>微内核的基本设计思想</strong>：</p>
+<ul>
+<li><p>微内核只把<strong>最基本、最核心的功能</strong>保留在内核中；</p>
+</li>
+<li><p>操作系统的大部分其他功能，如部分服务、驱动等，放到<strong>用户态</strong>作为独立进程运行；</p>
+</li>
+<li><p>这些用户态服务之间、以及它们与内核之间，往往需要通过 <strong>IPC（Inter-Process Communication，进程间通信）</strong> 来协作。</p>
+</li>
+<li><p><strong>不要把“结构先进”误等同于“性能更好”</strong>。微内核的优势主要在可靠性、安全性、可扩展性，不在运行效率。</p>
+</li>
+<li><p>题干比较对象是**“与宏内核相比”，因此要按两者典型差异作答，而不是只看“性能”这个词的宽泛含义。</p>
+</li>
+<li><p>记忆时可抓一句话：<strong>微内核优点在“稳、安、易扩展”，缺点在“通信开销大、性能偏低”</strong>。</p>
+</li>
+</ul>
+</blockquote>
+<h2 id="操作系统的运行环境"><a href="#操作系统的运行环境" class="headerlink" title="操作系统的运行环境"></a>操作系统的运行环境</h2><h3 id="1-1"><a href="#1-1" class="headerlink" title="1"></a>1</h3><p><strong>题目：</strong><br><img lazyload="" src="/images/loading.svg" data-src="https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/20260725173921950.png"><br><strong>答案：</strong></p>
+<details class="relative my-4 border border-border-color bg-second-background-color rounded-md  green" data-header-exclude=""><summary class="px-4 py-2 rounded-md shadow-[0_0_2px_0_var(--shadow-color-1)] cursor-pointer not-markdown"><i class="fa-solid fa-chevron-right"></i>查看答案</summary><div class="content p-4 "><p>A</p>
+</div></details>
+
+<p><strong>解析：</strong><br>不做解释了</p>
+<h3 id="2-1"><a href="#2-1" class="headerlink" title="2"></a>2</h3><p><strong>题目：</strong><br><img lazyload="" src="/images/loading.svg" data-src="https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/20260725174046921.png" alt="|1304x324"><br><strong>答案：</strong></p>
+<details class="relative my-4 border border-border-color bg-second-background-color rounded-md  green" data-header-exclude=""><summary class="px-4 py-2 rounded-md shadow-[0_0_2px_0_var(--shadow-color-1)] cursor-pointer not-markdown"><i class="fa-solid fa-chevron-right"></i>查看答案</summary><div class="content p-4 "><p>A</p>
+</div></details>
+
+<p><strong>解析：</strong></p>
+<blockquote>
+<p>缺页处理和时钟中断都属于中断，在 内核态 执行；进程调度是操作系统内核进程，无须用户干预，在核心态执行；命令解释程序属于命令接口，是四个选项中唯一能面对用户的，它在 用户态 执行。</p>
+</blockquote>
+<h3 id="3-1"><a href="#3-1" class="headerlink" title="3"></a>3</h3><p><strong>题目：</strong><br><img lazyload="" src="/images/loading.svg" data-src="https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/20260725174242019.png"><br><strong>答案：</strong></p>
+<details class="relative my-4 border border-border-color bg-second-background-color rounded-md  green" data-header-exclude=""><summary class="px-4 py-2 rounded-md shadow-[0_0_2px_0_var(--shadow-color-1)] cursor-pointer not-markdown"><i class="fa-solid fa-chevron-right"></i>查看答案</summary><div class="content p-4 "><p>C</p>
+</div></details>
+
+<p><strong>解析：</strong></p>
+<blockquote>
+<p>A，系统调用是操作系统提供给用户程序的接口，系统调用发生在用户态，被调用程序在核心态下执行。<br>B，外部中断是用户态到核心态的 “门”，也发生在用户态，在核心态完成中断过程。<br>C，进程切换属于系统调用执行过程中的事件，只能发生在核心态。<br>D，缺页产生后，在用户态发生缺页中断，然后进入核心态执行缺页中断服务程序。</p>
+</blockquote>
+<h3 id="4-1"><a href="#4-1" class="headerlink" title="4"></a>4</h3><p><strong>题目：</strong><br><img lazyload="" src="/images/loading.svg" data-src="https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/20260725174532996.png" alt="|1311x321"><br><strong>答案：</strong></p>
+<details class="relative my-4 border border-border-color bg-second-background-color rounded-md  green" data-header-exclude=""><summary class="px-4 py-2 rounded-md shadow-[0_0_2px_0_var(--shadow-color-1)] cursor-pointer not-markdown"><i class="fa-solid fa-chevron-right"></i>查看答案</summary><div class="content p-4 "><p>B</p>
+</div></details>
+
+<p><strong>解析：</strong></p>
+<blockquote>
+<p>子程序调用只需保存程序断点，即该指令的下一条指令的地址；中断调用子程序不仅要保护断点（PC 程序计数器 Program Counter），而且要保护程序状态字寄存器的内容 PSW（PSW 程序状态字 Program Status Word）。在中断处理中，最重要的两个寄存器是 PC 和 PSWR。</p>
+</blockquote>
+<h3 id="5-1"><a href="#5-1" class="headerlink" title="5"></a>5</h3><p><strong>题目：</strong><br><img lazyload="" src="/images/loading.svg" data-src="https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/20260725174918351.png"><br><strong>答案：</strong></p>
+<details class="relative my-4 border border-border-color bg-second-background-color rounded-md  green" data-header-exclude=""><summary class="px-4 py-2 rounded-md shadow-[0_0_2px_0_var(--shadow-color-1)] cursor-pointer not-markdown"><i class="fa-solid fa-chevron-right"></i>查看答案</summary><div class="content p-4 "><p>B</p>
+</div></details>
+
+<p><strong>解析：</strong></p>
+<blockquote>
+<p>需要在系统 内核态 执行的操作是整数除零操作（需要中断处理）和 read 系统调用函数，sin() 函数调用是在用户态下进行的。</p>
+</blockquote>
+<h3 id="6"><a href="#6" class="headerlink" title="6"></a>6</h3><p><strong>题目：</strong><br><img lazyload="" src="/images/loading.svg" data-src="https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/20260725175100643.png"><br><strong>答案：</strong></p>
+<details class="relative my-4 border border-border-color bg-second-background-color rounded-md  green" data-header-exclude=""><summary class="px-4 py-2 rounded-md shadow-[0_0_2px_0_var(--shadow-color-1)] cursor-pointer not-markdown"><i class="fa-solid fa-chevron-right"></i>查看答案</summary><div class="content p-4 "><p>D</p>
+</div></details>
+
+<p><strong>解析：</strong></p>
+<blockquote>
+<p>trap 指令、跳转指令和压栈指令均可以在用户态执行，其中 trap 指令负责由用户态转换成为内核态，而关中断指令为特权指令，必须在核心态才能执行，选 D。</p>
+</blockquote>
+<h3 id="7"><a href="#7" class="headerlink" title="7"></a>7</h3><p><strong>题目：</strong><br><img lazyload="" src="/images/loading.svg" data-src="https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/20260725175202666.png"><br><strong>答案：</strong></p>
+<details class="relative my-4 border border-border-color bg-second-background-color rounded-md  green" data-header-exclude=""><summary class="px-4 py-2 rounded-md shadow-[0_0_2px_0_var(--shadow-color-1)] cursor-pointer not-markdown"><i class="fa-solid fa-chevron-right"></i>查看答案</summary><div class="content p-4 "><p>B</p>
+</div></details>
+
+<p><strong>解析：</strong></p>
+<blockquote>
+<p>中断现场保存完整分类（硬件自动保存 + OS软件保存）</p>
+<p>一、硬件自动保存（CPU硬件电路完成，无需操作系统干预）<br>发生中断瞬间，硬件自动压入栈：<br>1. PC程序计数器：被中断指令的下一条指令地址，中断返回后从此处继续执行（对应题目A选项）<br>2. PSW程序状态字：标志位（溢出、正负、中断屏蔽位、特权级等），记录中断前CPU运行状态<br>二、操作系统（中断服务程序）手动保存（软件操作，题目考点）<br>进入内核中断处理函数后，操作系统主动把通用寄存器全部压栈保存（对应题目B选项）：</p>
+<ul>
+<li>通用数据寄存器（AX/BX/CX/DX等）</li>
+<li>基址、变址寄存器（BP、SI、DI等）<br>中断处理完成后，再按顺序弹出恢复，保证原进程运算数据不丢失。<br>三、不需要保存的两类高速缓存（TLB、Cache，题目C、D）<br>1. TLB快表：页表高速缓存，仅缓存虚拟-物理地址映射，丢失无影响，缺页时重新查询页表即可，中断无需保存<br>2. Cache高速缓存：CPU与内存间缓存，数据副本同时存在内存，中断不用保存；Cache失效只会轻微影响速度，不会破坏进程上下文<br>速记区分</li>
+<li>硬件存：PC、PSW</li>
+<li>OS存：所有通用寄存器</li>
+<li>不存：TLB、Cache、内存数据</li>
+</ul>
+</blockquote>
+<h3 id="8"><a href="#8" class="headerlink" title="8"></a>8</h3><p><strong>题目：</strong><br><img lazyload="" src="/images/loading.svg" data-src="https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/20260725210118269.png"><br><strong>答案：</strong></p>
+<details class="relative my-4 border border-border-color bg-second-background-color rounded-md  green" data-header-exclude=""><summary class="px-4 py-2 rounded-md shadow-[0_0_2px_0_var(--shadow-color-1)] cursor-pointer not-markdown"><i class="fa-solid fa-chevron-right"></i>查看答案</summary><div class="content p-4 "><p>C</p>
+</div></details>
+
+<p><strong>解析：</strong></p>
+<blockquote>
+<p>A.除零会导致中断<br>B.<code>INT n</code> 本身就是一条主动触发中断的指令，常用于系统调用或陷入内核。<br>C. 该指令仅对寄存器 <code>R0</code> 的内容做按位取反：<code>0</code> 变 <code>1</code>；1<code>变</code>0<code>。 D.该指令需要访问内存地址 </code>addr` 对应的内容。访问内存时，可能出现异常情况，例如：所访问页面当前不在主存中，触发<strong>缺页异常</strong>；<br>一旦发生这类异常，CPU 就需要进入内核态处理。因此 D <strong>有可能</strong>导致 CPU 从用户态变为内核态，不符合题意。</p>
+</blockquote>
+<h3 id="9"><a href="#9" class="headerlink" title="9"></a>9</h3><p><strong>题目：</strong><br><img lazyload="" src="/images/loading.svg" data-src="https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/20260725210705820.png"><br><strong>答案：</strong></p>
+<details class="relative my-4 border border-border-color bg-second-background-color rounded-md  green" data-header-exclude=""><summary class="px-4 py-2 rounded-md shadow-[0_0_2px_0_var(--shadow-color-1)] cursor-pointer not-markdown"><i class="fa-solid fa-chevron-right"></i>查看答案</summary><div class="content p-4 "><p>C</p>
+</div></details>
+
+<p><strong>解析：</strong></p>
+<blockquote>
+<p>执行系统调用时，先要把系统调用参数传给操作系统，然后再执行 <code>trap</code> 指令进入内核态，接着由内核执行相应服务程序，最后返回用户态。</p>
+<p><strong>③ 传递系统调用参数</strong> 必须在陷入之前完成。因为一旦执行 <code>trap</code> 指令，CPU 就从用户态切换到内核态，用户程序失去控制权，之后就不能再继续把参数传给系统。<br><strong>② 执行陷入（trap）指令</strong> 的作用是完成用户态到内核态的切换。<br>④ 执行相应的服务程序** 只能在内核态下进行，因为系统服务通常要访问系统资源。<br><strong>① 返回用户态</strong> 必然发生在服务程序执行完之后。</p>
+<p>因此正确顺序是：<strong>③→②→④→①</strong>，即 <strong>C</strong>。</p>
+</blockquote>
+<h3 id="10"><a href="#10" class="headerlink" title="10"></a>10</h3><p><strong>题目：</strong><br><img lazyload="" src="/images/loading.svg" data-src="https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/20260725211251995.png"><br><strong>答案：</strong></p>
+<details class="relative my-4 border border-border-color bg-second-background-color rounded-md  green" data-header-exclude=""><summary class="px-4 py-2 rounded-md shadow-[0_0_2px_0_var(--shadow-color-1)] cursor-pointer not-markdown"><i class="fa-solid fa-chevron-right"></i>查看答案</summary><div class="content p-4 "><p>D</p>
+</div></details>
+
+<p><strong>解析：</strong></p>
+<blockquote>
+<p>时钟中断的主要工作是处理和时间有关的信息以及决定是否执行调度程序，和时间有关的所有信息，包括系统时间、进程的时间片、延时、使用 CPU 的时间、各种定时器</p>
+</blockquote>
+<h3 id="11"><a href="#11" class="headerlink" title="11"></a>11</h3><p><strong>题目：</strong><br><img lazyload="" src="/images/loading.svg" data-src="https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/20260725212030492.png"><br><strong>答案：</strong></p>
+<details class="relative my-4 border border-border-color bg-second-background-color rounded-md  green" data-header-exclude=""><summary class="px-4 py-2 rounded-md shadow-[0_0_2px_0_var(--shadow-color-1)] cursor-pointer not-markdown"><i class="fa-solid fa-chevron-right"></i>查看答案</summary><div class="content p-4 "><p>C</p>
+</div></details>
+
+<p><strong>解析：</strong></p>
+<blockquote>
+<p>用户可以在用户态调用操作系统的服务，但执行具体的系统调用服务程序是处于内核态的，Ⅰ正确：设备管理属于操作系统的职能之一，包括对输入/输出设备的分配、初始化、维护等，用户程序需要通过系统调用使用操作系统的设备管理服务，Ⅱ正确：操作系统不同，底层逻辑、实现方式均不相同，为应用程序提供的系统调用接口也不同，Ⅲ错误：系统调用是用户在程序中调用操作系统提供的子功能，Ⅳ正确。</p>
+</blockquote>
+<h3 id="12"><a href="#12" class="headerlink" title="12"></a>12</h3><p><strong>题目：</strong><br><img lazyload="" src="/images/loading.svg" data-src="https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/20260725212936239.png"><br><strong>答案：</strong></p>
+<details class="relative my-4 border border-border-color bg-second-background-color rounded-md  green" data-header-exclude=""><summary class="px-4 py-2 rounded-md shadow-[0_0_2px_0_var(--shadow-color-1)] cursor-pointer not-markdown"><i class="fa-solid fa-chevron-right"></i>查看答案</summary><div class="content p-4 "><p>D</p>
+</div></details>
+
+<p><strong>解析：</strong></p>
+<blockquote>
+<p>当 CPU 检测到中断信号后，由硬件自动保存被中断程序的断点（即程序计数器 PC）, I 错误。<br>之后，硬件找到该中断信号对应的中断向量，中断向量指明中断服务程序入口地址（各中断向量统一存放在中断向量表中，该表由操作系统初始化，Ⅲ 正确）。<br>接下来开始执行中断服务程序，保存 PSW、保存中断屏蔽字、保存各通用寄存器的值，并提供与中断信号 对应的中断服务，中断服务程序属于操作系统内核，Ⅱ 和 Ⅳ 正确。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th align="left">阶段</th>
+<th align="left">执行主体</th>
+<th align="left">核心操作</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">中断响应（硬件阶段）</td>
+<td align="left">CPU 硬件</td>
+<td align="left">关中断、保存<strong>程序计数器 PC / 程序状态字 PSW</strong>（中断点）、根据中断向量表跳转到中断处理程序入口</td>
+</tr>
+<tr>
+<td align="left">中断处理（软件阶段）</td>
+<td align="left">操作系统</td>
+<td align="left">保存现场（通用寄存器、中断屏蔽字）、提供中断服务、恢复现场、开中断、返回用户态</td>
+</tr>
+</tbody></table>
+<h3 id="13"><a href="#13" class="headerlink" title="13"></a>13</h3><p><strong>题目：</strong><br><img lazyload="" src="/images/loading.svg" data-src="https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/20260725213618244.png"><br><strong>答案：</strong></p>
+<details class="relative my-4 border border-border-color bg-second-background-color rounded-md  green" data-header-exclude=""><summary class="px-4 py-2 rounded-md shadow-[0_0_2px_0_var(--shadow-color-1)] cursor-pointer not-markdown"><i class="fa-solid fa-chevron-right"></i>查看答案</summary><div class="content p-4 "><p>B</p>
+</div></details>
+
+<p><strong>解析：</strong></p>
+<blockquote>
+<p>在 内核态 下，CPU 可执行任何指令，在用户态下 CPU 只能执行非特权指令，而特权指令只能在内核态下执行。常见的 特权指令 有：有关对 IO 设备操作的指令；有关访问程序状态的指令；存取特殊寄存器指令；其他指令。</p>
+</blockquote>
+<h3 id="14"><a href="#14" class="headerlink" title="14"></a>14</h3><p><strong>题目：</strong><br><img lazyload="" src="/images/loading.svg" data-src="https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/20260725213933350.png"><br><strong>答案：</strong></p>
+<details class="relative my-4 border border-border-color bg-second-background-color rounded-md  green" data-header-exclude=""><summary class="px-4 py-2 rounded-md shadow-[0_0_2px_0_var(--shadow-color-1)] cursor-pointer not-markdown"><i class="fa-solid fa-chevron-right"></i>查看答案</summary><div class="content p-4 "><p>C</p>
+</div></details>
+
+<p><strong>解析：</strong></p>
+<blockquote>
+<p>A，当内存中的空闲页框不够时，操作系统会将某些页面调出，并将要访问的页面调入，这个过程完全由操作系统完成不涉及系统调用。对于<br>B，进程调度完全由操作系统完成，无法通过系统调用完成。<br>C，创建新进程可以通过系统调用来完成，如 Linux 中通过 fork 系统调用来创建子进程。<br>D，生成随机数只需要普通的函数调用，不涉及请求操作系统的服务</p>
+</blockquote>
+<h3 id="15"><a href="#15" class="headerlink" title="15"></a>15</h3><p><strong>题目：</strong><br><img lazyload="" src="/images/loading.svg" data-src="https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/20260725214151554.png"><br><strong>答案：</strong></p>
+<details class="relative my-4 border border-border-color bg-second-background-color rounded-md  green" data-header-exclude=""><summary class="px-4 py-2 rounded-md shadow-[0_0_2px_0_var(--shadow-color-1)] cursor-pointer not-markdown"><i class="fa-solid fa-chevron-right"></i>查看答案</summary><div class="content p-4 "><p>C</p>
+</div></details>
+
+<p><strong>解析：</strong></p>
+<blockquote>
+<p>CPU 在 用户态 时只能执行非特权指令，在 内核态 时可以执行特权指令和非特权指令。</p>
+</blockquote>
+<h3 id="16"><a href="#16" class="headerlink" title="16"></a>16</h3><p><strong>题目：</strong><br><img lazyload="" src="/images/loading.svg" data-src="https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/20260725214254282.png"><br><strong>答案：</strong></p>
+<details class="relative my-4 border border-border-color bg-second-background-color rounded-md  green" data-header-exclude=""><summary class="px-4 py-2 rounded-md shadow-[0_0_2px_0_var(--shadow-color-1)] cursor-pointer not-markdown"><i class="fa-solid fa-chevron-right"></i>查看答案</summary><div class="content p-4 "><p>B</p>
+</div></details>
+
+<p><strong>解析：</strong></p>
+<blockquote>
+<p>Ⅰ. 保存断点由中断隐指令完成，即由硬件完成。<br>Ⅱ. 为了防止系统调用覆盖用户程序中的数据，操作系统在进入系统调用处理程序时会保存用户程序的寄存器内容<br>Ⅲ. 系统调用就是要求操作系统执行某项服务，服务程序是操作系统的一部分，由操作系统调度执行。<br>Ⅳ. 将 CPU 模式改为内核态，这一点不是由操作系统主动完成，而是由硬件自动完成的：</p>
+</blockquote>
+<h3 id="17"><a href="#17" class="headerlink" title="17"></a>17</h3><p><strong>题目：</strong><br><img lazyload="" src="/images/loading.svg" data-src="https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/20260725214639820.png"><br><strong>答案：</strong></p>
+<details class="relative my-4 border border-border-color bg-second-background-color rounded-md  green" data-header-exclude=""><summary class="px-4 py-2 rounded-md shadow-[0_0_2px_0_var(--shadow-color-1)] cursor-pointer not-markdown"><i class="fa-solid fa-chevron-right"></i>查看答案</summary><div class="content p-4 "><p>A</p>
+</div></details>
+
+<p><strong>解析：</strong></p>
+<blockquote>
+<p>中断向量表 适合采用的数据结构是数组。中断向量表 是一种用于存储中断处理程序入口地址的数据结构，它以中断号作为索引，将中断号映射到相 应的中断处理程序入口地址。由于中断号是一个固定的范围采用数组可以实现快速的索引和访问，具有较高的效率。使用数组可以直接根据中断号计算出对应的数组索引而不需要遍历链表或队列来查找对应的处理程序入口地址，从而提高中断处理的效率。</p>
+</blockquote>
+<h3 id="18"><a href="#18" class="headerlink" title="18"></a>18</h3><p><strong>题目：</strong><br><img lazyload="" src="/images/loading.svg" data-src="https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/20260725214842323.png"><br><strong>答案：</strong></p>
+<details class="relative my-4 border border-border-color bg-second-background-color rounded-md  green" data-header-exclude=""><summary class="px-4 py-2 rounded-md shadow-[0_0_2px_0_var(--shadow-color-1)] cursor-pointer not-markdown"><i class="fa-solid fa-chevron-right"></i>查看答案</summary><div class="content p-4 "><p>D</p>
+</div></details>
+
+<p><strong>解析：</strong></p>
+<blockquote>
+<p>对于 A 选项，阻塞过程属于进程状态切换，不直接涉及CPU模式转换。<br>对于 B 选项，执行 CPU 调度属于内核调度器行为，通常保持在内核态。<br>对于 C 选项，唤醒进程属于进程管理操作，不直接触发模式切换<br>对于 D 选项，当用户程序需要访问特权指令或执行需要操作系统提供的服务时，它会通过 系统调用 请求进入内核态。在系统调用期间，CPU 会切换到内核态执行相应的内核代码来满足用户程序的需求。一旦系统调用执行完毕，CPU 会从内核态返回到用户态继续执行用户程序。所以，执行系统调用是导致 CPU 从内核态转为用户态的关键操作。</p>
+</blockquote>
+<h3 id="19"><a href="#19" class="headerlink" title="19"></a>19</h3><p><strong>题目：</strong><br><img lazyload="" src="/images/loading.svg" data-src="https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/20260725215151711.png"><br><strong>答案：</strong></p>
+<details class="relative my-4 border border-border-color bg-second-background-color rounded-md  green" data-header-exclude=""><summary class="px-4 py-2 rounded-md shadow-[0_0_2px_0_var(--shadow-color-1)] cursor-pointer not-markdown"><i class="fa-solid fa-chevron-right"></i>查看答案</summary><div class="content p-4 "><p>A</p>
+</div></details>
+
+<p><strong>解析：</strong></p>
+<blockquote>
+<p>A 错误。中断或异常发生时，CPU 处于用户态。当中断或异常发生时，CPU 会从用户态切换到内核态，然后开始执行相应的中断处理程序或异常处理程序。<br>B 正确。操作系统为每种系统调用提供了对应的内核服务例程，这些例程负责处理用户程序发起的系统调用，以及管理内核资源和执行相应的操作。当用户程序发起系统调用时，处理器会从用户态切换到内核态，并执行与该系统调用对应的内核服务例程。<br>C 正确。当中断发生时，CPU 会从用户态切换到内核态，并开始执行相应的中断处理程序。因为中断处理程序需要访问和操作受保护的内核资源，如管理设备、执行特权指令等，所以中断处理程序必须在内核态下执行。<br>D 正确。系统添加新类型设备时，需注册相应的中断服务例程。因为许多设备在发生特定事件时会触发中断，需要相应的中断处理程序来进行处理，该中断处理程序就是中断服务例程。</p>
+</blockquote>
+<h3 id="20"><a href="#20" class="headerlink" title="20"></a>20</h3><p><strong>题目：</strong><br><img lazyload="" src="/images/loading.svg" data-src="https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/20260725215538687.png"><br><strong>答案：</strong></p>
+<details class="relative my-4 border border-border-color bg-second-background-color rounded-md  green" data-header-exclude=""><summary class="px-4 py-2 rounded-md shadow-[0_0_2px_0_var(--shadow-color-1)] cursor-pointer not-markdown"><i class="fa-solid fa-chevron-right"></i>查看答案</summary><div class="content p-4 "><p>C</p>
+</div></details>
+
+<p><strong>解析：</strong></p>
+<blockquote>
+<p>命令解释程序（Command-Line Interpreter，简称 CLI 或 Shell）是操作系统中的核心组件。它作为用户与底层系统内核之间的桥梁，负责接收、解析并执行用户输入的文本命令。<br>在操作系统中，内核模式用于执行特权指令和访问核心资源，如硬件管理和进程控制。编译程序、链接程序和命令解释程序通常作为用户空间的应用程序运行，在用户模式下执行；而装入程序负责将可执行文件加载到内存并启动进程，这一过程涉及内存分配和进程创建等特权操作，因此由操作系统内核在内核模式下执行。</p>
+</blockquote>
+<h2 id="操作系统的结构和引导"><a href="#操作系统的结构和引导" class="headerlink" title="操作系统的结构和引导"></a>操作系统的结构和引导</h2><h3 id="1-2"><a href="#1-2" class="headerlink" title="1"></a>1</h3><p><strong>题目：</strong><br><img lazyload="" src="/images/loading.svg" data-src="https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/20260727145437234.png"><br><strong>答案：</strong></p>
+<details class="relative my-4 border border-border-color bg-second-background-color rounded-md  green" data-header-exclude=""><summary class="px-4 py-2 rounded-md shadow-[0_0_2px_0_var(--shadow-color-1)] cursor-pointer not-markdown"><i class="fa-solid fa-chevron-right"></i>查看答案</summary><div class="content p-4 "><p>D</p>
+</div></details>
+
+<p><strong>解析：</strong></p>
+<blockquote>
+<p>RAM：随机访问存储器特征：可随机读写，读写速度快，断电后数据消失。<br>ROM：只读存储器特征：数据写入后不可更改，即使断电数据也不消失。<br>EPROM：电可编程只读存储器，一种特殊的 ROM。<br>BIOS：基本输入输出系统。</p>
+</blockquote>
+<h3 id="2-2"><a href="#2-2" class="headerlink" title="2"></a>2</h3><p><strong>题目：</strong><br><img lazyload="" src="/images/loading.svg" data-src="https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/20260727151444610.png"><br><strong>答案：</strong></p>
+<details class="relative my-4 border border-border-color bg-second-background-color rounded-md  green" data-header-exclude=""><summary class="px-4 py-2 rounded-md shadow-[0_0_2px_0_var(--shadow-color-1)] cursor-pointer not-markdown"><i class="fa-solid fa-chevron-right"></i>查看答案</summary><div class="content p-4 "><p>A</p>
+</div></details>
+
+<p><strong>解析：</strong><br>操作系统在每一次重启时都要调入内存中，因为操作系统需要从磁盘中读出，所以在启动计算机之前磁盘中的文件系统及分区已经完成，B、C、D 错误。</p>
+<blockquote>
+<p>中断向量表：在操作系统启动时，必须初始化中断向量表，用于存储中断服务例程的入口地址，以便处理硬件或软件中断。这是操作系统初始化过程中的关键步骤。<br>文件系统的根目录：根目录通常在文件系统格式化时创建，而不是操作系统初始化过程中。<br>硬盘分区表：分区表是在磁盘分区时创建的，通常在安装操作系统之前完成。<br>文件系统的索引节点表：索引节点表（inode 表）是在文件系统创建时生成的，不是操作系统初始化的一部分。<br>因此，正确答案是 A。</p>
+</blockquote>
+<h3 id="3-2"><a href="#3-2" class="headerlink" title="3"></a>3</h3><p><strong>题目：</strong><br><img lazyload="" src="/images/loading.svg" data-src="https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/20260727152212862.png"><br><strong>答案：</strong></p>
+<details class="relative my-4 border border-border-color bg-second-background-color rounded-md  green" data-header-exclude=""><summary class="px-4 py-2 rounded-md shadow-[0_0_2px_0_var(--shadow-color-1)] cursor-pointer not-markdown"><i class="fa-solid fa-chevron-right"></i>查看答案</summary><div class="content p-4 "><p>C</p>
+</div></details>
+
+<p><strong>解析：</strong></p>
+<blockquote>
+<p>VMM（虚拟机监控器或 Hypervisor）通常运行在比普通操作系统更高的特权级，因为它需要控制底层硬件资源，并管理多个客户操作系统。例如在 x86 架构中，VMM 通常在Ring -1（即硬件支持的更低层）运行，而操作系统在 Ring 0。 即使是某些 Type 2 Hypervisor（如 VMware Workstation）运行在宿主操作系统上，也会通过硬件辅助（如 Intel VT-x）获得高特权级访问。</p>
+</blockquote>
+<h2 id="复习"><a href="#复习" class="headerlink" title="复习"></a>复习</h2><h3 id="操作系统的概念"><a href="#操作系统的概念" class="headerlink" title="操作系统的概念"></a>操作系统的概念</h3><h4 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h4><ul>
+<li><font color="#ff0000">操作系统是一组能有效地组织和管理计算机硬件和软件资源、合理地对各类作业进行调度、以及方便用户使用的程序的集合。</font></li>
+<li>操作系统是硬件上的第一层软件，是最基本的系统软件，最接近硬件的软件。</li>
+<li>操作系统提供给用户和其他软件方便的接口和环境（向上层提供服务，上层即用户和软件；操作系统屏蔽底层硬件细节，使用户在使用时无需关心底层如何实现功能——即封装思想）。</li>
+</ul>
+<h4 id="功能和目标"><a href="#功能和目标" class="headerlink" title="功能和目标"></a>功能和目标</h4><p>1.操作系统作为计算机系统资源的管理者</p>
+<table>
+<thead>
+<tr>
+<th>处理机管理</th>
+<th>在多道程序环境下，<font color="#ff0000">处理机的分配和运行都以进程 (或线程) 为基本单位</font>，因此处理机管理本质上是对进程的管理。<br>进程管理的主要任务包括进程控制、进程同步、进程通信、死锁处理以及处理机调度等。</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>存储器管理</td>
+<td><font color="#ff0000">为多道程序提供良好的内存运行环境</font>，方便用户使用并提高内存利用率。<br>主要功能包括内存分配与回收、地址映射、内存保护与共享，以及内存扩充等。</td>
+</tr>
+<tr>
+<td>文件管理</td>
+<td>文件存储空间的管理、目录管理、文件读/写操作及访问保护等。</td>
+</tr>
+<tr>
+<td>设备管理</td>
+<td><font color="#ff0000">处理用户的 I/O 请求，屏蔽设备差异</font>，方便用户使用各类外设，并提高设备利用率。<br>主要包括缓冲管理、设备分配、设备驱动处理和虚拟设备等功能。</td>
+</tr>
+</tbody></table>
+<h5 id="处理机管理"><a href="#处理机管理" class="headerlink" title="处理机管理"></a>处理机管理</h5><p><font color="#92d050">进程控制</font>：操作系统需要为每道作业<font color="#92cddc">创建进程，撤销/终止已结束的进程、控制进程</font>在运行过程中的<font color="#92cddc">状态切换</font>。<br><font color="#92d050">进程同步</font>：<font color="#92cddc">对多个进程（含线程）的运行进行协调。</font><br><font color="#92d050">进程通信</font>：实现相互合作进程之间的信息交换。<br><font color="#92d050">进程调度</font>：按照一定的算法把处理器分配给进程。</p>
+<h5 id="存储器管理"><a href="#存储器管理" class="headerlink" title="存储器管理"></a>存储器管理</h5><p><font color="#92d050">内存分配</font>：</p>
+<ul>
+<li>通过一定的分配策略为每道程序分配内存空间。</li>
+<li>提高存储器的利用率，尽量减少不可用的内存空间。</li>
+<li>允许正在运行的程序申请附加内存空间，以适应程序和数据的动态增长。</li>
+</ul>
+<p><font color="#f79646">两种分配方式：</font></p>
+<ul>
+<li><font color="#92d050">静态分配</font>：作业所需的内存空间装载时确定，整个运行期间不允许该作业再申请新的内存空间。</li>
+<li><font color="#92d050">动态分配</font>：允许在运行过程中动态申请新的内存空间，以适应程序和数据的增长。</li>
+</ul>
+<p><font color="#92d050">内存保护</font>：保证各程序在各自的空间运行而互不干扰，不允许用户程序访问操作系统和其他用户的程序和数据。</p>
+<p><font color="#92d050">地址映射</font>：将地址空间中的<font color="#92cddc">逻辑地址</font>转换为内存空间中与之对应的<font color="#92cddc">物理地址</font>。</p>
+<p><font color="#92d050">内存扩充</font>：从逻辑上扩充内存容量，使用户感觉到的内存容量比实际内存容量大得多。以便让更多的用户程序能并发运行。</p>
+<h5 id="文件管理"><a href="#文件管理" class="headerlink" title="文件管理"></a>文件管理</h5><p><font color="#f79646">文件存储空间的管理：</font>由文件系统对诸多文件及其所占据的存储空间实施统一的管理。</p>
+<ul>
+<li><font color="#92cddc">为文件分配必要的外存空间</font>，提高外存利用率，提高文件系统的存取速度。</li>
+<li><font color="#92cddc">设置相应的数据结构</font>，用于记录文件存储空间的使用情况，以供分配存储空间时参考，并具有<font color="#92cddc">对存储空间进行分配和回收的功能</font>。</li>
+</ul>
+<p><font color="#f79646">目录管理：</font></p>
+<ul>
+<li><font color="#92cddc">为每个文件建立一个目录项</font>，目录项包括文件名、文件属性、文件在磁盘上的物理位置等，并对众多的目录项加以有效的组织，以实现方便的按名存取。</li>
+<li><font color="#92cddc">实现文件共享</font>，只需在外存中保留一份该共享文件的副本即可。</li>
+<li><font color="#92cddc">提供快速的目录查询手段</font>，以提高对文件检索的速度。</li>
+</ul>
+<p><font color="#f79646">文件的读/写管理：</font>根据用户的请求，从外存中读取数据，或将数据写入外存。<br><font color="#f79646">文件保护：</font>防止系统中的文件被非法窃取和破坏，提供有效的存取控制功能。防止未经授权的用户对文件的操作和访问。</p>
+<h5 id="设备管理"><a href="#设备管理" class="headerlink" title="设备管理"></a>设备管理</h5><p>设备管理的基本任务是完成用户进程提出的 I/O 请求，分配所需的 I/O 设备，完成指定的 I/O 操作。提高 CPU 和 I/O 设备的利用率和并行程度，提高 I/O 速度。<br><font color="#f79646">缓冲管理：</font>通过在 I/O 设备和 CPU 之间引入缓冲，可以解决速度不匹配的矛盾，提高 CPU 利用率，提高系统吞吐量。<br><font color="#f79646">设备分配：</font>对于用户进程的 I/O 请求，根据系统现有的资源情况，按照某种设备分配策略为其分配所需的设备。<br><font color="#f79646">设备处理：</font><font color="#92d050">设备处理程序</font>即<font color="#92d050">设备驱动程序</font>，主要用于实现处理器和设备控制器之间的通信。<br><font color="#f79646">虚拟设备：</font>操作系统的虚拟性。</p>
+<p>2.操作系统作为用户与计算机硬件系统之间的接口<br>（1）用户接口</p>
+<table>
+<thead>
+<tr>
+<th>联机用户接口<br>（交互式命令接口）</th>
+<th>用户输入命令后，系统立即解释并执行，完成后返回控制权，适用于实时交互场景。<br>“雇主”说一句话，“工人”做一件事，并做出反馈，强调<u>交互性</u>。</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>脱机用户接口<br>（批处理命令接口）</td>
+<td>用于批处理系统。<br>“雇主”预先将任务清单交给“工人”,“工人”按清单逐条完成这些任务。</td>
+</tr>
+<tr>
+<td>图形用户接口<br>（GUI）</td>
+<td>提升易用性，通过图标、菜单、对话框等图形元素替代文本命令。 <br>用户借助鼠标等设备进行操作，底层通过系统调用与内核交互，显著降低了使用门槛。</td>
+</tr>
+<tr>
+<td>（2）程序接口</td>
+<td></td>
+</tr>
+<tr>
+<td>程序接口是应用程序在运行时请求操作系统服务、访问系统资源的唯一合法途径，其核心是一组<font color="#ff0000">系统调用</font>。每个系统调用对应内核中实现某个特定功能的子程序。当应用程序需要操作系统服务时，必须通过调用相应的系统调用来完成。</td>
+<td></td>
+</tr>
+<tr>
+<td><font color="#ff0000">注意，库函数本身并非操作系统接口，它们只是对系统调用的封装。</font></td>
+<td></td>
+</tr>
+</tbody></table>
+<h3 id="操作系统的四个特征"><a href="#操作系统的四个特征" class="headerlink" title="操作系统的四个特征"></a>操作系统的四个特征</h3><h5 id="并发——最基本的特征"><a href="#并发——最基本的特征" class="headerlink" title="并发——最基本的特征"></a>并发——最基本的特征</h5><p>并发：指两个或多个事件在<font color="#92cddc">同一时间间隔</font><font color="#92cddc">内</font>发生。在单处理器系统中，<font color="#ff0000">宏观来看，这些程序是同时向前推进的；而微观来看，并发执行的程序是交替在处理器上执行的。</font><br>并行：指两个或多个事件在<font color="#92cddc">同一时刻同时</font>在不同的处理单元上运行。<font color="#92cddc">并行通常需要多处理器等硬件支持</font>。并行是并发的特例，程序并行性一定是并发的，反之则不一定成立。</p>
+<h5 id="共享——最基本的特征"><a href="#共享——最基本的特征" class="headerlink" title="共享——最基本的特征"></a>共享——最基本的特征</h5><p>共享是指系统中的资源可供<font color="#92cddc">内存中</font>多个并发执行的进程共同使用。<br>两种资源共享方式：<br>根据资源特性与访问方式 的不同，共享主要分为<font color="#ff0000">互斥共享</font>和<font color="#ff0000">同时访问</font>两种形式。</p>
+<table>
+<thead>
+<tr>
+<th>互斥共享方式</th>
+<th>要求一个资源在一段时间内只满足一个请求，<font color="#ff0000">只能供一个作业使用</font>。<br><font color="#ff0000">一个时间段内只允许一个进程访问该资源</font>，释放该资源后才允许另一个进程对该资源进行访问。（临界资源）<br>计算机系统中的大多数独占型物理设备 (如打印机), 以及软件中的栈、变量、表格等，均属于临界资源，必须以互斥方式共享。</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>同时访问方式</td>
+<td>此处的“同时”通常指逻 辑上的并发访问，微观上这些进程可能通过分时交替方式访问资源，即分时共享。<br>允许<font color="#ff0000">一个时间段内有多个进程“同时”</font>对他们进行访问（宏观同时、微观交替）</td>
+</tr>
+</tbody></table>
+<p><font color="#92d050">并发和共享二者互为前提：</font><br>①资源共享<font color="#92cddc">以进程的并发执行为前提</font>，若系统仅支持单道程序，则无须考虑资源共享；<br>②有效的资源共享机制是并发执行的基础，若无法协调资源访问，则并发程序将因竞争冲突而无法正确运行。</p>
+<h5 id="虚拟"><a href="#虚拟" class="headerlink" title="虚拟"></a>虚拟</h5><p>虚拟是指通过某种技术手段，将一个物理实体映射为多个逻辑上的对应物。<font color="#ff0000">物理实体是实际存在的，而逻辑上的对应物是用户感受到的。</font><br>操作系统主要通过两类复用技术实现虚拟：时分复用和空分复用。</p>
+<table>
+<thead>
+<tr>
+<th>时分复用技术</th>
+<th>通过利用处理机空闲时间运行其他程序，提高利用率。<br>虚拟处理器：处理器被多个程序“时分”地使用，微观上交替执行。<br>虚拟设备技术：利用时分复用技术，将物理上的 I/O 设备虚拟为多台逻辑上的 I/O 设备。</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>空分复用技术</td>
+<td>利用存储器的空闲区域存放和运行其他的多道程序。<br>单纯采用空分复用技术的存储器只能提高内存利用率，并不能实现在逻辑上扩大内存容量的功能，还应引入虚拟存储技术。<br>虚拟存储器技术：将一台机器的物理存储器变为虚拟存储器，将内存划分给多个程序使用。其本质上是实现内存的分时复用。</td>
+</tr>
+</tbody></table>
+<h5 id="异步"><a href="#异步" class="headerlink" title="异步"></a>异步</h5><p>在多道程序环境下，多个进程并发执行。但由于系统资源有限，进程的执行并非连续进行， 而是以不可预知的速度断续推进，这种特性称为进程的异步性。<br>可能导致与时间相关的错误。<br>拥有并发性才有可能导致异步性。</p>
+<h3 id="操作系统的发展"><a href="#操作系统的发展" class="headerlink" title="操作系统的发展"></a>操作系统的发展</h3><h4 id="手工操作阶段"><a href="#手工操作阶段" class="headerlink" title="手工操作阶段"></a>手工操作阶段</h4><h5 id="人工操作阶段"><a href="#人工操作阶段" class="headerlink" title="人工操作阶段"></a>人工操作阶段</h5><p>用户将准备好的穿孔纸带或卡片放入输入输出设备，计算机读取其中的程序和数据并运行。只有当前程序运行完毕并取出结果后，下一个用户才能使用计算机。<br>手工操作阶段存在两个突出缺点：①用户独占全机，虽无资源竞争，但系统资源利用率极低；②CPU 长时间空闲，等待人工完成 I/O 操作，导致其计算能力未能充分发挥。</p>
+<h5 id="脱机-I-O-方式"><a href="#脱机-I-O-方式" class="headerlink" title="脱机 I/O 方式"></a>脱机 I/O 方式</h5><p>引入一台外围机，在 CPU 不参与的情况下，预先完成 I/O 准备工作：输入时，外围机将纸带或卡片上的程序和数据读入磁带，供 CPU 后续调入内存；输出时，CPU 将结果先写入磁带，再由外围机将磁带内容输出至外设。<br>脱机 I/O 的主要优点包括：①装带、卸带及数据传输等操作在脱机状态下由外围机完成，显著减少了 CPU 空闲时间；② CPU 可直接从高速磁带读取或写入数据，大幅提升了 I/O 效率。</p>
+<h4 id="批处理阶段"><a href="#批处理阶段" class="headerlink" title="批处理阶段"></a>批处理阶段</h4><h5 id="单道批处理系统"><a href="#单道批处理系统" class="headerlink" title="单道批处理系统"></a>单道批处理系统</h5><p>引入脱机输入/输出技术，并用监督程序负责控制作业的输入输出。<br><font color="#f79646">主要特征：</font></p>
+<ul>
+<li><font color="#92d050">自动性：</font>磁带上的作业可自动连续执行，无须人工干预。</li>
+<li><font color="#92d050">顺</font><font color="#92d050">序性：</font>作业按磁带上的顺序依次装入内存，先装入者先完成。</li>
+<li><font color="#92d050">单道性：</font>内存中仅允许一道用户程序运行；监督程序每次仅从磁带调入一道作业，待其完成或异常终止后才装入下一道。<br>优点：缓解人机速度矛盾，减少 CPU 空闲时间；提高了I/O 速度，提升资源利用率。<br>缺点：内存中同一时刻只能有一道程序运行，且它在执行时独占资源，并在 CPU 上连续执行。但 CPU 在等待 I/O 完成期间无法处理其他任务，导致大量时间处于空闲，整体 CPU 利用率较低。</li>
+</ul>
+<h5 id="多道批处理系统"><a href="#多道批处理系统" class="headerlink" title="多道批处理系统"></a>多道批处理系统</h5><p>用户提交的作业首先存放在外存的后备队列中。作业调度程序按一定算法从该队列中选取若 干作业调入主存，<font color="#ff0000">并且允许多个作业并发运行，这些作业共享处理器、外设以及其他资源。</font><br><font color="#f79646">主要特征：</font></p>
+<ul>
+<li><font color="#92d050">制约性：</font>程序执行因为共享资源及相互协同的原因产生了竞争，相互制约。</li>
+<li><font color="#92d050">间断性：</font>考虑竞争的公平性，程序的执行是断续的。</li>
+<li><font color="#92d050">共享性：</font>内存中的多个程序共享系统中的各种软硬件资源。</li>
+</ul>
+<p><font color="#f79646">优点：</font></p>
+<ul>
+<li><font color="#92cddc">多道程序并发执行</font>，资源利用率大幅提升。</li>
+<li><font color="#92cddc">系统吞吐量大。</font></li>
+<li><font color="#ff0000">宏观上并发。</font></li>
+<li><font color="#ff0000">微观上串行。</font></li>
+</ul>
+<p><font color="#f79646">缺点：</font></p>
+<ul>
+<li><font color="#92cddc">无交互能力。</font></li>
+<li><font color="#92cddc">平均周转时间长。</font><br>多道程序环境需要付出额外的开销（作业调度开销、上下文切换开销、内存管理开销、资源竞争开销、进程间通信和同步开销）来组织作业和切换作业，管理内存以及处理各种任务。</li>
+</ul>
+<h4 id="分时操作系统"><a href="#分时操作系统" class="headerlink" title="分时操作系统"></a>分时操作系统</h4><p>分时技术是指将处理器时间划分为很短的时间片，轮流分配给各用户程序使用。<font color="#ff0000">用户可与计算机进行交互。</font><br><font color="#f79646">特点：</font><br><font color="#92d050">同时性：</font>多路性，允许多个终端用户同时使用一台计算机，并按分时原则为每个用户服务。<br><font color="#92d050">交互性：</font>即用户通过终端采用人机对话的方式直接控制程序运行。<br><font color="#92d050">独立性：</font>多个用户可以彼此独立地进行操作，互不干扰，单个用户感觉不到别人也在使用这台计算机。<br><font color="#92d050">及时性：</font>用户地请求能在短时间内获得响应。<br><font color="#f79646">优点：</font>及时接收，及时处理。<br><font color="#f79646">缺点：</font>对每个用户/作业完全公平，循环地为每个用户/作业服务一个时间片，不区分任务的紧急性，<font color="#92cddc">不能优先处理紧急任务</font>。</p>
+<h4 id="实时操作系统"><a href="#实时操作系统" class="headerlink" title="实时操作系统"></a>实时操作系统</h4><p>计算机系统在接收到外部信号后及时处理，并且要在严格的时限内处理完事件。<br>主要特点是及时性和可靠性。其进程调度采用抢占式的优先级调度算法。<br>优点：能够响应并优先处理紧急任务，某些紧急任务无需等待时间片排队。<br><font color="#92d050">硬实时操作系统：</font>必须在绝对严格的规定时限内完成处理。<br><font color="#92d050">软实时操作系统：</font>能接受偶尔违反时间限制。</p>
+<h4 id="网络操作系统"><a href="#网络操作系统" class="headerlink" title="网络操作系统"></a>网络操作系统</h4><p>网络操作系统是在单机操作系统基础上扩展网络功能而形成的系统，主要用于支持计算机之间的通信、数据传输以及资源共享 (如文件、打印机共享等)。</p>
+<h4 id="分布式操作系统"><a href="#分布式操作系统" class="headerlink" title="分布式操作系统"></a>分布式操作系统</h4><p>用于管理分布式计算机系统的操作系统称为<font color="#92d050">分布式操作系统</font>，<br>特征：节点地位对等，无固定的主从关系； 系统资源可被所有用户透明地共享；具备良好的可扩展性与容错能力，支持动态重组；能够将一个任务分解为多个子任务，并分布到不同节点上并行执行、协同完成。<br>特点：分布性、并行性、统一性、自治性、共享性和透明性。</p>
+<h4 id="微机操作系统"><a href="#微机操作系统" class="headerlink" title="微机操作系统"></a>微机操作系统</h4><p>1.单用户单任务操作系统<br>2.单用户多任务操作系统<br>3.多用户多任务操作系统</p>
+<h3 id="程序运行环境"><a href="#程序运行环境" class="headerlink" title="程序运行环境"></a>程序运行环境</h3><h4 id="两种程序"><a href="#两种程序" class="headerlink" title="两种程序"></a>两种程序</h4><p><font color="#92d050">内核程序：</font>可以执行一些特权指令<br><font color="#92d050">应用程序：</font>只能执行非特权指令</p>
+<h4 id="两种指令"><a href="#两种指令" class="headerlink" title="两种指令"></a>两种指令</h4><table>
+<thead>
+<tr>
+<th>特权指令</th>
+<th>非特权指令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>不允许用户直接使用的指令（<font color="#ff0000">内核态</font>下运行）</td>
+<td>允许用户直接使用的指令（<font color="#ff0000">用户态</font>下运行）</td>
+</tr>
+<tr>
+<td><font color="#92cddc">有关 I/O 的指令</font>；访问<font color="#92cddc">程序状态字寄存器</font>的指令；设置系统时钟时间；关中断；存取<font color="#92cddc">特殊寄存器</font>（如用于内存保护的寄存器）的指令；其他访问<font color="#92cddc">系统状态</font>和直接访问<font color="#92cddc">系统资源</font>的指令等。<font color="#ff0000">切换到用户态的指令也是特权指令。</font></td>
+<td>不能直接访问系统中的软硬件资源；<br>只限于访问用户的地址空间。</td>
+</tr>
+<tr>
+<td>对于内存空间的访问范围基本不受限制</td>
+<td>应用程序所使用的都是非特权指令。</td>
+</tr>
+<tr>
+<td>如：内存清零指令，指令影响重大，只允许管理者（操作系统内核）使用</td>
+<td>如：加法指令、减法指令、访管指令</td>
+</tr>
+<tr>
+<td>这种限制由<font color="#92cddc">硬件</font>强制执行，若应用程序尝试执行特权指令，硬件会将其判定为非法操作并拒绝执行，同时发出权限错误信号。操作系统捕获此信号后，会立即转入相应的错误处理程序，中止该应用程序的运行，并重新进行调度。</td>
+<td></td>
+</tr>
+</tbody></table>
+<h4 id="两种处理器状态"><a href="#两种处理器状态" class="headerlink" title="两种处理器状态"></a>两种处理器状态</h4><p>用于区分正在运行的是<font color="#92cddc">内核程序</font>或<font color="#92cddc">应用程序</font>，<font color="#ff0000">主要区别：能否访问硬件。</font></p>
+<table>
+<thead>
+<tr>
+<th>内核态（核心态、管态）</th>
+<th>用户态（普通态、目态）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>运行<font color="#92cddc">内核程序，可以执行特权指令。</font></td>
+<td>运行<font color="#92cddc">应用程序，只能执行非特权指令。</font><br>在用户态下，进程只能访问自己的地址空间，不能直接调用内核函数。</td>
+</tr>
+<tr>
+<td><font color="#ff0000">用户态转为内核态唯一的途径是中断或异常。</font></td>
+<td></td>
+</tr>
+</tbody></table>
+<h4 id="区分两种状态"><a href="#区分两种状态" class="headerlink" title="区分两种状态"></a>区分两种状态</h4><p>CPU 中的 <font color="#92cddc">PSW 寄存器（程序状态字寄存器）</font>，其中有个二进制位（模式位），通常情况下用 0/1 表示内核态（0）或用户态（1）。</p>
+<h4 id="状态切换"><a href="#状态切换" class="headerlink" title="状态切换"></a>状态切换</h4><ol>
+<li>内核态→用户态<br>执行特权指令，<font color="#ff0000">修改 PSW 标志位为用户态</font>，操作系统主动让出 CPU 控制权。</li>
+<li>用户态→内核态<br><font color="#ff0000">由中断引发，该状态转换过程由 CPU 硬件自动完成。</font><br>计算机通过硬件完成操作系统由用户态到内核态的转换。当发生中断事件时，硬件检测到这一动作后，自动将 CPU 状态置为核心态。</li>
+<li>访管指令（Trap 指令/陷入指令）<br>由<font color="#92cddc">用户态转到内核态</font>，则会用到访管指令，<font color="#ff0000">访管指令（Trap 指令）是在用户态使用的，</font>用于引发访管中断，<font color="#ff0000">请求进入内核态。</font></li>
+</ol>
+<p><font color="#92d050">访管中断：</font>因请求操作系统服务而自愿中断，转为内核态，由访管指令（陷入指令）产生。<br>访管指令本身是非特权指令，但它触发的中断处理程序是在内核态执行的。</p>
+<h4 id="两种状态的事件-指令"><a href="#两种状态的事件-指令" class="headerlink" title="两种状态的事件/指令"></a>两种状态的事件/指令</h4><table>
+<thead>
+<tr>
+<th>用户态</th>
+<th>事件</th>
+<th>系统调用、外部中断、缺页</th>
+</tr>
+</thead>
+<tbody><tr>
+<td></td>
+<td>指令</td>
+<td>陷入指令（Trap）跳转指令、数据传送指令、设置断点</td>
+</tr>
+<tr>
+<td>内核态</td>
+<td>事件</td>
+<td>进程切换、缺页处理</td>
+</tr>
+<tr>
+<td></td>
+<td>指令</td>
+<td>关中断、I/O 指令、所有特权指令</td>
+</tr>
+</tbody></table>
+<h4 id="内核的三大基本支撑功能"><a href="#内核的三大基本支撑功能" class="headerlink" title="内核的三大基本支撑功能"></a>内核的三大基本支撑功能</h4><h5 id="时钟管理"><a href="#时钟管理" class="headerlink" title="时钟管理"></a>时钟管理</h5><ul>
+<li>计时功能，操作系统需要通过时钟管理向用户提供标准的系统时间。</li>
+<li>通过时钟中断的管理，可以实现进程的切换。</li>
+<li>每当定时器出发时钟中断，时钟中断处理程序更新的内容：a.内核中时钟变量的值（整个系统用了多少时间）；b.当前进程已使用的 CPU 时长；c.进程在当前时间片内剩余的执行时间。</li>
+<li><font color="#ff0000">获取（读）时钟可以在用户态进行，但设置（写）时钟必须在内核态进行。</font></li>
+</ul>
+<h5 id="中断机制"><a href="#中断机制" class="headerlink" title="中断机制"></a>中断机制</h5><ul>
+<li>目的：提高多道运行环境中 CPU 的利用率，它允许 CPU 在 I/O 操作期间执行其他指令。</li>
+<li>中断来源广泛，包括键盘输入、鼠标事件、进程的管理和调度、系统调用、设备驱动和文件访问等。<u>中断是现代操作系统运行的基础</u>。</li>
+</ul>
+<h5 id="原语"><a href="#原语" class="headerlink" title="原语"></a>原语</h5><p>它是一组由若干条指令组成、用于完成特定功能的过程。<br><font color="#92d050">原子性：</font>原语是原子操作。这意味着它的所有动作要么全部完成，要么全部不执行，是一个不可分割的基本单位。由于其原子性，<font color="#ff0000">原语在执行过程中不允许被中断。</font><br>原语在<font color="#92cddc">内核态</font>下执行，并且常驻内存。常用于实现对关键数据结构的原子操作或同步机制。</p>
+<h4 id="中断和异常"><a href="#中断和异常" class="headerlink" title="中断和异常"></a>中断和异常</h4><h5 id="中断的作用"><a href="#中断的作用" class="headerlink" title="中断的作用"></a>中断的作用</h5><ul>
+<li><font color="#ff0000">中断会使 CPU 由用户态变为内核态，OS 重新夺回对 CPU 的控制权。</font>（硬件实现）<br>硬件实现：用一个特殊寄存器来表示 CPU 当前的工作状态是内核态还是用户态。</li>
+<li>如果没有中断机制，就无法高效的进行并发。</li>
+<li><font color="#ff0000">中断是操作系统内核夺回 CPU 使用权的唯一途径</font>（用户态→内核态）。</li>
+</ul>
+<h5 id="中断的类型"><a href="#中断的类型" class="headerlink" title="中断的类型"></a>中断的类型</h5><p>![思维导图 (1).jpg](<a class="link" target="_blank" rel="noopener" href="https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE">https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/思维导图<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a> (1).jpg)<br>①<font color="#92d050">内中断</font>（异常、例外）<br>与当前执行的指令有关，中断信号来源于 CPU 内部，由某个指令引发的中断。检测异常的工作由 CPU（包括控制器和运算器）实现的。内中断通常不能被屏蔽，一旦出现应立即处理。</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>概念</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>陷入（trap）</td>
+<td>由陷入指令引发的，应用程序故意引发。</td>
+<td>系统调用（陷入指令并非特权指令，且需要在用户态下执行，系统调用通过陷入指令完成）。</td>
+</tr>
+<tr>
+<td>故障（fault）</td>
+<td>由错误条件引起，可能被内核程序修复，CPU 使用权交还应用程序。若不能被修复，则终止程序</td>
+<td>缺页故障、运算溢出等。</td>
+</tr>
+<tr>
+<td>终止（abort）</td>
+<td>由致命错误引起，内核程序无法修复该错误，并且不会交还 CPU 使用权，而是直接终止应用程序。</td>
+<td>除法指令除数为 0，非法使用特权指令</td>
+</tr>
+<tr>
+<td>常见的内中断：地址非法、数据校验错误、访存缺页、存储访问控制错、算数操作上溢、数据格式非法、除数为 0、非法指令、用户程序执行特权指令、陷入指令、运行超时、等待超时、算数运算错。</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><font color="#ff0000">内中断一旦出现立即处理，返回的地方可能是发生异常的指令，也可能直接跳过。</font></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>②<font color="#92d050">外中断</font>（也称硬件中断）</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><font color="#ff0000">与当前执行的指令无关，中断信号来源于 CPU 外部。</font></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>时钟中断：时钟部件发出的中断信号，该部件每隔一个时间片，给 CPU 发送一个时钟中断信号。</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><font color="#92d050">时钟中断</font>的主要工作：处理和时间有关的信息以及决定是否执行调度程序。包括<font color="#92cddc">系统时间、进程的时间片、延时、使用 CPU 的时间、各种定时器、进程已执行的时间、进程在时间片内的剩余执行时间</font>等。</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>I/O 中断：由输入输设备发出的中断信号。</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>常见的外中断：程序 I/O 中断、DMA 中断、通道中断、时钟中断。</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>内中断（异常）会引起中断，但中断未必是内中断引起的（也可由外中断）。</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><font color="#92d050">软件中断：</font>在程序中使用软件中断指令使机器进入中断处理的过程，不是随机产生的。</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><font color="#92d050">硬件中断：</font>由随机产生的硬件事件产生的中断。</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>原因</th>
+<th>同/异步</th>
+<th>中断来源</th>
+<th>返回</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>中断</td>
+<td>I/O 设备的请求信号</td>
+<td>异步</td>
+<td>外部设备</td>
+<td>返回下一条指令</td>
+</tr>
+<tr>
+<td>故障</td>
+<td>可能恢复的异常事件</td>
+<td>同步</td>
+<td>访存、除法指令</td>
+<td>可能返回当前指令</td>
+</tr>
+<tr>
+<td>陷阱</td>
+<td>故意安排的异常事件</td>
+<td>同步</td>
+<td>陷入指令</td>
+<td>返回下一条指令</td>
+</tr>
+<tr>
+<td>终止</td>
+<td>无法恢复的异常事件</td>
+<td>同步</td>
+<td>硬件损坏</td>
+<td>不返回</td>
+</tr>
+</tbody></table>
+<h4 id="中断机制的基本原理"><a href="#中断机制的基本原理" class="headerlink" title="中断机制的基本原理"></a>中断机制的基本原理</h4><p><font color="#92d050">内中断</font>：CPU 在执行指令时会检查是否有异常发生。<br><font color="#92d050">外中断</font>：每个指令周期末尾，CPU 会检查是否有外部中断信号需要处理。<br><font color="#92d050">中断向量表</font>：CPU 检测到中断后，根据中断信号的类型去查询<font color="#92cddc">中断向量表</font>，找到相应的<font color="#92cddc">中断处理程序</font>（运行在<font color="#92cddc">内核态</font>）在内存中的存放位置。</p>
+<h3 id="系统调用"><a href="#系统调用" class="headerlink" title="系统调用"></a>系统调用</h3><p>系统调用是操作系统提供给应用程序使用的接口，应用程序可以通过系统调用来请求获得操作系统内核的服务。<br>系统调用是应用程序取得操作系统所有服务的唯一途径。<br>程序结构由一组系统调用组成。系统调用=程序接口=广义指令。<br>每一个系统调用都是一个能完成特定功能的子程序。</p>
+<h4 id="系统调用和库函数的区别"><a href="#系统调用和库函数的区别" class="headerlink" title="系统调用和库函数的区别"></a>系统调用和库函数的区别</h4><p>库函数属于用户程序而非系统调用，是系统调用的上层。<br><font color="#92d050">库函数：</font>高级语言中提供的与系统调用对应的函数，目的是隐藏访管指令的细节，使得系统调用更为方便抽象。<br><font color="#92d050">普通应用程序：</font>可直接进行系统调用，也可使用库函数。<br><font color="#92d050">高级编程语言：</font>向上提供库函数或把系统调用封装为库函数。<br><font color="#92d050">操作系统：</font>向上提供系统调用。</p>
+<h4 id="系统调用是必须的"><a href="#系统调用是必须的" class="headerlink" title="系统调用是必须的"></a>系统调用是必须的</h4><p>用户通过系统调用请求资源，由操作系统内核进行统一管理分配，避免资源使用冲突。<br>用户程序运行在用户态，不能直接访问内核数据或执行特权指令。通过系统调用进入内核态后，操作系统接管控制权，在内核态重可以直接访问系统资源，保证了系统的稳定性和安全性。</p>
+<h4 id="系统调用按功能分类"><a href="#系统调用按功能分类" class="headerlink" title="系统调用按功能分类"></a>系统调用按功能分类</h4><p>凡是与共享资源有关的操作（存储分配、I/O 操作、文件管理等），都必须通过系统调用的方式向操作系统内核提出服务请求，由操作系统内核代为完成。<br><font color="#92d050">设备管理：</font>完成设备的<font color="#ff0000">请求/释放/启动</font>等功能。<br><font color="#92d050">文件管理：</font>完成文件的<font color="#ff0000">读写/创建/删除</font>等功能。<br><font color="#92d050">进程控制：</font>完成进程的<font color="#ff0000">创建/撤销/阻塞/唤醒</font>等功能。<br><font color="#92d050">进程通信：</font>完成进程之间的<font color="#ff0000">消息传递/信号传递</font>等功能。<br><font color="#92d050">内存管理：</font>完成内存的分<font color="#ff0000">配/回收</font>等功能。</p>
+<h4 id="系统调用的过程"><a href="#系统调用的过程" class="headerlink" title="系统调用的过程"></a>系统调用的过程</h4><p><font color="#548dd4">①传递系统调用参数：</font>在用户态下，通过若干传参指令将若干个参数分别传入寄存器中，操作系统根据参数提供对应的系统调用服务。<br><font color="#548dd4">②执行陷入指令并切换至内核态：</font>陷入指令引发中断，CPU 硬件自动完成从用户态到内核态的特权级转换。。硬件与内核协同保存现场，将 PC、PSW 及通用寄存器内容压入内核堆栈。<br><font color="#548dd4">③定位并执行相应服务程序：</font>执行中断服务程序的过程中，根据寄存器中的参数执行对应的系统调用处理程序。此过程对用户是透明的。<br><font color="#548dd4">④恢复现场并返回用户态：</font>操作系统完成服务后将结果放入约定的寄存器或内存中。操作系统返回指令，CPU 状态从内核态切回用户态，并从内核栈恢复先前保存的上下文。用户程序从系统调用指令之后的位置继续执行，并自行获取返回值。</p>
+<h4 id="系统调用和一般过程调用的主要区别"><a href="#系统调用和一般过程调用的主要区别" class="headerlink" title="系统调用和一般过程调用的主要区别"></a>系统调用和一般过程调用的主要区别</h4><ol>
+<li>运行状态不同。普通过程调用的调用者与被调用者运行在同一特权级；而系统调用的调用者运行在用户态，被调用者运行在内核态。 </li>
+<li>状态转换不同。普通过程调用无须特权级切换，可以直接跳转；系统调用则需要通过陷入指令 (Trap) 触发，先从用户态切换到内核态，再由内核分派至相应处理程序。 </li>
+<li>返回机制不同。系统调用执行完毕后，内核可能根据调度策略决定是否切换进程；而普通过程调用总是直接返回原调用点。 </li>
+<li>嵌套调用限制不同。系统调用的嵌套深度受到内核栈空间的限制；而普通过程调用的嵌套深度通常仅受用户栈大小约束。</li>
+</ol>
+<h4 id="子程序调用"><a href="#子程序调用" class="headerlink" title="子程序调用"></a>子程序调用</h4><p>系统调用是用户程序调用系统程序，子程序调用时用户程序调用用户程序。<br>过程调用和函数调用都是子程序调用。</p>
+<h6 id="子程序调用和中断处理的区别"><a href="#子程序调用和中断处理的区别" class="headerlink" title="子程序调用和中断处理的区别"></a>子程序调用和中断处理的区别</h6><p><font color="#ff0000">子程序调用只需要保护程序断点，即该指令的下一条指令的地址；中断处理不仅要保护断点（PC 的内容），还要保护程序状态字寄存器的内容 PSW。</font><br>子程序调用是通过调用指令（CALL）引起，是事先安排的；中断的产生是随机的。<br>子程序受主程序或上层子程序控制；中断服务程序一般与被中断的现行程序无关。<br>不 i 存在同一时刻调用多个子程序的情况；有可能发生多个外设同时请求 CPU 服务的情况。<br><u>无论中断处理还是子程序调用都需要保存通用数据寄存器和通用地址寄存器中的内容</u>。在中断处理过程中程序计数器（PC）和程序状态字（PSW）寄存器的内容可由软件来实现。<br>程序状态字（PSW）寄存器用于记录当前处理器的状态和控制指令的执行顺序，并且保留与运行程序相关的各种信息，主要作用是实现程序状态的保护和恢复。子程序调用在进程内部执行，不会涉及特权模式的切换，通常由硬件自动保存程序计数器（PC），而 PSW 的保存可视情况由软件处理。</p>
+<h3 id="程序运行时内存映像与地址空间"><a href="#程序运行时内存映像与地址空间" class="headerlink" title="程序运行时内存映像与地址空间"></a>程序运行时内存映像与地址空间</h3><h4 id="程序运行时内存映像"><a href="#程序运行时内存映像" class="headerlink" title="程序运行时内存映像"></a>程序运行时内存映像</h4><p>源代码要经过编译、链接等处理生成可执行二进制目标代码，然后装入内存并经过操作系统抽象后，变成一个进程。程序运行时的内存映像指的是进程在内存中存放和组织的方式，进程会被映射到一个统一的虚拟地址空间，结构如图所示。<br>![头脑风暴 (3).png](<a class="link" target="_blank" rel="noopener" href="https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/%E5%A4%B4%E8%84%91%E9%A3%8E%E6%9A%B4">https://raw.githubusercontent.com/lionlnuc/Blog_imag/main/image/头脑风暴<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a> (3).png)<br>下面按照虚拟地址递增顺序依次进行介绍：<br>只读代码和数据区：进程虚拟地址从此开始，该区域存放进程的只读代码和只读数据。<br>可读/写数据区：该区域存放进程的可读可写数据。<br>运行时堆：由进程在运行时动态创建，该区域可以动态增长和收缩，例如 malloc() 可以申请该区域的内存，free() 可以释放该区域的内存。<br>共享库：该区域用于存放公共的共享库代码和数据，例如 C 语言的标准库函数。<br>用户栈：用来存放局部变量、返回地址，函数调用参数等信息，可以利用该区域实现函数调用。和堆一样，该区域随着程序的运行增长和缩减。<br>操作系统内核区：该区域是操作系统内核使用的地址空间，包括内核程序、代码、内核栈等信息，这些信息对用户程序不可见。<br>由于这部分没怎么考，所以记得比较少，详细内容再看看书。</p>
+<h3 id="操作系统的结构"><a href="#操作系统的结构" class="headerlink" title="操作系统的结构"></a>操作系统的结构</h3><h4 id="分层"><a href="#分层" class="headerlink" title="分层"></a>分层</h4><p>将操作系统分为若干层次，每个层次由若干模块组成。<font color="#ff0000">最底层为硬件系统（裸机系统），最高层为用户接口（系统调用接口）</font>，每层只能调用紧邻它的低层的功能和服务，且不能跨层调用。</p>
+<h5 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h5><p>① <font color="#92cddc">便于调试与验证，</font>系统可自底向上逐层开发与测试。层 1 完成且验证无误后，即可开发层 2, 因其仅依赖已验证的下层；后续各层以此类推。若某层出现错误，可将其定位在该层内部，因其所有依赖的下层均已通过验证。<br>②<font color="#92cddc">易于扩充与维护。</font>在保持层间接口不变的前提下，可独立修改、替换或新增某一层的实现，而不会影响其他层次的功能。</p>
+<h5 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h5><p>①<font color="#92cddc">层次划分困难。</font>合理界定各层的功能边界较为复杂，且一旦依赖关系固化，系统架构可能缺乏灵活性。<br>② <font color="#92cddc">运行效率较低。</font>执行一个高层功能 通常需穿越多个中间层，每层之间的参数传递与控制转移会引入额外开销，从而影响系统整体性能。</p>
+<h4 id="模块化"><a href="#模块化" class="headerlink" title="模块化"></a>模块化</h4><p>模块化是将操作系统按功能划分为若干具有一定独立性的模块。还可进一步将模块细分为若干子模块，并且规定子模块之间的接口。这种设计方法称为模块-接口法。<br>在划分模块时：<br>若模块过小，虽然可降低单个模块的复杂性，但会导致模块间交互频繁， 增加系统的整体复杂度；<br>若模块过大，则模块内部结构复杂，难以维护。<br>衡量模块独立性的主要标准有两个：<br><font color="#92d050">内聚性：</font>模块内部各组成部分间联系的紧密程度。<font color="#92cddc">内聚性越高，模块独立性越好。</font><br><font color="#92d050">耦合度：</font>模块间相互依赖和影响的程度。<font color="#92cddc">耦合度越低，模块独立性越好。</font></p>
+<h5 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h5><p>①<font color="#92cddc">提高了操作系统设计的正确性、可理解性和可维护性。</font><br>②<font color="#92cddc">增强了系统 的可适应性，</font>便于功能扩展，<font color="#ff0000">支持动态加载新的内核模块</font>，添加新模块功能无需对整个内核进行重新编译。<br>③<font color="#92cddc">支持并行开发，加速操作系统研制进程。</font><br>④<font color="#ff0000">任何模块都可以直接调用其他模块，无需采用消息传递进行通信。</font>效率高。</p>
+<h5 id="缺点-1"><a href="#缺点-1" class="headerlink" title="缺点"></a>缺点</h5><p>①难以准确预估和定义模块间的接口规范，可能导致设计完成后难以满足实际要求。<br>②各模块并行开发，若缺乏清晰的依赖关系定义，可能导致开发或集成的无序性。<br>③只适用于系统规模小、模块数量少、使用环境比较稳定的系统。</p>
+<h4 id="宏内核"><a href="#宏内核" class="headerlink" title="宏内核"></a>宏内核</h4><p>将系统的主要功能模块集成在一个紧密耦合的整体中，运行于内核态，从而为用户程序提供高效的系统服务。<br>优点：高性能。内核内部各功能可以直接相互调用。<br>缺点：内核代码庞大，结构混乱，难以维护；某个功能出错可能导致整个系统崩溃。</p>
+<h4 id="微内核"><a href="#微内核" class="headerlink" title="微内核"></a>微内核</h4><p><font color="#f79646">基本概念：</font></p>
+<table>
+<thead>
+<tr>
+<th>足够小的内核</th>
+<th><font color="#92cddc">内核只保留最基本功能</font>：a.与硬件处理最紧密相关的部分；b.基本的抽象机制； c.客户与服务器之间通信。<br>仅含有<font color="#92cddc"><u>时钟管理、中断管理、进程通信、原语</u></font>等与硬件关联紧密的模块。<br><font color="#92cddc">进程管理（部分）、文件管理、设备管理</font>等功能在用户态以用户进程的形式运行。</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>基于客户/服务器模块</td>
+<td>OS 绝大部分在微内核外的服务器中实现。<br>客户端与服务器借助微内核提供消息传递机制进行消息交互。</td>
+</tr>
+<tr>
+<td>机制与策略分离</td>
+<td>机制：实现某一功能具体执行的机构。<br>策略：在机制的基础上借助某些参数和算法来实现该功能的优化。<br>机制处于系统基层，策略处于系统高层。在微内核 OS 中，通常将机制放在 OS 的微内核中。</td>
+</tr>
+<tr>
+<td><font color="#f79646">基本功能：</font></td>
+<td></td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>进程（线程）管理</th>
+<th>进程（线程）间通信功能是微内核 OS 最基本的功能，频繁使用，通信功能放入微内核中。<br>微内核 OS 在进程管理上，核心理念是遵循“机制与策略分离”的原则，将功能明确划分为内核内部的核心“机制”和内核外部的具体“策略”。即进程管理的部分功能在微内核内，部分在微内核外。<br>微内核内（机制）：微内核仅包含最基础的核心机制，如进程间通信、进程切换、线程调度（仅限底层操作，如状态管理、上下文切换），以及多处理机之间的同步等功能。它专注于实现“如何”执行进程管理的基本操作。<br>微内核外（策略）：微内核外部的用户态服务器则负责具体的进程管理“策略”。这包括决定进程的初始化优先级、根据运行时需求动态调整优先级（如老化、IO 或 CPU 消耗调整），以及选择哪个进程应被执行。他侧重解决了“什么”进程应该被调度和“何时”调度的问题，并通过进程间通信机制调用微内核提供的底层机制来执行其策略。</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>低级存储器管理</td>
+<td>微内核仅配置最基本的低级存储器管理机制，<font color="#ff0000">如页表机制和地址变换机制，这些机制用于将用户空间的逻辑地址转换为物理地址</font>，这一部分依赖硬件。因此放入微内核。<br>而实现虚拟存储器管理的策略，包括应采用何种页面置换算法，采用何种内存分配与回收策略等，则应放在微内核外的存储器管理服务器中。</td>
+</tr>
+<tr>
+<td>中断和陷入处理</td>
+<td>微内核捕获所发生的中断和陷入事件，进行初步的处理，然后将有关事件的信息转换成消息后，把它发送给相关服务器。<br>服务器根据中断或陷入的类型调用相应的从处理程序来进行后期处理。</td>
+</tr>
+<tr>
+<td><font color="#f79646">优点：</font></td>
+<td></td>
+</tr>
+<tr>
+<td>①扩展性和灵活性。新增或修改功能只需调整相应服务器，无须改动内核。</td>
+<td></td>
+</tr>
+<tr>
+<td>②可靠性和安全性。用户态服务的故障不会导致系统崩溃，且攻击面更小。</td>
+<td></td>
+</tr>
+<tr>
+<td>③可移植性。仅微内核包含硬件相关代码，其余服务器与平台无关，便于移植。</td>
+<td></td>
+</tr>
+<tr>
+<td>④分布式计算。客户/服务器间通过消息传递通信，易于扩展至网络环境。</td>
+<td></td>
+</tr>
+<tr>
+<td><font color="#f79646">缺点：</font></td>
+<td></td>
+</tr>
+<tr>
+<td>用户态下的各功能模块不可以直接相互调用，只能通过内核的“消息传递”来间接通信。需要频繁地在核心态和用户态之间交换，开销大，性能低。</td>
+<td></td>
+</tr>
+</tbody></table>
+<h4 id="外核"><a href="#外核" class="headerlink" title="外核"></a>外核</h4><p>外核的基本理念是：内核不再提供传统操作系统中的进程、虚拟内存等抽象事物，而是极小化其自身，仅专注于对底层物理资源进行隔离和安全复用。具体的硬件资源管理职责，则完全下放给应用程序自行实现。<br>应用程序可以通过系统提供的库函数调用普通内核中的功能，也可以通过库函数直接调用外核所提供的各个功能。<br><strong>将物理资源直接暴露给用户级系统，自身仅负责资源的安全分配与隔离。</strong><br>在这种操作系统中，操作系统=内核+外核；<br>内核：负责进程调度、进程通信等功能以及与硬件资源无关的功能。<br>外核：负责为用户进程分配未经抽象的硬件资源（如磁盘的存储空间、内存的存储空间），且由外核负责保护资源的使用安全。<br><font color="#f79646">优点：</font><br>①减少抽象开销。传统操作系统强制引入虚拟内存、虚拟文件系统等映射层，而外核允许 用户级系统按需定制资源使用方式，显著降低了系统开销。<br>②提升灵活性与性能。用户级系统可根据应用特性优化资源管理策略 (如数据库可以直接 管理磁盘块), 充分发挥硬件的潜力。<br>③清晰分离保护与实现。外核仅负责资源保护，功能实现完全置于用户空间，系统结构简 洁且易于验证。<br><font color="#f79646">缺点：</font><br>①降低了系统的一致性。<br>②使系统变得更复杂。</p>
+<h3 id="操作系统引导"><a href="#操作系统引导" class="headerlink" title="操作系统引导"></a>操作系统引导</h3><p>基本输入输出系统（BIOS）是固化到计算机主板上的一个只读存储器芯片内的一组程序，保存计算机最重要的基本输入输出程序、开机后自检程序和系统自启动程序。<font color="#ff0000">BIOS 被存储在主板上的 ROM 芯片里</font>，开机后计算机会自动将其加载到内存中执行。</p>
+<p>操作系统引导是指计算机利用 CPU 运行特定程序，通过程序识别硬盘分区及其上的操作系统，最后通过程序启动操作系统的过程。</p>
+<p>常见操作系统的引导过程：</p>
+<p><font color="#f79646">①加电与指令跳转：</font><br>计算机加电后，CPU 进行复位操作。此时 CPU 的 CS（代码段）寄存器和 IP（指令指针）寄存器会被强制初始化指向一个预设的物理内存地址（通常为 FFFF0H）。该地址处通常存放着一条 JMP 跳转指令，CPU 执行该指令后，将控制流跳转到 BIOS（或者 UEFI）固件程序的入口地址，开始执行固件代码。<br><font color="#f79646">②硬件自检（POST）：</font><br>BIOS 程序执行上电自检，检测 CPU、内存、显卡、键盘等关键硬件设备。</p>
+<ul>
+<li>若硬件状态正常，继续执行后续流程。</li>
+<li>若发现硬件故障，主板通常会通过蜂鸣器发出报警声。</li>
+</ul>
+<p><font color="#f79646">③系统初始化</font><br>硬件检测通过后，BIOS 将存储在 CMOS 芯片中的参数配置应用到各个硬件设备中。随后，BIOS 会在内存的低地址区域建<u>立中断向量表</u>，并<u>登记各种硬件中断服务程序（如硬盘读写、键盘输入等）的入口地址</u>。<br><font color="#f79646">④加载主引导记录（MBR）：</font><br>BIOS 按照用户设置的启动顺序逐一扫描存储介质。BIOS 读取存储介质起始位置（主引导区）的数据，并检查该扇区的最后两个字节。</p>
+<ul>
+<li>若最后两个字节为 0x55aa，则确认该介质存在有效的主引导记录（MBR）。</li>
+<li>BIOS 将检测到的 MBR 读取并加载到内存地址 0x7c00 处。</li>
+<li>BIOS 将 CPU 的控制权移交给位于 0x7c00 处的主引导程序。</li>
+</ul>
+<p><font color="#f79646">⑤扫描分区表与定位活动分区：</font><br>MBR 程序开始执行，其主要任务是扫描 MBR 内部的硬盘分区表（DPT）。它会在分区表中寻找标记为“活动”的主分区，并识别该分区的分区引导记录。<br><font color="#f79646">⑥加载分区引导记录（PBR/VBR）：</font><br>MBR 根据分区表信息，找到活动分区的第一个扇区，即分区引导记录（PBR 或 VBR）。MBR 将 PBR 读取到内存中并执行。PBR 的主要职责是定位并启动存储在该分区目录下的启动管理程序。<br><font color="#f79646">⑦内核加载：</font><br>启动管理程序接管控制权后，负责将操作系统内核的初始部分从磁盘加载到物理内存（RAM）中。</p>
+<ul>
+<li>内核完成内存管理、进程管理、设备驱动等系统级的初始化工作。</li>
+<li>初始化完成后，内核开始运行用户空间的第一个进程，至此，整个计算机系统正式运行起来，准备接受用户操作。<br>引导并不要求一次性加载完整 OS，其余部分可以按需加载。</li>
+</ul>
+<h4 id="知识点"><a href="#知识点" class="headerlink" title="知识点"></a>知识点</h4><h5 id="引导块"><a href="#引导块" class="headerlink" title="引导块"></a>引导块</h5><p>存储介质（如硬盘、闪存等）的第一个扇区。引导块在硬盘上通常就是指 MBR。<br><strong>引导加载程序定位：</strong> 引导块包含引导加载程序的信息，它指示计算机的固件在哪里可以找到更复杂的引导加载程序。该引导加载程序是启动过程的下一步，负责加载操作系统的核心代码。<br><strong>引导加载程序初始化：</strong> 引导块中的代码负责初始化引导加载程序的执行环境，例如设置必要的寄存器和内存区域，以确保引导加载程序能够正确执行。<br><strong>引导加载程序的跳转：</strong> 引导块中的代码通常包含一条跳转指令，将控制权移交到引导加载程序代码所在的扇区。此后，引导加载程序将继续执行引导过程，加载操作系统的核心代码。</p>
+<h5 id="扫描分区表"><a href="#扫描分区表" class="headerlink" title="扫描分区表"></a>扫描分区表</h5><p>引导程序通过扫描存储器介质上的分区表来找到活动分区或用户指定的分区。</p>
+<h5 id="分区表"><a href="#分区表" class="headerlink" title="分区表"></a>分区表</h5><p>一种数据结构，它记录了存储介质上每个分区的大小、起始地址和类型。在多操作系统环境中，分区表尤其关键，因为它包含了不同操作系统所在位置的相关信息，引导程序据此来识别和启动相应的操作系统。</p>
+<p>安装有操作系统的分区被标记为活动分区，并使用其启动操作系统，如 C 盘。<br>计算机主存由 RAM 和 ROM 组成，BIOS（基本输入/输出系统）或 UEFI 固件固化在主板上的 ROM 芯片内。其中，最重要的是 ROM 引导程序（自举程序）。<br>RAM（随机存取存储器）在关机或断电后数据会丢失，而 ROM（只读存储器）的数据则能持久保存。根据这一特性，可以令计算机在开机时固定地从 ROM 的某一区域中启动自举程序，ROM 引导程序的作用是指示 CPU 将磁盘的主引导记录（MBR）读入内存。</p>
+<p>精简流程：BIOS→MBR→PBR→启动管理器→内核。<br><font color="#ff0000">计算机开机后，操作系统及其程序最终被加载到 RAM（内存系统区）中进行。BIOS/UEFI 固件存在于 ROM 中，而运行中的操作系统位于 RAM 中。</font></p>
+<h3 id="虚拟机"><a href="#虚拟机" class="headerlink" title="虚拟机"></a>虚拟机</h3><p>虚拟机是一台逻辑计算机，是利用特殊的虚拟化技术，通过隐藏计算平台的物理特性，为用户提供抽象、统一、模拟的计算环境，虚拟化需要利用虚拟机管理程序，该管理程序通常称为虚拟机监视器（VMM）。虚拟机管理程序是一个软件程序，它提供抽象层，处理物理和虚拟资源之间的转换，并管理虚拟机（VM）的创建和支持。<br>虚拟机管理程序运行的物理硬件通常称为主机，管理程序创建和支持的 VM 通常称为客户机。<br>目前主流的虚拟化方案分为两类。</p>
+<h4 id="第一类虚拟机管理程序（裸金属架构）"><a href="#第一类虚拟机管理程序（裸金属架构）" class="headerlink" title="第一类虚拟机管理程序（裸金属架构）"></a>第一类虚拟机管理程序（裸金属架构）</h4><p>直接运行在裸机上，是唯一一个运行在最高特权级的程序，向上层提供若干台虚拟机，这些虚拟机是裸机硬件的精确复制品。<br>在此类架构中，客户操作系统运行于虚拟内核态，它认为自己处于真实的 CPU 内核态，但实际上并非如此；其用户进程则运行在真实的用户态。当客户操作系统执行一条仅允许在真实 内核态下执行的敏感指令时，会触发异常并陷入虚拟机管理程序。<br>在支持硬件虚拟化的 CPU 上，虚拟机管理程序能够根据执行上下文判断该指令源自客户操作系统还是用户程序：若为前者，则代为完成其功能；若为后者 (用户程序非法执行敏感指令), 则模拟真实硬件的异常响应行为。而在早期不支持硬件虚拟化的 CPU 上，所有敏感指令均 被透明重定向到虚拟机管理程序，由其通过软件模拟实现相应功能。</p>
+<h4 id="第二类虚拟机管理程序（寄居架构）"><a href="#第二类虚拟机管理程序（寄居架构）" class="headerlink" title="第二类虚拟机管理程序（寄居架构）"></a>第二类虚拟机管理程序（寄居架构）</h4><p>以应用程序的形式运行在宿主操作系统 (如 Windows 或 Linux) 之上，依赖宿主系统进行资源分配与调度，本质上是一个用户态进程。这种虚拟机管理程序仍然伪装成具有 CPU 和各种设备的完整计算机。底层操作系统的存在会引入不可避免的延迟，因为所有该管理程序的活动和每个 VM 的工作都必须通过主机操作系统。第二类 VMM 内的虚拟机可以打包为镜像文件，实现跨主机迁移这使其特别适合开发、测试和跨平台环境中快速部署 。</p>
+<p>运行在两类虚拟机管理程序上的操作系统都称为<font color="#92cddc">客户操作系统</font>，对于第二类虚拟机管理程序，运行在底层硬件上的操作系统都称为<font color="#92d050">宿主操作系统</font>。</p>
+
+		</div>
+
+		
+		<div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+			<div class="article-copyright-info-container">
+    <ul>
+        <li><strong>标题:</strong> 1.计算机系统概述</li>
+        <li><strong>作者:</strong> Lionlnuc</li>
+        <li><strong>创建于
+                :</strong> 2026-07-30 00:00:00</li>
+        
+            <li>
+                <strong>更新于
+                    :</strong> 2026-07-30 00:00:00
+            </li>
+        
+        <li>
+            <strong>链接:</strong> https://lionlnuc.github.io/2026/07/30/操作系统/1.计算机系统概述/
+        </li>
+        <li>
+            <strong>
+                版权声明:
+            </strong>
+            
+
+            
+                本文章采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a> 进行许可。
+            
+        </li>
+    </ul>
+</div>
+
+		</div>
+		
+
+		
+		<ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">#操作系统</a>&nbsp;
+			</li>
+			
+		</ul>
+		
+
+		
+
+		
+		<div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+			
+			
+			<div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="next" rel="next" href="/2026/07/26/%E8%AE%A1%E7%BB%84/1.%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/">
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">1.计算机系统概述</span>
+						<span class="post-nav-item">下一篇</span>
+					</span>
+					<span class="right arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-right"></i>
+					</span>
+				</a>
+			</div>
+			
+		</div>
+		
+
+
+		
+		<div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+			<div class="comments-container mt-10 w-full ">
+    <div id="comment-anchor" class="w-full h-2.5"></div>
+    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
+        评论
+    </div>
+    
+
+        
+            
+    <div id="giscus-container"></div>
+    <script data-swup-reload-script defer>
+        (function() {
+            const containerId = "giscus-container";
+            const mapping = "pathname";
+            const lang = "zh-CN";
+            const inputPosition = "bottom";
+            const reactionsEnabled = "1" === "1";
+            const emitMetadata = "1" === "1";
+            const strict = "0" === "1";
+            const loading = "lazy";
+
+            const getTerm = () => {
+                if (mapping === "pathname") return location.pathname;
+                if (mapping === "url") return location.href;
+                if (mapping === "title") return document.title;
+                if (mapping === "og:title") {
+                    const ogTitle = document.querySelector("meta[property='og:title']");
+                    return ogTitle?.content || document.title;
+                }
+                return "";
+            };
+
+            const sendUpdate = () => {
+                const iframe = document.querySelector("iframe.giscus-frame");
+                if (!iframe) {
+                    return;
+                }
+
+                const setConfig = {
+                    theme: "preferred_color_scheme",
+                    lang,
+                    inputPosition,
+                    reactionsEnabled,
+                    emitMetadata,
+                    strict,
+                };
+
+                if (mapping !== "number") {
+                    const term = getTerm();
+                    if (term) {
+                        setConfig.term = term;
+                    }
+                }
+
+                iframe.contentWindow.postMessage(
+                    { giscus: { setConfig } },
+                    "https://giscus.app",
+                );
+            };
+
+            const loadGiscus = () => {
+                const container = document.getElementById(containerId);
+                if (!container) {
+                    return;
+                }
+
+                const iframe = container.querySelector("iframe.giscus-frame");
+                if (iframe) {
+                    sendUpdate();
+                    return;
+                }
+
+                if (container.dataset.giscusInit === "true") {
+                    return;
+                }
+
+                const giscusConfig = {
+                    src: "https://giscus.app/client.js",
+                    "data-repo": "lionlnuc/lionlnuc.github.io",
+                    "data-repo-id": "R_kgDOQnj-7Q",
+                    "data-category": "Announcements",
+                    "data-category-id": "DIC_kwDOQnj-7c4Cz7IZ",
+                    "data-mapping": mapping,
+                    "data-strict": "0",
+                    "data-reactions-enabled": "1",
+                    "data-emit-metadata": "1",
+                    "data-theme": "preferred_color_scheme",
+                    "data-lang": lang,
+                    "data-input-position": inputPosition,
+                    "data-loading": loading,
+                    crossorigin: "anonymous",
+                    async: true,
+                };
+
+                const giscusScript = document.createElement("script");
+                for (const key in giscusConfig) {
+                    giscusScript.setAttribute(key, giscusConfig[key]);
+                }
+                container.appendChild(giscusScript);
+                container.dataset.giscusInit = "true";
+            };
+
+            const runGiscus = () => {
+                const container = document.getElementById(containerId);
+                if (!container) {
+                    return;
+                }
+
+                if (container.querySelector("iframe.giscus-frame")) {
+                    sendUpdate();
+                    return;
+                }
+
+                loadGiscus();
+            };
+
+            runGiscus();
+        })();
+    </script>
+
+
+        
+    
+</div>
+
+		</div>
+		
+	</div>
+
+	
+	<div class="toc-content-container">
+		<div class="post-toc-wrap">
+	<div class="post-toc">
+		<div class="toc-title">目录</div>
+		<div class="page-title">1.计算机系统概述</div>
+		<ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%A6%82%E5%BF%B5%E4%B8%8E%E5%8A%9F%E8%83%BD"><span class="nav-text">操作系统的概念与功能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1"><span class="nav-text">1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2"><span class="nav-text">2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3"><span class="nav-text">3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4"><span class="nav-text">4</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5"><span class="nav-text">5</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83"><span class="nav-text">操作系统的运行环境</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1"><span class="nav-text">1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1"><span class="nav-text">2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1"><span class="nav-text">3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1"><span class="nav-text">4</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1"><span class="nav-text">5</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6"><span class="nav-text">6</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7"><span class="nav-text">7</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8"><span class="nav-text">8</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9"><span class="nav-text">9</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10"><span class="nav-text">10</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11"><span class="nav-text">11</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12"><span class="nav-text">12</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13"><span class="nav-text">13</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14"><span class="nav-text">14</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15"><span class="nav-text">15</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16"><span class="nav-text">16</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#17"><span class="nav-text">17</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#18"><span class="nav-text">18</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#19"><span class="nav-text">19</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#20"><span class="nav-text">20</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%BB%93%E6%9E%84%E5%92%8C%E5%BC%95%E5%AF%BC"><span class="nav-text">操作系统的结构和引导</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2"><span class="nav-text">1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2"><span class="nav-text">2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2"><span class="nav-text">3</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%8D%E4%B9%A0"><span class="nav-text">复习</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-text">操作系统的概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%9B%9B%E4%B8%AA%E7%89%B9%E5%BE%81"><span class="nav-text">操作系统的四个特征</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%8F%91%E5%B1%95"><span class="nav-text">操作系统的发展</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83"><span class="nav-text">程序运行环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-text">系统调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E6%97%B6%E5%86%85%E5%AD%98%E6%98%A0%E5%83%8F%E4%B8%8E%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4"><span class="nav-text">程序运行时内存映像与地址空间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%BB%93%E6%9E%84"><span class="nav-text">操作系统的结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%BC%95%E5%AF%BC"><span class="nav-text">操作系统引导</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="nav-text">虚拟机</span></a></li></ol></li></ol>
+
+	</div>
+</div>
+	</div>
+	
+</div>
+
+			</div>
+
+			
+		</div>
+
+		<div class="main-content-footer">
+			<footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2025</span>
+              -
+            
+            2026&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">Lionlnuc</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        共撰写了 46 篇文章
+                    </span>
+                    
+                </p>
+            
+        </div>
+        
+            <script data-swup-reload-script src="https://cn.vercount.one/js"></script>
+            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
+                
+                    <span id="busuanzi_container_site_uv" class="lg:!block">
+                        <span class="text-sm">访问人数</span>
+                        <span id="busuanzi_value_site_uv"></span>
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv" class="lg:!block">
+                        <span class="text-sm">总访问量</span>
+                        <span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">由 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a> 驱动</span>
+            <span class="text-sm lg:block">主题&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.9.0</a></span>
+        </div>
+        
+        
+            <div>
+                博客已运行 <span class="odometer" id="runtime_days" ></span> 天 <span class="odometer" id="runtime_hours"></span> 小时 <span class="odometer" id="runtime_minutes"></span> 分钟 <span class="odometer" id="runtime_seconds"></span> 秒
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+        
+    </div>  
+</footer>
+		</div>
+	</div>
+
+	
+	<div class="post-tools">
+		<div class="post-tools-container">
+	<ul class="article-tools-list">
+		<!-- TOC aside toggle -->
+		
+		<li class="right-bottom-tools page-aside-toggle">
+			<i class="fa-regular fa-outdent"></i>
+		</li>
+		
+
+		<!-- go comment -->
+		
+		<li class="go-comment">
+			<i class="fa-regular fa-comments"></i>
+		</li>
+		
+	</ul>
+</div>
+	</div>
+	
+
+	<div class="right-side-tools-container">
+		<div class="side-tools-container">
+	<ul class="hidden-tools-list">
+		<li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-plus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-minus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+			<i class="fa-regular fa-moon"></i>
+		</li>
+
+		<!-- rss -->
+		
+
+		
+
+		<li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+			<i class="fa-regular fa-arrow-down"></i>
+		</li>
+	</ul>
+
+	<ul class="visible-tools-list">
+		<li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+			<i class="fa-regular fa-cog fa-spin"></i>
+		</li>
+		
+		<li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+			<i class="arrow-up fas fa-arrow-up"></i>
+			<span class="percent"></span>
+		</li>
+		
+		
+	</ul>
+</div>
+	</div>
+
+	<div class="image-viewer-container" role="dialog" aria-modal="true" aria-label="图片查看器">
+	<button class="image-viewer-close" type="button" aria-label="关闭">
+		<i class="fa-solid fa-xmark"></i>
+	</button>
+	<button class="image-viewer-prev" type="button" aria-label="上一页">
+		<i class="fa-solid fa-chevron-left"></i>
+	</button>
+	<div class="image-viewer-frame">
+		<img src="" alt="">
+	</div>
+	<div class="image-viewer-exif-panel hidden absolute left-1/2 bottom-20 -translate-x-1/2 w-[min(92vw,420px)] max-h-[60vh] overflow-hidden rounded-2xl bg-background-color-transparent-80 p-4 text-left shadow-redefine-flat backdrop-blur-md" role="dialog" aria-label="EXIF" aria-hidden="true">
+		<div class="flex items-center justify-between mb-3">
+			<span class="text-sm font-semibold text-first-text-color">EXIF</span>
+			<button class="image-viewer-exif-close flex h-8 w-8 items-center justify-center rounded-full bg-background-color-transparent-80 text-first-text-color transition hover:bg-background-color-transparent-40" type="button" aria-label="关闭">
+				<i class="fa-solid fa-xmark text-[0.65rem]"></i>
+			</button>
+		</div>
+		<div class="image-viewer-exif-cards grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[50vh] overflow-y-auto pr-1 scrollbar-hide"></div>
+		<template class="image-viewer-exif-card-template">
+			<div class="rounded-lg bg-background-color-transparent-40 px-3 py-2">
+				<div class="image-viewer-exif-card-header flex items-center gap-2 mb-1">
+					<i class="image-viewer-exif-card-icon fa-solid fa-circle-info text-xs text-third-text-color"></i>
+					<div class="image-viewer-exif-card-title text-xs font-semibold text-first-text-color"></div>
+				</div>
+				<div class="image-viewer-exif-card-items flex flex-col gap-1"></div>
+			</div>
+		</template>
+	</div>
+	<button class="image-viewer-exif-toggle flex items-center gap-2 hidden absolute left-1/2 bottom-6 -translate-x-1/2 rounded-full border border-border-color bg-background-color-transparent-80 px-4 py-2 text-first-text-color backdrop-blur-md transition hover:bg-background-color-transparent-40" type="button" aria-label="EXIF" aria-expanded="false">
+		<i class="fa-solid fa-circle-info text-xs"></i>
+		<span class="text-xs font-semibold uppercase tracking-wider">EXIF</span>
+	</button>
+	<button class="image-viewer-next" type="button" aria-label="下一页">
+		<i class="fa-solid fa-chevron-right"></i>
+	</button>
+</div>
+
+
+	
+	<div class="search-pop-overlay">
+	<div class="popup search-popup">
+		<div class="search-header">
+			<span class="search-input-field-pre">
+				<i class="fa-solid fa-keyboard"></i>
+			</span>
+			<div class="search-input-container">
+				<input autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="站内搜索您需要的内容..." spellcheck="false" type="search" class="search-input">
+			</div>
+			<span class="popup-btn-close">
+				<i class="fa-solid fa-times"></i>
+			</span>
+		</div>
+		<div id="search-result">
+			<div id="no-result">
+				<i class="fa-solid fa-spinner fa-spin-pulse fa-5x fa-fw"></i>
+			</div>
+		</div>
+	</div>
+</div>
+	
+
+</main>
+
+
+
+<script src="/js/build/libs/Swup.min.js"></script>
+
+<script src="/js/build/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/build/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    window.swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+
+    window.dispatchEvent(
+        new CustomEvent("redefine:swup:ready", {
+            detail: {
+                swup: window.swup,
+            },
+        }),
+    );
+</script>
+
+
+
+
+	
+<script src="/js/build/main.js" type="module"></script>
+
+
+
+    
+<script src="/js/build/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+
+
+
+  
+<script src="/js/build/libs/Typed.min.js"></script>
+
+
+
+
+
+
+
+
+    
+<script src="/js/build/libs/minimasonry.min.js" data-swup-reload-script=""></script>
+
+
+
+
+<script src="/js/build/libs/moment-with-locales.min.js" data-swup-reload-script=""></script>
+
+
+
+	
+</body>
+
+</html>
