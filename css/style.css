@@ -1499,9 +1499,12 @@ pre .deletion {
 }
 .home-banner-container .description p {
   margin: 0;
+  max-width: 92vw;
+  padding: 0 16px;
   opacity: 0.9;
   font-family: 'Geist Variable', sans-serif;
   font-weight: 350;
+  overflow-wrap: anywhere;
 }
 .home-banner-container .description p i {
   font-size: 1.5rem;

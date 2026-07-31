@@ -59,6 +59,47 @@ const createTyped = (id, strings, options) => {
   instances.set(id, instance);
 };
 
+const firstString = (...values) => {
+  const value = values.find(
+    (entry) => typeof entry === "string" && entry.trim(),
+  );
+  return value ? value.trim() : "";
+};
+
+const parseHitokotoResponse = (data) => {
+  const payload = data?.item && typeof data.item === "object" ? data.item : data;
+
+  return {
+    quote: firstString(payload?.hitokoto, payload?.content),
+    author: firstString(
+      payload?.from_who,
+      payload?.author,
+      payload?.source,
+      payload?.from,
+    ),
+  };
+};
+
+const getCacheKey = (api, showAuthor) =>
+  `redefine:hitokoto:${api}:author=${Boolean(showAuthor)}`;
+
+const readCachedHitokoto = (key) => {
+  try {
+    const cached = window.sessionStorage.getItem(key);
+    return typeof cached === "string" ? cached : "";
+  } catch {
+    return "";
+  }
+};
+
+const writeCachedHitokoto = (key, text) => {
+  try {
+    window.sessionStorage.setItem(key, text);
+  } catch {
+    // Storage can be disabled without affecting quote rendering.
+  }
+};
+
 const subtitleConfig = theme?.home_banner?.subtitle || {};
 const hitokotoConfig = subtitleConfig.hitokoto || {};
 
@@ -95,44 +136,79 @@ export default function initTyped(id) {
     startDelay: usrStartDelay ?? 500,
   };
 
-  const hitokotoEnabled = Boolean(hitokotoConfig.enable);
-
-  if (hitokotoEnabled) {
-    if (!usrHitokotoAPI) {
+  const subtitleEntries = normalizeSubtitleText(subtitleConfig.text);
+  const renderFallback = () => {
+    if (initTokens.get(id) !== currentToken || subtitleEntries.length === 0) {
       return;
     }
 
-    fetch(usrHitokotoAPI)
-      .then((response) => response.json())
-      .then((data) => {
-        if (initTokens.get(id) !== currentToken) {
-          return;
-        }
+    createTyped(id, subtitleEntries, options);
+  };
 
-        const quote = typeof data?.hitokoto === "string" ? data.hitokoto : "";
-        if (!quote) {
-          return;
-        }
-
-        const author =
-          typeof data?.from_who === "string" && hitokotoConfig.show_author
-            ? data.from_who
-            : "";
-        const text = author ? `${quote}——${author}` : quote;
-
-        createTyped(id, [text], options);
-      })
-      .catch((error) => {
-        console.error("Failed to fetch hitokoto:", error);
-      });
-
+  if (!hitokotoConfig.enable) {
+    renderFallback();
     return;
   }
 
-  const subtitleEntries = normalizeSubtitleText(subtitleConfig.text);
-  if (subtitleEntries.length === 0) {
+  if (!usrHitokotoAPI) {
+    renderFallback();
     return;
   }
 
-  createTyped(id, subtitleEntries, options);
+  const cacheKey = getCacheKey(
+    usrHitokotoAPI,
+    hitokotoConfig.show_author,
+  );
+  const cachedText = readCachedHitokoto(cacheKey);
+  if (cachedText) {
+    createTyped(id, [cachedText], options);
+    return;
+  }
+
+  const controller = new AbortController();
+  const configuredTimeout = Number(hitokotoConfig.timeout);
+  const timeout = Number.isFinite(configuredTimeout) && configuredTimeout > 0
+    ? configuredTimeout
+    : 6000;
+  const timeoutId = window.setTimeout(() => controller.abort(), timeout);
+
+  fetch(usrHitokotoAPI, {
+    headers: { Accept: "application/json" },
+    signal: controller.signal,
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Hitokoto request failed with ${response.status}`);
+      }
+
+      return response.json();
+    })
+    .then((data) => {
+      if (initTokens.get(id) !== currentToken) {
+        return;
+      }
+
+      const { quote, author } = parseHitokotoResponse(data);
+      if (!quote) {
+        throw new Error("Hitokoto response does not contain quote text");
+      }
+
+      const text = author && hitokotoConfig.show_author
+        ? `${quote} —— ${author}`
+        : quote;
+
+      writeCachedHitokoto(cacheKey, text);
+      createTyped(id, [text], options);
+    })
+    .catch((error) => {
+      if (initTokens.get(id) !== currentToken) {
+        return;
+      }
+
+      console.warn("Failed to fetch hitokoto; using local subtitle:", error);
+      renderFallback();
+    })
+    .finally(() => {
+      window.clearTimeout(timeoutId);
+    });
 }
