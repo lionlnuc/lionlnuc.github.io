@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Museboard">
+  <rect width="512" height="512" rx="112" fill="#181a1e"/>
+  <path d="M126 232 173 174 241 283 194 342Z" fill="#fff"/>
+  <path d="M198 156 251 91 368 279 315 344Z" fill="#89deb0"/>
+  <path d="M302 184 349 126 415 231 368 289Z" fill="#fff"/>
+</svg>

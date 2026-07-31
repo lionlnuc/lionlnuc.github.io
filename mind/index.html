@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f6f8f7" />
+    <meta name="description" content="MindFlow 纯前端在线思维导图工作台" />
+    <title>MindFlow | 在线思维导图</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <svg class="icon-sprite" aria-hidden="true" focusable="false">
+      <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+      <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+      <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></symbol>
+      <symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+      <symbol id="i-move" viewBox="0 0 24 24"><path d="M12 2v20M2 12h20M8 6l4-4 4 4M8 18l4 4 4-4M6 8l-4 4 4 4M18 8l4 4-4 4"/></symbol>
+      <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
+      <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m4 17 4-4 3 3 3-4 6 6"/></symbol>
+      <symbol id="i-note" viewBox="0 0 24 24"><path d="M5 3h14v18H5z"/><path d="M8 7h8M8 11h8M8 15h5"/></symbol>
+      <symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18h1.5a2 2 0 0 0 0-4H12a2 2 0 0 1 0-4h3a6 6 0 0 0 0-10Z"/><circle cx="7.5" cy="10" r="1"/><circle cx="9" cy="6.5" r="1"/><circle cx="14" cy="6.5" r="1"/></symbol>
+      <symbol id="i-collapse" viewBox="0 0 24 24"><path d="M4 4h6M4 4v6M20 4h-6M20 4v6M4 20h6M4 20v-6M20 20h-6M20 20v-6"/></symbol>
+      <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4M5 5c4-3 6 3 10 0 1-.7 2-.7 4-1v8c-2 .3-3 .3-4 1-4 3-6-3-10 0"/></symbol>
+      <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7L11 6"/><path d="M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7L13 18"/></symbol>
+      <symbol id="i-braces" viewBox="0 0 24 24"><path d="M8 3H6a2 2 0 0 0-2 2v4a2 2 0 0 1-2 2 2 2 0 0 1 2 2v4a2 2 0 0 0 2 2h2M16 3h2a2 2 0 0 1 2 2v4a2 2 0 0 0 2 2 2 2 0 0 0-2 2v4a2 2 0 0 1-2 2h-2"/></symbol>
+      <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></symbol>
+      <symbol id="i-paperclip" viewBox="0 0 24 24"><path d="m20 11-8.5 8.5a5 5 0 0 1-7-7L13 4a3.5 3.5 0 0 1 5 5l-8.5 8.5a2 2 0 0 1-3-3L14 7"/></symbol>
+      <symbol id="i-type" viewBox="0 0 24 24"><path d="M4 5V3h16v2M8 21h8M12 3v18"/></symbol>
+      <symbol id="i-layout" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="6" rx="1"/><rect x="14" y="3" width="7" height="6" rx="1"/><rect x="3" y="15" width="7" height="6" rx="1"/><rect x="14" y="15" width="7" height="6" rx="1"/><path d="M10 6h4M6.5 9v6M17.5 9v6M10 18h4"/></symbol>
+      <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18a5 5 0 1 1 1-9.9A6 6 0 0 1 19 10a4 4 0 0 1 0 8Z"/><path d="m9 14 3 3 3-3M12 17V9"/></symbol>
+      <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-2"/></symbol>
+      <symbol id="i-redo" viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h2"/></symbol>
+      <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7V5Z"/></symbol>
+      <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8.2 10.8 7.6-4.5M8.2 13.2l7.6 4.5"/></symbol>
+      <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 20h16"/></symbol>
+      <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></symbol>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 5 5"/></symbol>
+      <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+      <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+      <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></symbol>
+      <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+      <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="m12 3 1.2 4.8L18 9l-4.8 1.2L12 15l-1.2-4.8L6 9l4.8-1.2L12 3ZM19 14l.7 2.3L22 17l-2.3.7L19 20l-.7-2.3L16 17l2.3-.7L19 14ZM5 15l.6 1.9L7.5 18l-1.9.6L5 20.5l-.6-1.9L2.5 18l1.9-.6L5 15Z"/></symbol>
+      <symbol id="i-panel" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 4v16"/></symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+      <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"/></symbol>
+      <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 6a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v9a3 3 0 0 1-3 3H5a2 2 0 0 1-2-2Z"/></symbol>
+      <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></symbol>
+      <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></symbol>
+      <symbol id="i-cursor" viewBox="0 0 24 24"><path d="m5 3 6 16 2.2-6L19 11 5 3Z"/></symbol>
+      <symbol id="i-zoom-in" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M16 16l5 5M10.5 7.5v6M7.5 10.5h6"/></symbol>
+      <symbol id="i-zoom-out" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M16 16l5 5M7.5 10.5h6"/></symbol>
+      <symbol id="i-maximize" viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M21 16v5h-5"/></symbol>
+      <symbol id="i-edit" viewBox="0 0 24 24"><path d="m4 16-.8 4.8L8 20l11-11-4-4L4 16Z"/><path d="m13.5 6.5 4 4"/></symbol>
+      <symbol id="i-plus-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></symbol>
+      <symbol id="i-sticky" viewBox="0 0 24 24"><path d="M5 3h14v14l-4 4H5z"/><path d="M15 21v-4h4M8 8h8M8 12h6"/></symbol>
+      <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></symbol>
+      <symbol id="i-branch" viewBox="0 0 24 24"><path d="M6 4v13a3 3 0 0 0 3 3h9M6 8h7a3 3 0 0 1 3 3v9M6 8V4"/><circle cx="6" cy="4" r="2"/><circle cx="18" cy="20" r="2"/></symbol>
+      <symbol id="i-connector" viewBox="0 0 24 24"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><path d="M8 6h5a5 5 0 0 1 5 5v5"/></symbol>
+      <symbol id="i-wand" viewBox="0 0 24 24"><path d="m15 4 5 5M13 6l5 5M4 20l9-9"/><path d="m5 4 .6 2.4L8 7l-2.4.6L5 10l-.6-2.4L2 7l2.4-.6L5 4ZM18 14l.5 1.8 1.8.5-1.8.5-.5 1.8-.5-1.8-1.8-.5 1.8-.5.5-1.8Z"/></symbol>
+      <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12s3.2-6 9.5-6 9.5 6 9.5 6-3.2 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></symbol>
+      <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+      <symbol id="i-settings" viewBox="0 0 24 24"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"/><path d="m4.9 4.9 1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4M12 2v2M12 20v2"/></symbol>
+      <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 4.6 1.4c-.8 1-2.1 1.2-2.1 2.6M12 17h.01"/></symbol>
+      <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 13v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h5"/></symbol>
+    </svg>
+
+    <div class="app-shell" id="app-shell">
+      <header class="topbar">
+        <div class="brand-block">
+          <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
+          <div class="brand-copy">
+            <strong>MindFlow</strong>
+            <span>思维导图工作台</span>
+          </div>
+        </div>
+
+        <div class="document-heading">
+          <div class="document-title-line">
+            <input id="document-title" class="document-title" value="中断" aria-label="文档标题" />
+            <button class="icon-button subtle" data-action="rename-document" title="重命名文档" aria-label="重命名文档"><svg><use href="#i-edit"/></svg></button>
+          </div>
+          <div class="save-state"><span class="save-dot"></span><span id="save-state-text">已保存到本地</span></div>
+        </div>
+
+        <div class="topbar-actions">
+          <a class="icon-button subtle blog-return" href="/projects/" title="返回项目页" aria-label="返回项目页"><svg><use href="#i-arrow-left"/></svg></a>
+          <div class="topbar-group history-group">
+            <button class="icon-button subtle" data-action="undo" title="撤销（Ctrl + Z）" aria-label="撤销"><svg><use href="#i-undo"/></svg></button>
+            <button class="icon-button subtle" data-action="redo" title="重做（Ctrl + Y）" aria-label="重做"><svg><use href="#i-redo"/></svg></button>
+          </div>
+          <div class="topbar-divider"></div>
+          <button class="ghost-button" data-action="toggle-theme"><svg><use href="#i-sun"/></svg><span>主题</span></button>
+          <button class="outline-button" data-action="share"><svg><use href="#i-share"/></svg><span>分享</span></button>
+          <button class="primary-button" data-action="present"><svg><use href="#i-play"/></svg><span>演示</span></button>
+          <button class="avatar-button" data-action="account" title="账户菜单" aria-label="账户菜单">L</button>
+        </div>
+
+        <button class="mobile-menu-button icon-button" data-action="toggle-mobile-sidebar" title="打开侧栏" aria-label="打开侧栏"><svg><use href="#i-menu"/></svg></button>
+      </header>
+
+      <div class="commandbar">
+        <nav class="menu-nav" aria-label="主菜单">
+          <button class="menu-button" data-menu="file">文件 <svg><use href="#i-chevron-down"/></svg></button>
+          <button class="menu-button" data-menu="edit">编辑 <svg><use href="#i-chevron-down"/></svg></button>
+          <button class="menu-button" data-menu="view">视图 <svg><use href="#i-chevron-down"/></svg></button>
+          <button class="menu-button" data-menu="insert">插入 <svg><use href="#i-chevron-down"/></svg></button>
+        </nav>
+        <div class="command-divider"></div>
+        <div class="command-group primary-tools" aria-label="节点编辑工具">
+          <button class="tool-button active" data-action="select-mode" title="选择"><svg><use href="#i-cursor"/></svg><span>选择</span></button>
+          <button class="tool-button action-add" data-action="add-child" title="添加节点（Tab）"><svg><use href="#i-plus-circle"/></svg><span>新增</span></button>
+          <button class="tool-button" data-action="add-sibling" title="添加同级主题（Enter）"><svg><use href="#i-branch"/></svg><span>同级</span></button>
+          <button class="tool-button action-delete" data-action="delete-node" title="删除选中节点（Delete）"><svg><use href="#i-trash"/></svg><span>删除</span></button>
+          <div class="command-divider inner-divider" aria-hidden="true"></div>
+          <button class="tool-button action-clear" data-action="clear-map" title="清空画布"><svg><use href="#i-trash"/></svg><span>清空</span></button>
+          <button class="tool-button" data-action="add-connection" title="添加联系"><svg><use href="#i-connector"/></svg><span>联系</span></button>
+          <button class="tool-button" data-action="add-summary" title="添加概要"><svg><use href="#i-braces"/></svg><span>概要</span></button>
+        </div>
+        <div class="command-divider"></div>
+        <div class="command-group secondary-tools" aria-label="内容工具">
+          <button class="tool-button" data-action="add-note" title="添加备注"><svg><use href="#i-note"/></svg><span>备注</span></button>
+          <button class="tool-button" data-action="add-tag" title="添加标记"><svg><use href="#i-flag"/></svg><span>标记</span></button>
+          <button class="tool-button" data-action="add-link" title="添加链接"><svg><use href="#i-link"/></svg><span>链接</span></button>
+          <button class="tool-button" data-action="add-image" title="添加图片"><svg><use href="#i-image"/></svg><span>图片</span></button>
+          <button class="tool-button" data-action="add-attachment" title="添加附件"><svg><use href="#i-paperclip"/></svg><span>附件</span></button>
+        </div>
+        <div class="command-spacer"></div>
+        <div class="command-group view-tools">
+          <button class="tool-button" data-action="toggle-outline" title="大纲"><svg><use href="#i-type"/></svg><span>大纲</span></button>
+          <button class="tool-button" data-action="toggle-inspector" title="样式"><svg><use href="#i-palette"/></svg><span>样式</span></button>
+          <button class="tool-button" data-action="fit-view" title="适应画布"><svg><use href="#i-maximize"/></svg><span>适应</span></button>
+        </div>
+      </div>
+
+      <main class="workspace">
+        <aside class="left-panel" id="left-panel">
+          <div class="panel-content" id="left-panel-content"></div>
+        </aside>
+
+        <section class="canvas-area" id="canvas-area" aria-label="思维导图画布">
+          <div class="canvas-toolbar-float">
+            <div class="breadcrumb"><span class="breadcrumb-dot"></span><span id="breadcrumb-text">中断</span></div>
+            <div class="canvas-quick-actions">
+              <button class="icon-button light" data-action="toggle-grid" title="切换网格" aria-label="切换网格"><svg><use href="#i-grid"/></svg></button>
+              <button class="icon-button light" data-action="center-selected" title="定位选中节点" aria-label="定位选中节点"><svg><use href="#i-target"/></svg></button>
+              <button class="icon-button light" data-action="toggle-minimap" title="小地图" aria-label="小地图"><svg><use href="#i-panel"/></svg></button>
+            </div>
+          </div>
+          <div class="node-action-bar" id="node-action-bar" aria-label="节点快捷操作"></div>
+          <div class="canvas-viewport" id="canvas-viewport">
+            <div class="canvas-stage" id="canvas-stage">
+              <svg class="connections-layer" id="connections-layer" aria-hidden="true"></svg>
+              <div class="nodes-layer" id="nodes-layer"></div>
+              <div class="relationship-layer" id="relationship-layer"></div>
+            </div>
+          </div>
+          <div class="canvas-hint" id="canvas-hint"><span class="hint-key">Tab</span> 添加节点 <span class="hint-separator"></span><span class="hint-key">Enter</span> 添加同级 <span class="hint-separator"></span><span class="hint-key">Del</span> 删除</div>
+          <div class="zoom-control" aria-label="缩放控制">
+            <button class="icon-button light" data-action="zoom-out" title="缩小" aria-label="缩小"><svg><use href="#i-minus"/></svg></button>
+            <button class="zoom-value" data-action="fit-view" id="zoom-value" title="适应画布">100%</button>
+            <button class="icon-button light" data-action="zoom-in" title="放大" aria-label="放大"><svg><use href="#i-plus"/></svg></button>
+          </div>
+          <div class="minimap" id="minimap" hidden>
+            <div class="minimap-header"><span>小地图</span><button class="icon-button tiny" data-action="toggle-minimap" title="关闭小地图" aria-label="关闭小地图"><svg><use href="#i-close"/></svg></button></div>
+            <div class="minimap-canvas" id="minimap-canvas"></div>
+          </div>
+        </section>
+
+        <aside class="right-panel" id="right-panel">
+          <div class="inspector-header">
+            <div><span class="eyebrow">检查器</span><h2>节点属性</h2></div>
+            <button class="icon-button subtle" data-action="toggle-inspector" title="收起检查器" aria-label="收起检查器"><svg><use href="#i-panel"/></svg></button>
+          </div>
+          <div class="inspector-content" id="inspector-content"></div>
+        </aside>
+      </main>
+      <footer class="statusbar">
+        <div class="status-left"><span class="status-indicator"></span><span id="status-message">所有更改已保存</span></div>
+        <div class="status-center"><span id="node-count">8 个节点</span><span class="status-separator"></span><span id="selected-label">已选择：中断</span></div>
+        <div class="status-right"><span>本地工作区</span><span class="status-separator"></span><button class="status-link" data-action="shortcuts">快捷键</button><button class="icon-button tiny" data-action="help" title="帮助" aria-label="帮助"><svg><use href="#i-help"/></svg></button></div>
+      </footer>
+    </div>
+
+    <div class="menu-layer" id="menu-layer" hidden></div>
+    <div class="modal-layer" id="modal-layer" hidden></div>
+    <div class="toast-region" id="toast-region" aria-live="polite"></div>
+    <input type="file" id="file-input" accept="application/json,.mind,.mindflow" hidden />
+
+    <noscript><div class="noscript-card">请启用 JavaScript 以使用 MindFlow 思维导图工作台。</div></noscript>
+    <script src="app.js" defer></script>
+  </body>
+</html>
