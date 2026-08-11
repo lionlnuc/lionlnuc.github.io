@@ -293,7 +293,7 @@ body {
   padding: 0;
   color: var(--default-text-color);
   background: var(--background-color);
-  font-family: Geist Variable, Noto Sans SC, -apple-system, system-ui, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, BlinkMacSystemFont, Helvetica Neue, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial;
+  font-family: 'LXGW WenKai', Geist Variable, Noto Sans SC, -apple-system, system-ui, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, BlinkMacSystemFont, Helvetica Neue, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial;
   font-weight: 400;
   font-size: 16px;
   line-height: 1.5;
@@ -426,7 +426,7 @@ img[lazyload] {
   clear: both;
 }
 .markdown-body {
-  font-family: 'Geist Variable', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', 'Heiti SC', 'WenQuanYi Micro Hei', sans-serif, sans-serif;
+  font-family: 'Geist Variable', 'LXGW WenKai', sans-serif;
   font-size: 16px;
 }
 .markdown-body blockquote:not(.not-markdown) {
@@ -552,7 +552,7 @@ img[lazyload] {
 .markdown-body .h4:not(.not-markdown),
 .markdown-body .h5:not(.not-markdown),
 .markdown-body .h6:not(.not-markdown) {
-  font-family: 'Geist Variable', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', 'Heiti SC', 'WenQuanYi Micro Hei', sans-serif, sans-serif;
+  font-family: 'Geist Variable', 'LXGW WenKai', sans-serif;
   color: var(--second-text-color);
   line-height: 1.5;
 }
@@ -1470,7 +1470,7 @@ pre .deletion {
   transition: filter 0.3s ease;
 }
 .home-banner-container {
-  font-family: 'Chillax-Variable', sans-serif;
+  font-family: 'LXGW WenKai';
   position: relative;
   box-sizing: border-box;
   width: 100%;
@@ -1502,7 +1502,7 @@ pre .deletion {
   max-width: 92vw;
   padding: 0 16px;
   opacity: 0.9;
-  font-family: 'Geist Variable', sans-serif;
+  font-family: 'LXGW WenKai';
   font-weight: 350;
   overflow-wrap: anywhere;
 }
@@ -1512,6 +1512,22 @@ pre .deletion {
 }
 .home-banner-container .description p span {
   font-size: 1.575rem;
+}
+.home-banner-container .description .home-banner-title {
+  display: block;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+.home-banner-container .description .home-banner-slogan {
+  margin-top: 0.75rem;
+  font-size: 1.62rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  opacity: 0.96;
+}
+.home-banner-container .description .home-banner-quote {
+  margin-top: 0.55rem;
+  opacity: 0.84;
 }
 @media (max-width: 768px) {
   .home-banner-container .description {
@@ -1776,7 +1792,7 @@ pre .deletion {
   margin: auto;
 }
 .navbar-container {
-  font-family: 'Chillax-Variable', sans-serif;
+  font-family: 'LXGW WenKai';
   width: 100%;
   height: 100%;
   box-sizing: border-box;
@@ -2674,7 +2690,7 @@ html.is-animating .scroll-progress-bar {
   width: 100%;
   font-size: 0.92rem;
   box-sizing: border-box;
-  font-family: 'Geist Variable', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', 'Heiti SC', 'WenQuanYi Micro Hei', sans-serif, 'Noto Sans', 'Noto Sans SC', sans-serif;
+  font-family: 'Geist Variable', 'LXGW WenKai', 'Noto Sans', 'Noto Sans SC', sans-serif;
 }
 .post-toc-wrap .post-toc .toc-title {
   font-size: 0.8rem;
@@ -4209,7 +4225,7 @@ html.is-animating .transition-fade-down {
   font-size: 1.4rem;
   line-height: 1.5;
   color: var(--second-text-color);
-  font-family: 'Geist Variable', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', 'Heiti SC', 'WenQuanYi Micro Hei', sans-serif, 'Noto Sans SC', sans-serif;
+  font-family: 'Geist Variable', 'LXGW WenKai', 'Noto Sans SC', sans-serif;
   margin: 0;
 }
 @media (max-width: 768px) {
@@ -5330,7 +5346,7 @@ html.is-animating .transition-fade-down {
   font-size: 1.2rem;
   font-weight: 500;
   color: var(--second-text-color);
-  font-family: 'Chillax-Variable', sans-serif;
+  font-family: 'LXGW WenKai';
   text-align: center;
 }
 .home-sidebar-container .sidebar-links .site-info .announcement {
@@ -5349,7 +5365,7 @@ html.is-animating .transition-fade-down {
   text-align: left;
   border-radius: 9px;
   cursor: pointer;
-  font-family: Geist Variable, Noto Sans SC, -apple-system, system-ui, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, BlinkMacSystemFont, Helvetica Neue, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial;
+  font-family: 'LXGW WenKai';
 }
 .home-sidebar-container .sidebar-links .links .link-name {
   font-weight: 500;
