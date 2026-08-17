@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">动态规划 - 流云鹤文章封面</title>
+  <desc id="desc">STATE · TRANSITION · OPTIMIZE</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#29234f"/>
+      <stop offset="1" stop-color="#685aa5"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#ddd7ff" stop-opacity="0.42"/>
+      <stop offset="1" stop-color="#ddd7ff" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="dots" width="38" height="38" patternUnits="userSpaceOnUse">
+      <circle cx="3" cy="3" r="1.5" fill="#ffffff" fill-opacity="0.12"/>
+    </pattern>
+    <filter id="soft-shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="18" stdDeviation="24" flood-color="#071018" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="630" rx="34" fill="url(#background)"/>
+  <rect width="1200" height="630" rx="34" fill="url(#dots)"/>
+  <circle cx="1015" cy="90" r="340" fill="url(#glow)"/>
+  <path d="M0 485 C160 425 290 535 455 475 S760 420 920 486 S1080 535 1200 470 V630 H0Z" fill="#ffffff" fill-opacity="0.07"/>
+  <path d="M0 520 C180 460 320 570 500 508 S825 462 1010 520 S1125 542 1200 512" fill="none" stroke="#ddd7ff" stroke-opacity="0.34" stroke-width="3"/>
+  <g opacity="0.18" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M858 142 C914 92 979 78 1038 96 C1001 107 971 128 945 160 C1001 136 1050 139 1092 159 C1030 166 983 188 946 225" stroke-width="10"/>
+    <path d="M946 225 C979 226 1004 240 1021 264" stroke-width="7"/>
+    <circle cx="1026" cy="269" r="5" fill="#ffffff" stroke="none"/>
+  </g>
+  <text x="74" y="92" fill="#ffffff" fill-opacity="0.76" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="24" letter-spacing="4">流云鹤 · TECH NOTES</text>
+  <rect x="74" y="124" width="104" height="6" rx="3" fill="#ddd7ff"/>
+  <text x="72" y="306" fill="#ffffff" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="76" font-weight="700">动态规划</text>
+  <text x="76" y="368" fill="#ffffff" fill-opacity="0.72" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="28" letter-spacing="2">STATE · TRANSITION · OPTIMIZE</text>
+  <g transform="translate(825 184)" filter="url(#soft-shadow)">
+    <circle cx="138" cy="138" r="132" fill="#ffffff" fill-opacity="0.09" stroke="#ffffff" stroke-opacity="0.22" stroke-width="2"/>
+    <circle cx="138" cy="138" r="101" fill="none" stroke="#ddd7ff" stroke-opacity="0.55" stroke-width="3" stroke-dasharray="8 12"/>
+    <text x="138" y="166" text-anchor="middle" fill="#ffffff" font-family="Cascadia Code, Consolas, monospace" font-size="88" font-weight="700">DP</text>
+  </g>
+  <g transform="translate(74 500)">
+    <rect width="230" height="54" rx="27" fill="#ffffff" fill-opacity="0.11" stroke="#ffffff" stroke-opacity="0.2"/>
+    <circle cx="29" cy="27" r="7" fill="#ddd7ff"/>
+    <text x="50" y="35" fill="#ffffff" fill-opacity="0.88" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="20" letter-spacing="1">KNOWLEDGE SERIES</text>
+  </g>
+  <text x="1126" y="568" text-anchor="end" fill="#ffffff" fill-opacity="0.42" font-family="Segoe UI, sans-serif" font-size="18" letter-spacing="4">LIUYUNHE</text>
+</svg>
